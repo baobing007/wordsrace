@@ -98,6 +98,10 @@
       <div class="btn orange" id="startBtn">⚔️ 拔出宝刀，开始闯关</div>
       <div class="mini" id="resumeTip"></div>
     </div>
+    <div class="card" id="historyCard" style="display:none;">
+      <div style="font-weight:800;color:var(--shield-d);font-size:16px;margin-bottom:8px;">📊 学习记录</div>
+      <div id="historyBody"></div>
+    </div>
     <div class="paw">—— 每次新学 10 词 · 顺着词库顺序闯关 · 错词自动进复习库 ——</div>
   </section>
 
@@ -253,6 +257,43 @@ let submitted=false;
 function $(id){ return document.getElementById(id); }
 function show(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("show")); $(id).classList.add("show"); }
 
+function renderHistory(){
+  const card=$("historyCard");
+  const body=$("historyBody");
+  if(!card||!body) return;
+  if(S.seq===0 && (!S.dayErrors||S.dayErrors.length===0)){ card.style.display="none"; return; }
+  card.style.display="block";
+  let html="";
+  html+='<div class="stat-row"><span>📅 开始日期</span><b>'+todayStr()+'</b></div>';
+  html+='<div class="stat-row"><span>📚 已学单词</span><b>'+Math.min(S.seq, WORDS.length)+' / '+WORDS.length+'</b></div>';
+  if(S.seq>0){
+    html+='<div style="margin-top:10px;font-weight:700;color:#A06A4E;font-size:14px;">✅ 已掌握的单词：</div>';
+    html+='<div class="list">';
+    const learned=new Set();
+    for(let i=0;i<S.seq && i<WORDS.length;i++){ learned.add(normalize(WORDS[i][1])); }
+    const errSet=new Set(S.dayErrors||[]);
+    const mastered=[...learned].filter(en=>!errSet.has(en)).slice(0,20);
+    mastered.forEach(en=>{
+      const w=findWord(en);
+      if(w){ html+='<li><b>'+escapeHtml(w[1])+'</b>　'+escapeHtml(w[4])+'　'+escapeHtml(w[2]||w[5])+'</li>'; }
+    });
+    if(mastered.length===0){ html+='<li style="color:#A06A4E;">暂无完全掌握的单词，继续加油！</li>'; }
+    else if(learned.size-mastered.size>0){ html+='<li style="color:#A06A4E;font-size:12px;">...还有 '+Math.min(learned.size-mastered.size,10)+' 个在复习中</li>'; }
+    html+='</div>';
+  }
+  if(S.dayErrors && S.dayErrors.length>0){
+    html+='<div style="margin-top:10px;font-weight:700;color:var(--red);font-size:14px;">🔄 需加强的单词：</div>';
+    html+='<div class="list">';
+    S.dayErrors.slice(0,20).forEach(en=>{
+      const w=findWord(en);
+      if(w){ html+='<li><b>'+escapeHtml(w[1])+'</b>　'+escapeHtml(w[4])+'　'+escapeHtml(w[2]||w[5])+'</li>'; }
+    });
+    if(S.dayErrors.length>20){ html+='<li style="color:#A06A4E;font-size:12px;">...还有 '+Math.min(S.dayErrors.length-20,10)+' 个需加强</li>'; }
+    html+='</div>';
+  }
+  body.innerHTML=html;
+}
+
 /* ===== 欢迎页 ===== */
 function initWelcome(){
   if(S.nick) $("nick").value=S.nick;
@@ -267,6 +308,7 @@ function initWelcome(){
     tip="🌟 第一次来？这次先带出前 "+NEW_COUNT+" 个新词～";
   }
   $("resumeTip").textContent=tip;
+  renderHistory();
 }
 $("startBtn").onclick=()=>{
   const n=$("nick").value.trim();
