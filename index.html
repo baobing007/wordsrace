@@ -3,75 +3,191 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>单词背诵默写神器 · 刀盾小英雄</title>
+<title>单词花园 · 成长记录</title>
 <style>
   :root{
-    --shield:#3A7BD5; --shield-d:#2C5FA8; --red:#E8503A; --orange:#FF9F45;
-    --cream:#FFF8EE; --ink:#2C2C34; --green:#2FA37A; --pink:#FF7BAC; --gold:#FFC24B;
+    --leaf:#6BAF7A; --leaf-d:#4E9A60; --red:#E8726A; --orange:#F0A868;
+    --cream:#FFFDF8; --ink:#3D3A36; --green:#5CB870; --pink:#F2A6B3; --gold:#F5C842;
+    --peach:#FBD5A8; --lavender:#C8B6E2; --sage:#A8D5BA; --earth:#C4A882;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0; padding:0; background:#FCEFE0; color:var(--ink);
-    font-family:"PingFang SC","Microsoft YaHei","Comic Sans MS","Heiti SC",sans-serif;}
-  #app{max-width:480px; margin:0 auto; min-height:100vh; padding:18px 16px 40px;
-    background:linear-gradient(180deg,#FFF6E9 0%, #FDE7DA 55%, #F7DCEB 100%);}
+  html,body{margin:0; padding:0; color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Comic Sans MS","YouYuan","圆体",sans-serif;}
+  #app{max-width:480px; margin:0 auto; min-height:100vh; padding:18px 16px 80px;
+    background:linear-gradient(180deg, #F7FFF0 0%, #FFF8EC 40%, #FFF0F5 100%);}
   .screen{display:none; animation:fade .35s ease;}
   .screen.show{display:block;}
   @keyframes fade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
   .logo{display:flex; justify-content:center; margin:6px 0 10px;}
-  h1{font-size:25px; text-align:center; color:var(--shield-d); margin:4px 0 2px;
-    text-shadow:0 2px 0 #fff; letter-spacing:1px;}
-  .sub{text-align:center; color:#A06A4E; font-size:13px; margin-bottom:18px;}
+  h1{font-size:28px; text-align:center; color:var(--leaf-d); margin:4px 0 2px;
+    text-shadow:0 2px 0 rgba(255,255,255,.8); letter-spacing:2px;}
+  .sub{text-align:center; color:#8B7D6B; font-size:14px; margin-bottom:18px;}
   .card{background:var(--cream); border-radius:22px; padding:18px 16px;
-    box-shadow:0 6px 0 #E9C9A8, 0 10px 24px rgba(180,120,80,.22);
-    border:3px solid #fff;}
+    box-shadow:0 4px 0 #E2D5C0, 0 8px 20px rgba(160,130,100,.15);
+    border:3px solid #E8DFD0;}
   label{font-size:14px; color:#7A5742; display:block; margin:10px 0 6px; font-weight:700;}
-  input[type=text]{width:100%; font-size:20px; padding:14px 14px; border-radius:16px;
-    border:3px solid var(--shield); background:#fff; color:var(--ink); outline:none;
+  input[type=text]{width:100%; font-size:24px; padding:14px 14px; border-radius:16px;
+    border:3px solid var(--sage); background:#FEFFFE; color:var(--ink); outline:none;
     text-align:center; font-family:inherit;}
-  input[type=text]:focus{box-shadow:0 0 0 4px rgba(58,123,213,.25);}
+  input[type=text]:focus{box-shadow:0 0 0 4px rgba(168,213,186,.4);}
   .btn{display:block; width:100%; margin-top:14px; padding:15px; border:none; border-radius:18px;
     font-size:18px; font-weight:800; color:#fff; cursor:pointer; font-family:inherit;
-    background:linear-gradient(180deg,var(--shield),var(--shield-d));
-    box-shadow:0 5px 0 #1E3F73; transition:transform .08s;}
-  .btn:active{transform:translateY(3px); box-shadow:0 2px 0 #1E3F73;}
-  .btn.orange{background:linear-gradient(180deg,var(--orange),#F0822E); box-shadow:0 5px 0 #C25E16;}
-  .btn.pink{background:linear-gradient(180deg,var(--pink),#E0458F); box-shadow:0 5px 0 #A82B6C;}
-  .btn.ghost{background:#fff; color:var(--shield-d); box-shadow:0 5px 0 #D9C3AC; border:3px solid var(--shield);}
-  .counter{text-align:center; color:#A06A4E; font-size:13px; margin-bottom:8px;}
-  .q-def{font-size:23px; text-align:center; font-weight:800; color:var(--ink); margin:6px 0 2px; line-height:1.4;}
+    background:linear-gradient(180deg,var(--leaf),var(--leaf-d));
+    box-shadow:0 5px 0 #3D7A4A; transition:transform .08s;}
+  .btn:active{transform:translateY(3px); box-shadow:0 2px 0 #3D7A4A;}
+  .btn.orange{background:linear-gradient(180deg,var(--peach),#E8A060); box-shadow:0 5px 0 #C4884A;}
+  .btn.orange:active{box-shadow:0 2px 0 #C4884A;}
+  .btn.pink{background:linear-gradient(180deg,var(--pink),#E08A98); box-shadow:0 5px 0 #B8707C;}
+  .btn.pink:active{box-shadow:0 2px 0 #B8707C;}
+  .btn.ghost{background:#FFFDF8; color:var(--leaf-d); box-shadow:0 4px 0 #D9D0C4; border:2px solid var(--sage);}
+  .btn.ghost:active{box-shadow:0 2px 0 #D9D0C4;}
+  .counter{text-align:center; color:#8B7D6B; font-size:13px; margin-bottom:8px;}
+  .q-def{font-size:26px; text-align:center; font-weight:800; color:var(--ink); margin:6px 0 2px; line-height:1.4;}
   .q-pos{text-align:center; color:var(--red); font-weight:800; font-size:15px; margin-bottom:4px;}
   .q-hint{text-align:center; color:#9A7B68; font-size:12px; margin-bottom:14px;}
   .feedback{margin-top:14px; padding:13px; border-radius:14px; font-size:16px; font-weight:700; text-align:center; display:none;}
-  .feedback.ok{display:block; background:#E3F7EE; color:var(--green); border:2px solid #9FE3C8; animation:okpop .45s ease;}
-  .feedback.no{display:block; background:#FDEAE6; color:var(--red); border:2px solid #F4B6A8;}
+  .feedback.ok{display:block; background:#E8F5E9; color:var(--green); border:2px solid #A5D6A7; animation:okpop .45s ease;}
+  .feedback.no{display:block; background:#FFF0EC; color:var(--red); border:2px solid #F4B6A8;}
   .cmp{display:inline-block; margin:0 4px;}
   .cmp.wrong{color:var(--red); text-decoration:line-through; background:#FBD9D2; padding:1px 6px; border-radius:6px;}
   .cmp.right{color:var(--green); background:#D8F2E6; padding:1px 6px; border-radius:6px;}
   .shield-flash{animation:flash .5s ease;}
   @keyframes flash{0%{filter:drop-shadow(0 0 0 #fff);}50%{filter:drop-shadow(0 0 12px var(--gold));}100%{filter:none;}}
   @keyframes okpop{0%{transform:scale(.85);opacity:.4}50%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+  @keyframes celebrate{0%{transform:scale(1)}25%{transform:scale(1.1) rotate(-3deg)}50%{transform:scale(1.15) rotate(3deg)}75%{transform:scale(1.1) rotate(-2deg)}100%{transform:scale(1)}}
+  @keyframes confetti{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(-60px) rotate(360deg)}}
+  .celebrate{animation:celebrate .6s ease;}
   .shake{animation:shk .4s;}
   @keyframes shk{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
   .list{margin:8px 0; padding-left:4px;}
   .list li{font-size:15px; margin:6px 0; list-style:none; padding-left:22px; position:relative;}
-  .list li:before{content:"🛡"; position:absolute; left:-2px; top:-1px; font-size:14px;}
-  .list li b{color:var(--shield-d);}
+  .list li:before{content:"🌿"; position:absolute; left:-2px; top:-1px; font-size:14px;}
+  .list li b{color:var(--leaf-d);}
   .stat-row{display:flex; justify-content:space-between; padding:8px 4px; border-bottom:1px dashed #E6CDB4; font-size:15px;}
   .stat-row b{color:var(--red);}
   .tip{background:#FFF3D6; border:2px dashed var(--orange); border-radius:14px; padding:12px; font-size:13px; color:#8A5A2E; margin-top:14px; line-height:1.6;}
   #cardImg{width:100%; border-radius:18px; margin-top:14px; display:none; box-shadow:0 8px 24px rgba(120,80,60,.3);}
-  .mini{font-size:12px; color:#A06A4E; text-align:center; margin-top:10px;}
-  .paw{font-size:12px; text-align:center; color:#C79A7C; margin-top:18px;}
-  .tag{display:inline-block; font-size:11px; font-weight:700; padding:1px 7px; border-radius:7px; margin-right:5px; background:#FFE3C9; color:#A06A4E; vertical-align:middle;}
-  .tag.new{background:#D8F2E6; color:var(--green);}
-  .btn.opt{font-size:16px; padding:13px 10px; margin-top:10px; background:linear-gradient(180deg,#6FA8E8,#3A7BD5); box-shadow:0 4px 0 #1E3F73;}
-  .btn.opt.rv-hit{outline:3px solid var(--green); background:linear-gradient(180deg,#7FD3B0,#2FA37A); box-shadow:0 4px 0 #1E6E4E;}
+  .mini{font-size:12px; color:#8B7D6B; text-align:center; margin-top:10px;}
+  .paw{font-size:12px; text-align:center; color:#B8A88E; margin-top:18px;}
+  .tag{display:inline-block; font-size:11px; font-weight:700; padding:1px 7px; border-radius:7px; margin-right:5px; background:#FFF0D6; color:#8B7D6B; vertical-align:middle;}
+  .tag.new{background:#E0F2E4; color:var(--green);}
+  .btn.opt{font-size:16px; padding:13px 10px; margin-top:10px; background:linear-gradient(180deg,var(--sage),var(--leaf)); box-shadow:0 4px 0 #4E9A60;}
+  .btn.opt.rv-hit{outline:3px solid var(--gold); background:linear-gradient(180deg,#8ED4A0,#5CB870); box-shadow:0 4px 0 #3D7A4A;}
   .btn.opt.rv-miss{opacity:.45;}
   .mute{position:fixed; top:10px; right:10px; z-index:60; width:42px; height:42px; border-radius:50%;
-    background:rgba(255,255,255,.85); box-shadow:0 3px 0 #E9C9A8; display:flex; align-items:center; justify-content:center;
-    font-size:20px; cursor:pointer; user-select:none; border:2px solid var(--shield);}
+    background:rgba(255,255,255,.85); box-shadow:0 3px 0 #D9D0C4; display:flex; align-items:center; justify-content:center;
+    font-size:20px; cursor:pointer; user-select:none; border:2px solid var(--sage);}
   .mute:active{transform:translateY(2px);}
   .rv-prompt{font-size:22px; text-align:center; font-weight:800; color:var(--ink); margin:4px 0 14px; line-height:1.4;}
+  .steps{display:flex; justify-content:center; gap:8px; margin-bottom:16px;}
+  .step-dot{width:10px; height:10px; border-radius:50%; background:#DDD; transition:all .3s;}
+  .step-dot.active{background:var(--leaf); transform:scale(1.3);}
+  .step-dot.done{background:var(--leaf-d);}
+  .progress-bar{height:12px; background:#EDE7DB; border-radius:6px; margin:12px 0; overflow:hidden;}
+  .progress-fill{height:100%; border-radius:6px; background:linear-gradient(90deg, var(--sage), var(--leaf), var(--gold)); transition:width .5s ease;}
+  .bottom-nav{position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px;
+    background:rgba(255,253,248,.92); backdrop-filter:blur(10px); border-top:2px solid #E8DFD0;
+    display:flex; justify-content:space-around; padding:8px 0 max(8px, env(safe-area-inset-bottom)); z-index:50;}
+  .nav-item{display:flex; flex-direction:column; align-items:center; font-size:10px; color:#8B7D6B; cursor:pointer; padding:4px 12px; border-radius:8px; transition:all .2s;}
+  .nav-item:active{background:rgba(168,213,186,.2);}
+  .nav-item .nav-icon{font-size:20px; margin-bottom:2px;}
+  .pronounce-btn{display:inline-flex; align-items:center; justify-content:center; width:70px; height:70px; border-radius:50%; border:3px solid var(--sage); background:#FEFFFE;
+    font-size:11px; font-weight:700; line-height:1.3; cursor:pointer; transition:all .15s; box-shadow:0 3px 0 #D9D0C4; text-align:center; padding:2px;}
+  .pronounce-btn:active{transform:translateY(2px); box-shadow:0 1px 0 #D9D0C4;}
+  .pronounce-btn.uk{border-color:#5CB870; color:#5CB870;}
+  .pronounce-btn.us{border-color:#F0A868; color:#F0A868;}
+  .pronounce-btn.play{animation:pulse 1s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 3px 0 #D9D0C4, 0 0 0 0 rgba(92,184,112,.4);}50%{box-shadow:0 3px 0 #D9D0C4, 0 0 0 8px rgba(92,184,112,0);}}
+  .pronounce-row{display:flex; justify-content:center; gap:16px; margin-bottom:14px;}
+
+  /* ===== 花园插画分隔线 ===== */
+  .garden-divider{width:100%; margin:20px 0; overflow:visible; position:relative; text-align:center;}
+  .garden-divider svg{max-width:100%; height:auto;}
+
+  /* ===== 丰富的花园动画系统 ===== */
+  /* 叶子轻轻摇曳 */
+  @keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+  /* 花朵呼吸式缩放 */
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  /* 蝴蝶飞舞路径 */
+  @keyframes flutter{
+    0%{transform:translate(0,0) rotate(0deg)}
+    25%{transform:translate(12px,-8px) rotate(5deg)}
+    50%{transform:translate(4px,-16px) rotate(-3deg)}
+    75%{transform:translate(-10px,-6px) rotate(4deg)}
+    100%{transform:translate(0,0) rotate(0deg)}
+  }
+  /* 小鸟啄食点动 */
+  @keyframes peck{0%,80%,100%{transform:rotate(0deg)}85%{transform:rotate(15deg)}90%{transform:rotate(-5deg)}95%{transform:rotate(10deg)}}
+  /* 小兔子蹦跳 */
+  @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}60%{transform:translateY(-4px)}}
+  /* 蘑菇轻微摆动 */
+  @keyframes wiggle{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}}
+  /* 云朵缓慢飘移 */
+  @keyframes drift{0%{transform:translateX(-5px)}50%{transform:translateX(5px)}100%{transform:translateX(-5px)}}
+  /* 水滴下落 */
+  @keyframes drip{0%{transform:translateY(0);opacity:1}80%{transform:translateY(12px);opacity:.6}100%{transform:translateY(16px);opacity:0}}
+  /* 星星闪烁 */
+  @keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+  /* 浇水壶倾斜浇水 */
+  @keyframes water{0%,70%,100%{transform:rotate(0deg)}75%{transform:rotate(-25deg)}85%{transform:rotate(-20deg)}}
+  /* 种子发芽生长 */
+  @keyframes sprout{0%{transform:scaleY(0);transform-origin:bottom}50%{transform:scaleY(1.1);transform-origin:bottom}100%{transform:scaleY(1);transform-origin:bottom}}
+  /* 花瓣飘落 */
+  @keyframes petal-fall{
+    0%{transform:translate(0,0) rotate(0deg);opacity:1}
+    50%{transform:translate(-15px,20px) rotate(180deg);opacity:.7}
+    100%{transform:translate(10px,40px) rotate(360deg);opacity:0}
+  }
+  /* 阳光旋转 */
+  @keyframes sun-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  /* 小狐狸探头 */
+  @keyframes peek{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}40%{transform:translateY(2px)}}
+  /* 蜜蜂飞舞 */
+  @keyframes bee-fly{
+    0%{transform:translate(0,0) scale(1,1)}
+    15%{transform:translate(8px,-10px) scale(1,-1)}
+    30%{transform:translate(16px,-4px) scale(1,1)}
+    45%{transform:translate(10px,6px) scale(1,-1)}
+    60%{transform:translate(2px,8px) scale(1,1)}
+    75%{transform:translate(-8px,2px) scale(1,-1)}
+    90%{transform:translate(-4px,-8px) scale(1,1)}
+    100%{transform:translate(0,0) scale(1,1)}
+  }
+  /* 渐入上升 */
+  @keyframes rise-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .rise-in{animation:rise-in .6s ease-out both;}
+
+  /* 动画class分配 */
+  .anim-sway{animation:sway 3s ease-in-out infinite; transform-origin:bottom center;}
+  .anim-breathe{animation:breathe 2.5s ease-in-out infinite; transform-origin:center center;}
+  .anim-flutter{animation:flutter 4s ease-in-out infinite;}
+  .anim-peck{animation:peck 3s ease-in-out infinite; transform-origin:bottom center;}
+  .anim-hop{animation:hop 2s ease-in-out infinite;}
+  .anim-wiggle{animation:wiggle 4s ease-in-out infinite; transform-origin:bottom center;}
+  .anim-drift{animation:drift 6s ease-in-out infinite;}
+  .anim-drip{animation:drip 2s ease-in infinite;}
+  .anim-twinkle{animation:twinkle 2s ease-in-out infinite;}
+  .anim-water{animation:water 4s ease-in-out infinite; transform-origin:bottom right;}
+  .anim-sprout{animation:sprout 1.5s ease-out both; transform-origin:bottom center;}
+  .anim-petal{animation:petal-fall 3s ease-in infinite;}
+  .anim-sun{animation:sun-spin 20s linear infinite;}
+  .anim-peek{animation:peek 4s ease-in-out infinite;}
+  .anim-bee{animation:bee-fly 5s ease-in-out infinite;}
+  .anim-sway-slow{animation:sway 5s ease-in-out infinite; transform-origin:bottom center;}
+  .anim-breathe-slow{animation:breathe 4s ease-in-out infinite; transform-origin:center center;}
+
+  /* 减弱动画偏好 */
+  @media (prefers-reduced-motion: reduce){
+    .anim-sway,.anim-breathe,.anim-flutter,.anim-peck,.anim-hop,.anim-wiggle,
+    .anim-drift,.anim-drip,.anim-twinkle,.anim-water,.anim-sprout,.anim-petal,
+    .anim-sun,.anim-peek,.anim-bee,.anim-sway-slow,.anim-breathe-slow{
+      animation:none !important;
+    }
+  }
+
+  /* ===== 页面入场动画 ===== */
+  .screen.show .garden-divider svg *{animation-play-state:running;}
 </style>
 </head>
 <body>
@@ -82,74 +198,359 @@
   <section id="welcome" class="screen">
     <div class="logo">
       <svg width="120" height="120" viewBox="0 0 120 120">
-        <path d="M60 8 L104 26 V64 C104 92 84 108 60 116 C36 108 16 92 16 64 V26 Z" fill="#3A7BD5" stroke="#fff" stroke-width="4"/>
-        <path d="M60 8 L104 26 V64 C104 92 84 108 60 116 Z" fill="#2C5FA8"/>
-        <circle cx="60" cy="52" r="22" fill="#FFF"/><circle cx="60" cy="50" r="18" fill="#F7E8D8"/>
-        <circle cx="51" cy="48" r="3.2" fill="#2C2C34"/><circle cx="69" cy="48" r="3.2" fill="#2C2C34"/>
-        <path d="M53 58 Q60 65 67 58" stroke="#2C2C34" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-        <text x="60" y="98" font-size="13" fill="#fff" text-anchor="middle" font-weight="bold">背单词</text>
+        <!-- 树干 -->
+        <rect x="52" y="70" width="16" height="35" rx="4" fill="#A0744E"/>
+        <!-- 树冠（三层圆形） -->
+        <circle cx="60" cy="48" r="38" fill="#6BAF7A" opacity="0.85"/>
+        <circle cx="42" cy="58" r="28" fill="#5CB870" opacity="0.8"/>
+        <circle cx="78" cy="58" r="28" fill="#4E9A60" opacity="0.8"/>
+        <!-- 小窗户（树屋） -->
+        <circle cx="60" cy="50" r="10" fill="#FFFDF8" stroke="#C4A882" stroke-width="2"/>
+        <line x1="60" y1="40" x2="60" y2="60" stroke="#C4A882" stroke-width="1.5"/>
+        <line x1="50" y1="50" x2="70" y2="50" stroke="#C4A882" stroke-width="1.5"/>
+        <!-- 小动物朋友 - 小鸟 -->
+        <circle cx="85" cy="32" r="8" fill="#F0A868"/>
+        <circle cx="85" cy="30" r="5" fill="#FBD5A8"/>
+        <circle cx="83" cy="29" r="1.5" fill="#3D3A36"/>
+        <polygon points="90,30 96,28 90,32" fill="#E8726A"/>
+        <!-- 叶子装饰 -->
+        <ellipse cx="30" cy="40" rx="6" ry="10" fill="#A8D5BA" transform="rotate(-20,30,40)"/>
+        <ellipse cx="92" cy="52" rx="5" ry="9" fill="#A8D5BA" transform="rotate(15,92,52)"/>
+        <ellipse cx="45" cy="25" rx="5" ry="8" fill="#C8B6E2" transform="rotate(-30,45,25)"/>
+        <!-- 标题文字 -->
+        <text x="60" y="105" font-size="12" fill="#4E9A60" text-anchor="middle" font-weight="bold">单词花园</text>
       </svg>
     </div>
-    <h1>单词背诵默写神器</h1>
-    <div class="sub">🛡️ 刀盾小英雄 · 祝您马上背出单词 🐼</div>
+    <h1>单词花园</h1>
+    <div class="sub">🌿 种下单词的种子，收获知识的花朵 🌱</div>
     <div class="card">
-      <label>小英雄的昵称</label>
+      <label>小园丁的昵称</label>
       <input id="nick" type="text" placeholder="例如：可可 / 小熊猫" maxlength="12">
-      <div class="btn orange" id="startBtn">⚔️ 拔出宝刀，开始闯关</div>
+      <div class="btn orange" id="startBtn">🌻 种下种子，开始学习</div>
       <div class="mini" id="resumeTip"></div>
     </div>
+
+    <!-- 欢迎页：花园入口插画 —— 小兔子浇水场景 -->
+    <div class="garden-divider">
+      <svg width="360" height="60" viewBox="0 0 360 60">
+        <!-- 地面草丛 -->
+        <path d="M0,55 Q30,42 60,52 Q90,40 120,50 Q150,38 180,48 Q210,40 240,50 Q270,42 300,52 Q330,44 360,50 L360,60 L0,60Z" fill="#B8D8A0" opacity=".5"/>
+        <path d="M0,58 Q40,48 80,56 Q120,46 160,54 Q200,48 240,56 Q280,46 320,54 Q340,50 360,54 L360,60 L0,60Z" fill="#8CC084" opacity=".4"/>
+        <!-- 左侧小蘑菇 -->
+        <g class="anim-wiggle">
+          <rect x="22" y="46" width="4" height="10" rx="2" fill="#E8D5C0"/>
+          <ellipse cx="24" cy="44" rx="8" ry="6" fill="#F2A6B3"/>
+          <circle cx="20" cy="42" r="1.5" fill="#fff" opacity=".7"/>
+          <circle cx="27" cy="43" r="1" fill="#fff" opacity=".7"/>
+        </g>
+        <!-- 右侧小蘑菇 -->
+        <g class="anim-wiggle" style="animation-delay:.5s">
+          <rect x="328" y="48" width="3" height="8" rx="1.5" fill="#E8D5C0"/>
+          <ellipse cx="329.5" cy="46" rx="6" ry="4.5" fill="#C8B6E2"/>
+          <circle cx="327" cy="44.5" r="1" fill="#fff" opacity=".7"/>
+        </g>
+        <!-- 左侧花朵 -->
+        <g class="anim-breathe">
+          <line x1="52" y1="55" x2="52" y2="36" stroke="#6BAF7A" stroke-width="2"/>
+          <ellipse cx="46" cy="34" rx="4" ry="5" fill="#F2A6B3" transform="rotate(-20,52,34)"/>
+          <ellipse cx="58" cy="34" rx="4" ry="5" fill="#F2A6B3" transform="rotate(20,52,34)"/>
+          <ellipse cx="52" cy="30" rx="4" ry="5" fill="#FBD5A8"/>
+          <circle cx="52" cy="34" r="3" fill="#F5C842"/>
+        </g>
+        <!-- 右侧花朵 -->
+        <g class="anim-breathe" style="animation-delay:1s">
+          <line x1="300" y1="54" x2="300" y2="38" stroke="#6BAF7A" stroke-width="2"/>
+          <ellipse cx="294" cy="36" rx="3.5" ry="4.5" fill="#C8B6E2" transform="rotate(-20,300,36)"/>
+          <ellipse cx="306" cy="36" rx="3.5" ry="4.5" fill="#C8B6E2" transform="rotate(20,300,36)"/>
+          <ellipse cx="300" cy="32" rx="3.5" ry="4.5" fill="#F2A6B3"/>
+          <circle cx="300" cy="36" r="2.5" fill="#F5C842"/>
+        </g>
+        <!-- 中间蝴蝶 -->
+        <g class="anim-flutter">
+          <ellipse cx="175" cy="22" rx="8" ry="5" fill="#F2A6B3" opacity=".8" transform="rotate(-15,175,22)"/>
+          <ellipse cx="185" cy="22" rx="8" ry="5" fill="#FBD5A8" opacity=".8" transform="rotate(15,185,22)"/>
+          <ellipse cx="175" cy="28" rx="6" ry="4" fill="#C8B6E2" opacity=".7" transform="rotate(-10,175,28)"/>
+          <ellipse cx="185" cy="28" rx="6" ry="4" fill="#F2A6B3" opacity=".7" transform="rotate(10,185,28)"/>
+          <rect x="179" y="18" width="2" height="14" rx="1" fill="#8B7D6B"/>
+          <line x1="178" y1="18" x2="174" y2="14" stroke="#8B7D6B" stroke-width=".8"/>
+          <line x1="182" y1="18" x2="186" y2="14" stroke="#8B7D6B" stroke-width=".8"/>
+          <circle cx="174" cy="13.5" r="1" fill="#F5C842"/>
+          <circle cx="186" cy="13.5" r="1" fill="#F5C842"/>
+        </g>
+        <!-- 飘落花瓣 -->
+        <ellipse cx="130" cy="15" rx="3" ry="2" fill="#F2A6B3" opacity=".6" class="anim-petal"/>
+        <ellipse cx="230" cy="20" rx="2.5" ry="1.8" fill="#C8B6E2" opacity=".5" class="anim-petal" style="animation-delay:1.5s"/>
+      </svg>
+    </div>
+
     <div class="card" id="historyCard" style="display:none;">
-      <div style="font-weight:800;color:var(--shield-d);font-size:16px;margin-bottom:8px;">📊 学习记录</div>
+      <div style="font-weight:800;color:var(--leaf-d);font-size:16px;margin-bottom:8px;">📊 成长日记</div>
       <div id="historyBody"></div>
     </div>
-    <div class="paw">—— 每次新学 10 词 · 顺着词库顺序闯关 · 错词自动进复习库 ——</div>
+    <div class="paw">—— 每次新学 10 词 · 顺着词库慢慢浇水 · 错词自动进复习花园 ——</div>
   </section>
 
   <!-- 默写前清单页 -->
   <section id="preview" class="screen">
-    <h1>📝 本次默写清单</h1>
+    <h1>📝 本次学习清单</h1>
+
+    <!-- 预览页：浇水壶准备场景插画 -->
+    <div class="garden-divider">
+      <svg width="360" height="50" viewBox="0 0 360 50">
+        <!-- 小花盆与嫩芽 -->
+        <g class="anim-sprout">
+          <path d="M150,48 L148,30 Q148,26 150,24 L152,24 Q154,26 154,30 L152,48Z" fill="#6BAF7A"/>
+          <ellipse cx="145" cy="26" rx="6" ry="3" fill="#A8D5BA" transform="rotate(-25,145,26)"/>
+          <ellipse cx="157" cy="28" rx="5" ry="2.5" fill="#A8D5BA" transform="rotate(20,157,28)"/>
+        </g>
+        <!-- 花盆 -->
+        <path d="M142,44 L144,48 L158,48 L160,44Z" fill="#C4A882"/>
+        <rect x="140" y="42" width="22" height="3" rx="1.5" fill="#A0744E"/>
+        <!-- 浇水壶 -->
+        <g class="anim-water" transform="translate(195,18)">
+          <ellipse cx="0" cy="12" rx="12" ry="10" fill="#C8B6E2"/>
+          <rect x="-4" y="-2" width="8" height="6" rx="2" fill="#B8A0D0"/>
+          <line x1="8" y1="8" x2="18" y2="2" stroke="#B8A0D0" stroke-width="3" stroke-linecap="round"/>
+          <!-- 水滴 -->
+          <circle cx="22" cy="4" r="1.5" fill="#A8D5BA" class="anim-drip"/>
+          <circle cx="20" cy="6" r="1" fill="#A8D5BA" class="anim-drip" style="animation-delay:.8s"/>
+        </g>
+        <!-- 左侧叶片摇曳 -->
+        <g class="anim-sway">
+          <ellipse cx="40" cy="20" rx="8" ry="14" fill="#A8D5BA" opacity=".6" transform="rotate(-15,40,20)"/>
+          <line x1="40" y1="30" x2="40" y2="46" stroke="#6BAF7A" stroke-width="1.5"/>
+        </g>
+        <!-- 右侧叶片摇曳 -->
+        <g class="anim-sway" style="animation-delay:.8s">
+          <ellipse cx="315" cy="18" rx="7" ry="12" fill="#B8D8A0" opacity=".5" transform="rotate(15,315,18)"/>
+          <line x1="315" y1="28" x2="315" y2="46" stroke="#6BAF7A" stroke-width="1.5"/>
+        </g>
+        <!-- 小蜜蜂 -->
+        <g class="anim-bee" transform="translate(100,10)">
+          <ellipse cx="0" cy="0" rx="5" ry="3.5" fill="#F5C842"/>
+          <line x1="-2" y1="-3.5" x2="-2" y2="3.5" stroke="#3D3A36" stroke-width=".8"/>
+          <line x1="1" y1="-3.8" x2="1" y2="3.8" stroke="#3D3A36" stroke-width=".8"/>
+          <ellipse cx="-5" cy="-1" rx="4" ry="2.5" fill="#FFFDF8" opacity=".6" transform="rotate(-20,-5,-1)"/>
+          <ellipse cx="5" cy="-1" rx="4" ry="2.5" fill="#FFFDF8" opacity=".6" transform="rotate(20,5,-1)"/>
+        </g>
+        <!-- 草地 -->
+        <path d="M0,46 Q60,40 120,44 Q180,38 240,43 Q300,39 360,44 L360,50 L0,50Z" fill="#D4E8C8" opacity=".4"/>
+      </svg>
+    </div>
+
     <div class="card">
       <div id="previewBody"></div>
       <div class="btn" id="reviewBtn">📚 先复习一下</div>
-      <div class="btn orange" id="startSpellBtn">⚔️ 开始拼写</div>
+      <div class="btn orange" id="startSpellBtn">☀️ 开始拼写</div>
     </div>
-    <div class="paw">复习一遍再上场，盾牌更稳哦 💪</div>
+    <div class="paw">复习一遍再上场，花朵开得更美哦 💪</div>
   </section>
 
   <!-- 默写页 -->
   <section id="play" class="screen">
+    <div class="steps" id="playSteps">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
     <div class="counter" id="counter"></div>
     <div class="card">
       <div class="q-def" id="qDef"></div>
       <div class="q-pos" id="qPos"></div>
+      <div class="pronounce-row">
+        <button class="pronounce-btn uk" id="playPronounceUK" title="英式发音">英式<br>发音</button>
+        <button class="pronounce-btn us" id="playPronounceUS" title="美式发音">美式<br>发音</button>
+      </div>
       <div class="q-hint" id="qHint"></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
       <input id="ans" type="text" placeholder="写出英文拼写" autocomplete="off">
-      <div class="btn" id="submitBtn">🛡️ 提交这一刀</div>
+      <div class="btn" id="submitBtn">🌿 提交答案</div>
       <div class="feedback" id="fb"></div>
       <div class="btn orange" id="nextBtn" style="display:none;">➡️ 下一个单词</div>
     </div>
     <div class="btn ghost" id="playReviewBtn">📚 进入复习</div>
-    <div class="btn ghost" id="playHomeBtn">🏠 返回首页</div>
-    <div class="paw">拼错也不用怕，盾牌会记下，下次接着练 💪</div>
+    <div class="btn ghost" id="playHomeBtn">🏠 返回花园</div>
+
+    <!-- 默写页底部：小狐狸鼓励场景插画 -->
+    <div class="garden-divider">
+      <svg width="360" height="55" viewBox="0 0 360 55">
+        <!-- 草地 -->
+        <path d="M0,48 Q45,42 90,46 Q135,40 180,45 Q225,41 270,46 Q315,42 360,46 L360,55 L0,55Z" fill="#C8E0B8" opacity=".45"/>
+        <!-- 左侧大树 -->
+        <g class="anim-sway-slow">
+          <rect x="20" y="30" width="6" height="20" rx="3" fill="#A0744E"/>
+          <circle cx="23" cy="22" r="14" fill="#6BAF7A" opacity=".7"/>
+          <circle cx="14" cy="28" r="10" fill="#5CB870" opacity=".6"/>
+          <circle cx="32" cy="27" r="10" fill="#4E9A60" opacity=".6"/>
+        </g>
+        <!-- 右侧大树 -->
+        <g class="anim-sway-slow" style="animation-delay:1.2s">
+          <rect x="334" y="32" width="5" height="18" rx="2.5" fill="#A0744E"/>
+          <circle cx="336" cy="24" r="12" fill="#6BAF7A" opacity=".7"/>
+          <circle cx="328" cy="29" r="9" fill="#5CB870" opacity=".6"/>
+          <circle cx="345" cy="28" r="9" fill="#4E9A60" opacity=".6"/>
+        </g>
+        <!-- 中间小狐狸（探头） -->
+        <g class="anim-peek" transform="translate(180,20)">
+          <!-- 身体 -->
+          <ellipse cx="0" cy="16" rx="12" ry="10" fill="#F0A868"/>
+          <!-- 头 -->
+          <circle cx="0" cy="4" r="10" fill="#F0A868"/>
+          <!-- 耳朵 -->
+          <polygon points="-8,-4 -12,-16 -3,-8" fill="#F0A868"/>
+          <polygon points="8,-4 12,-16 3,-8" fill="#F0A868"/>
+          <polygon points="-7,-5 -10,-13 -4,-8" fill="#FBD5A8"/>
+          <polygon points="7,-5 10,-13 4,-8" fill="#FBD5A8"/>
+          <!-- 脸部白色 -->
+          <ellipse cx="0" cy="8" rx="7" ry="5" fill="#FFFDF8"/>
+          <!-- 眼睛 -->
+          <circle cx="-4" cy="2" r="2" fill="#3D3A36"/>
+          <circle cx="4" cy="2" r="2" fill="#3D3A36"/>
+          <circle cx="-3.5" cy="1.5" r=".8" fill="#fff"/>
+          <circle cx="4.5" cy="1.5" r=".8" fill="#fff"/>
+          <!-- 鼻子 -->
+          <ellipse cx="0" cy="6" rx="1.5" ry="1" fill="#3D3A36"/>
+          <!-- 嘴巴 -->
+          <path d="M-2,7.5 Q0,9.5 2,7.5" stroke="#3D3A36" stroke-width=".8" fill="none"/>
+          <!-- 腮红 -->
+          <circle cx="-7" cy="5" r="2" fill="#F2A6B3" opacity=".4"/>
+          <circle cx="7" cy="5" r="2" fill="#F2A6B3" opacity=".4"/>
+        </g>
+        <!-- 小花装饰 -->
+        <g class="anim-breathe">
+          <circle cx="110" cy="38" r="4" fill="#F2A6B3"/>
+          <circle cx="110" cy="38" r="2" fill="#F5C842"/>
+          <line x1="110" y1="42" x2="110" y2="48" stroke="#6BAF7A" stroke-width="1.5"/>
+        </g>
+        <g class="anim-breathe" style="animation-delay:1.2s">
+          <circle cx="250" cy="36" r="3.5" fill="#C8B6E2"/>
+          <circle cx="250" cy="36" r="1.8" fill="#F5C842"/>
+          <line x1="250" y1="40" x2="250" y2="47" stroke="#6BAF7A" stroke-width="1.5"/>
+        </g>
+        <!-- 星星闪烁 -->
+        <text x="85" y="20" font-size="10" class="anim-twinkle" style="animation-delay:.3s">✨</text>
+        <text x="275" y="18" font-size="8" class="anim-twinkle" style="animation-delay:1s">✨</text>
+      </svg>
+    </div>
+
+    <div class="paw">拼错也不用怕，花园会帮你记住，下次接着练 💪</div>
   </section>
 
   <!-- 复习页（选择题） -->
   <section id="review" class="screen">
+    <div class="steps" id="rvSteps">
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
     <div class="counter" id="rvCounter"></div>
     <div class="card">
       <div class="rv-prompt" id="rvPrompt"></div>
+      <div class="pronounce-row">
+        <button class="pronounce-btn uk" id="rvPronounceUK" title="英式发音">英式<br>发音</button>
+        <button class="pronounce-btn us" id="rvPronounceUS" title="美式发音">美式<br>发音</button>
+      </div>
       <div id="rvOpts"></div>
       <div class="feedback" id="rvFb"></div>
       <div class="btn orange" id="rvNext" style="display:none;">➡️ 下一题</div>
-      <div class="btn" id="rvStart">⚔️ 开始拼写</div>
+      <div class="btn" id="rvStart">☀️ 开始拼写</div>
       <div class="btn ghost" id="rvEnd">🏠 结束复习</div>
     </div>
-    <div class="paw">英语 × 中文，每个都过一遍，记得更牢 🧠</div>
+
+    <!-- 复习页底部：小鸟学习场景插画 -->
+    <div class="garden-divider">
+      <svg width="360" height="50" viewBox="0 0 360 50">
+        <!-- 草地 -->
+        <path d="M0,44 Q50,38 100,42 Q150,36 200,41 Q250,37 300,42 Q340,38 360,41 L360,50 L0,50Z" fill="#C8E0B8" opacity=".35"/>
+        <!-- 左侧花丛 -->
+        <g class="anim-sway">
+          <line x1="45" y1="44" x2="45" y2="24" stroke="#6BAF7A" stroke-width="1.5"/>
+          <circle cx="45" cy="20" r="5" fill="#F2A6B3"/>
+          <circle cx="45" cy="20" r="2.5" fill="#F5C842"/>
+          <ellipse cx="39" cy="28" rx="5" ry="3" fill="#A8D5BA" transform="rotate(-25,39,28)"/>
+        </g>
+        <!-- 右侧花丛 -->
+        <g class="anim-sway" style="animation-delay:1s">
+          <line x1="310" y1="43" x2="310" y2="26" stroke="#6BAF7A" stroke-width="1.5"/>
+          <circle cx="310" cy="22" r="4.5" fill="#C8B6E2"/>
+          <circle cx="310" cy="22" r="2" fill="#F5C842"/>
+          <ellipse cx="316" cy="30" rx="4" ry="2.5" fill="#A8D5BA" transform="rotate(20,316,30)"/>
+        </g>
+        <!-- 中间小鸟啄食 -->
+        <g class="anim-peck" transform="translate(180,22)">
+          <ellipse cx="0" cy="4" rx="10" ry="8" fill="#F0A868"/>
+          <circle cx="0" cy="-2" r="8" fill="#F0A868"/>
+          <circle cx="0" cy="-3" r="5.5" fill="#FBD5A8"/>
+          <circle cx="-2" cy="-4" r="1.5" fill="#3D3A36"/>
+          <circle cx="2" cy="-4" r="1.5" fill="#3D3A36"/>
+          <circle cx="-1.5" cy="-4.5" r=".5" fill="#fff"/>
+          <circle cx="2.5" cy="-4.5" r=".5" fill="#fff"/>
+          <!-- 喙 -->
+          <polygon points="0,-1 6,0 0,2" fill="#E8726A"/>
+          <!-- 翅膀 -->
+          <ellipse cx="-8" cy="2" rx="6" ry="4" fill="#E8A060" transform="rotate(-10,-8,2)"/>
+          <ellipse cx="8" cy="2" rx="6" ry="4" fill="#E8A060" transform="rotate(10,8,2)"/>
+          <!-- 尾巴 -->
+          <polygon points="-7,6 -14,4 -8,10" fill="#E8A060"/>
+          <!-- 腮红 -->
+          <circle cx="-4" cy="-1" r="1.5" fill="#F2A6B3" opacity=".5"/>
+          <circle cx="4" cy="-1" r="1.5" fill="#F2A6B3" opacity=".5"/>
+        </g>
+        <!-- 飘落花瓣 -->
+        <ellipse cx="100" cy="12" rx="2.5" ry="1.5" fill="#FBD5A8" opacity=".5" class="anim-petal" style="animation-delay:.5s"/>
+        <ellipse cx="260" cy="15" rx="2" ry="1.5" fill="#F2A6B3" opacity=".4" class="anim-petal" style="animation-delay:2s"/>
+      </svg>
+    </div>
+
+    <div class="paw">英语 × 中文，每个都过一遍，花朵开得更美 🌸</div>
   </section>
 
   <!-- 轮次小结 -->
   <section id="summary" class="screen">
-    <h1 id="sumTitle">本轮战报</h1>
+    <h1 id="sumTitle">本轮成长记录</h1>
+
+    <!-- 轮次小结顶部：成长花园插画 —— 嫩芽成长 -->
+    <div class="garden-divider">
+      <svg width="360" height="45" viewBox="0 0 360 45">
+        <!-- 太阳 -->
+        <g class="anim-sun" transform="translate(320,12)">
+          <circle cx="0" cy="0" r="10" fill="#F5C842"/>
+          <g>
+            <line x1="0" y1="-14" x2="0" y2="-18" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+            <line x1="10" y1="-10" x2="13" y2="-13" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+            <line x1="14" y1="0" x2="18" y2="0" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+            <line x1="10" y1="10" x2="13" y2="13" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+            <line x1="0" y1="14" x2="0" y2="18" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+            <line x1="-10" y1="10" x2="-13" y2="13" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+            <line x1="-14" y1="0" x2="-18" y2="0" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+            <line x1="-10" y1="-10" x2="-13" y2="-13" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/>
+          </g>
+        </g>
+        <!-- 云朵 -->
+        <g class="anim-drift">
+          <ellipse cx="60" cy="10" rx="18" ry="8" fill="#fff" opacity=".6"/>
+          <ellipse cx="50" cy="12" rx="12" ry="6" fill="#fff" opacity=".5"/>
+          <ellipse cx="72" cy="12" rx="10" ry="5" fill="#fff" opacity=".5"/>
+        </g>
+        <!-- 嫩芽从土壤中生长 -->
+        <g class="anim-sprout">
+          <path d="M178,42 L176,22 Q176,18 178,16 L180,16 Q182,18 182,22 L180,42Z" fill="#6BAF7A"/>
+          <ellipse cx="172" cy="17" rx="8" ry="4" fill="#A8D5BA" transform="rotate(-20,172,17)"/>
+          <ellipse cx="188" cy="19" rx="7" ry="3.5" fill="#A8D5BA" transform="rotate(20,188,19)"/>
+          <ellipse cx="180" cy="13" rx="6" ry="3.5" fill="#C8E0B8"/>
+        </g>
+        <!-- 土壤 -->
+        <ellipse cx="180" cy="43" rx="30" ry="4" fill="#C4A882" opacity=".5"/>
+        <!-- 小草 -->
+        <path d="M155,42 Q153,35 150,38" stroke="#6BAF7A" stroke-width="1.5" fill="none" class="anim-sway"/>
+        <path d="M205,42 Q207,36 210,39" stroke="#5CB870" stroke-width="1.5" fill="none" class="anim-sway" style="animation-delay:.5s"/>
+        <!-- 水滴（成长需要水） -->
+        <circle cx="168" cy="10" r="2" fill="#A8D5BA" opacity=".7" class="anim-drip"/>
+      </svg>
+    </div>
+
     <div class="card">
       <div id="sumBody"></div>
       <div class="btn orange" id="nextRoundBtn">⚔️ 出错单词，再战！</div>
@@ -158,24 +559,108 @@
 
   <!-- 结算页 -->
   <section id="final" class="screen">
-    <h1>🏆 闯关结算 · 战报</h1>
+    <h1>🏆 成长记录 · 花园战报</h1>
+
+    <!-- 结算页顶部：花开满园庆祝插画 -->
+    <div class="garden-divider">
+      <svg width="360" height="55" viewBox="0 0 360 55">
+        <!-- 彩虹 -->
+        <path d="M60,50 Q180,-10 300,50" stroke="#F2A6B3" stroke-width="4" fill="none" opacity=".3"/>
+        <path d="M70,50 Q180,-5 290,50" stroke="#FBD5A8" stroke-width="4" fill="none" opacity=".3"/>
+        <path d="M80,50 Q180,0 280,50" stroke="#F5C842" stroke-width="4" fill="none" opacity=".3"/>
+        <path d="M90,50 Q180,5 270,50" stroke="#A8D5BA" stroke-width="4" fill="none" opacity=".3"/>
+        <path d="M100,50 Q180,10 260,50" stroke="#C8B6E2" stroke-width="4" fill="none" opacity=".3"/>
+        <!-- 大花朵左 -->
+        <g class="anim-breathe">
+          <line x1="50" y1="48" x2="50" y2="18" stroke="#6BAF7A" stroke-width="2"/>
+          <ellipse cx="42" cy="14" rx="6" ry="7" fill="#F2A6B3" transform="rotate(-25,50,14)"/>
+          <ellipse cx="58" cy="14" rx="6" ry="7" fill="#F2A6B3" transform="rotate(25,50,14)"/>
+          <ellipse cx="46" cy="8" rx="6" ry="7" fill="#FBD5A8" transform="rotate(-10,46,8)"/>
+          <ellipse cx="54" cy="8" rx="6" ry="7" fill="#FBD5A8" transform="rotate(10,54,8)"/>
+          <ellipse cx="50" cy="5" rx="6" ry="7" fill="#C8B6E2"/>
+          <circle cx="50" cy="13" r="4" fill="#F5C842"/>
+        </g>
+        <!-- 大花朵右 -->
+        <g class="anim-breathe" style="animation-delay:.6s">
+          <line x1="310" y1="48" x2="310" y2="20" stroke="#6BAF7A" stroke-width="2"/>
+          <ellipse cx="303" cy="16" rx="5.5" ry="6" fill="#C8B6E2" transform="rotate(-25,310,16)"/>
+          <ellipse cx="317" cy="16" rx="5.5" ry="6" fill="#C8B6E2" transform="rotate(25,310,16)"/>
+          <ellipse cx="307" cy="10" rx="5.5" ry="6" fill="#F2A6B3" transform="rotate(-10,307,10)"/>
+          <ellipse cx="313" cy="10" rx="5.5" ry="6" fill="#F2A6B3" transform="rotate(10,313,10)"/>
+          <ellipse cx="310" cy="7" rx="5.5" ry="6" fill="#FBD5A8"/>
+          <circle cx="310" cy="14" r="3.5" fill="#F5C842"/>
+        </g>
+        <!-- 中间小兔子蹦跳 -->
+        <g class="anim-hop" transform="translate(180,18)">
+          <!-- 身体 -->
+          <ellipse cx="0" cy="12" rx="10" ry="12" fill="#E8D5C0"/>
+          <!-- 头 -->
+          <circle cx="0" cy="-4" r="9" fill="#E8D5C0"/>
+          <!-- 长耳朵 -->
+          <ellipse cx="-5" cy="-18" rx="3.5" ry="10" fill="#E8D5C0"/>
+          <ellipse cx="5" cy="-18" rx="3.5" ry="10" fill="#E8D5C0"/>
+          <ellipse cx="-5" cy="-17" rx="2" ry="7" fill="#F2A6B3" opacity=".4"/>
+          <ellipse cx="5" cy="-17" rx="2" ry="7" fill="#F2A6B3" opacity=".4"/>
+          <!-- 眼睛 -->
+          <circle cx="-3" cy="-5" r="2" fill="#3D3A36"/>
+          <circle cx="3" cy="-5" r="2" fill="#3D3A36"/>
+          <circle cx="-2.5" cy="-5.5" r=".7" fill="#fff"/>
+          <circle cx="3.5" cy="-5.5" r=".7" fill="#fff"/>
+          <!-- 鼻子 -->
+          <ellipse cx="0" cy="-2" rx="1.2" ry=".8" fill="#F2A6B3"/>
+          <!-- 嘴 -->
+          <path d="M-1.5,-1 Q0,0.5 1.5,-1" stroke="#3D3A36" stroke-width=".6" fill="none"/>
+          <!-- 腮红 -->
+          <circle cx="-6" cy="-2" r="2" fill="#F2A6B3" opacity=".35"/>
+          <circle cx="6" cy="-2" r="2" fill="#F2A6B3" opacity=".35"/>
+          <!-- 小手 -->
+          <ellipse cx="-8" cy="8" rx="3" ry="2" fill="#E8D5C0" transform="rotate(-20,-8,8)"/>
+          <ellipse cx="8" cy="8" rx="3" ry="2" fill="#E8D5C0" transform="rotate(20,8,8)"/>
+        </g>
+        <!-- 小蝴蝶 -->
+        <g class="anim-flutter" style="animation-delay:1s" transform="translate(130,8)">
+          <ellipse cx="-3" cy="0" rx="4" ry="2.5" fill="#FBD5A8" opacity=".7"/>
+          <ellipse cx="3" cy="0" rx="4" ry="2.5" fill="#F2A6B3" opacity=".7"/>
+          <rect x="-.5" y="-1" width="1" height="4" rx=".5" fill="#8B7D6B"/>
+        </g>
+        <!-- 飘落花瓣庆祝 -->
+        <ellipse cx="100" cy="5" rx="2.5" ry="1.5" fill="#F2A6B3" opacity=".6" class="anim-petal"/>
+        <ellipse cx="140" cy="12" rx="2" ry="1.2" fill="#FBD5A8" opacity=".5" class="anim-petal" style="animation-delay:.7s"/>
+        <ellipse cx="220" cy="8" rx="2.5" ry="1.5" fill="#C8B6E2" opacity=".5" class="anim-petal" style="animation-delay:1.3s"/>
+        <ellipse cx="260" cy="3" rx="2" ry="1.2" fill="#F2A6B3" opacity=".6" class="anim-petal" style="animation-delay:2s"/>
+        <!-- 星星闪烁 -->
+        <text x="80" y="16" font-size="9" class="anim-twinkle">⭐</text>
+        <text x="280" y="12" font-size="7" class="anim-twinkle" style="animation-delay:.8s">✨</text>
+        <text x="160" y="6" font-size="8" class="anim-twinkle" style="animation-delay:1.5s">✨</text>
+        <!-- 草地底部 -->
+        <path d="M0,48 Q90,42 180,46 Q270,42 360,46 L360,55 L0,55Z" fill="#B8D8A0" opacity=".4"/>
+      </svg>
+    </div>
+
     <div class="card">
       <div id="finalBody"></div>
-      <img id="cardImg" alt="结算卡片">
-      <div class="btn orange" id="redoBtn">🔄 重来一次（同一组词）</div>
-      <div class="btn" id="nextGroupBtn">➡️ 再来一组（后续新词）</div>
-      <div class="btn pink" id="saveBtn">📥 保存战报图片</div>
-      <div class="btn ghost" id="copyBtn">📋 复制成绩文字</div>
-      <div class="tip">📷 <b>微信里查看时</b>：长按上方战报图片即可<b>保存或转发给爸爸</b>。<br>
-      🔁 下次再打开，会顺着词库顺序出新词，并把之前没背对的词加进复习库，反复练到全对。</div>
+      <img id="cardImg" alt="成长卡片">
+      <div class="btn orange" id="redoBtn">🔄 再浇一次水（同一组词）</div>
+      <div class="btn" id="nextGroupBtn">➡️ 种下一批种子（后续新词）</div>
+      <div class="btn pink" id="saveBtn">📥 保存成长图片</div>
+      <div class="btn ghost" id="copyBtn">📋 复制成长记录</div>
+      <div class="tip">📷 <b>微信里查看时</b>：长按上方成长图片即可<b>保存或转发给爸爸</b>。<br>
+      🔁 下次再打开，会顺着词库顺序出新词，并把之前没背对的词加进复习花园，反复练到全对。</div>
     </div>
-    <div class="paw">刀盾小英雄，今天也是闪闪发光的一天 ✨</div>
+    <div class="paw">花园小园丁，今天也是花开的一天 ✨</div>
   </section>
+
+  <!-- 底部导航栏 -->
+  <nav class="bottom-nav">
+    <div class="nav-item" id="navHome" onclick="goHome()"><span class="nav-icon">🏠</span><span>花园</span></div>
+    <div class="nav-item" id="navReview" onclick="goReview()"><span class="nav-icon">📚</span><span>复习</span></div>
+    <div class="nav-item" id="navRecord" onclick="goRecord()"><span class="nav-icon">📊</span><span>记录</span></div>
+  </nav>
 
 </div>
 
 <script>
-const WORDS = [[1, "stay", "停留;待", "/steɪ/", "v.", "停留；待", "保持（stay healthy 保持健康）", "stay at home 待在家里；stay up late 熬夜；stay healthy 保持健康", "We stay at my grandma's house every summer. 每年夏天我们都待在奶奶家。"], [1, "brave", "勇敢的", "/breɪv/", "adj.", "勇敢的", "v. 勇敢面对（brave the wind 顶着风）", "a brave boy 勇敢的男孩；a brave soldier 勇敢的士兵", "The brave firefighter saved the cat. 那位勇敢的消防员救了猫。"], [1, "writer", "作家", "/ˈraɪtə/", "n.", "作家；作者", "写字的人（a letter writer 写信人）", "a famous writer 著名作家；a story writer 故事作家", "She wants to be a writer when she grows up. 她长大后想当作家。"], [1, "doctor", "医生", "/ˈdɒktə/", "n.", "医生", "博士（a Doctor of Science 理学博士）", "see a doctor 看医生；a doctor's office 诊室", "The doctor helped the sick child. 医生帮助了那个生病的孩子。"], [1, "job", "工作;职业", "/dʒɒb/", "n.", "工作；职业", "任务；活儿（a good job 干得好）", "a good job 一份好工作；do a good job 干得好；part-time job 兼职", "My mother has an important job. 妈妈有一份重要的工作。"], [1, "unhappy", "不快乐的;悲伤的", "/ʌnˈhæpi/", "adj.", "不快乐的；悲伤的", "不满意的（an unhappy customer 不满意的顾客）", "feel unhappy 感到不快乐；an unhappy face 不高兴的脸", "She was unhappy because it rained. 因为下雨，她不开心。"], [1, "from", "从......起;来自", "/frɒm/", "prep.", "从……起；来自", "由……制成（made from wood 木头做的）", "from China 来自中国；from Monday to Friday 从周一到周五；far from 离……远", "I am from Shanghai. 我来自上海。"], [1, "goal", "目标;目的", "/ɡəʊl/", "n.", "目标；目的", "（足球等）球门；进球得分", "reach one's goal 实现目标；score a goal 进一球", "His goal is to read 20 books this year. 他的目标是今年读20本书。"], [1, "plan", "n.计划;打算", "/plæn/", "n.", "计划；打算", "v. 计划；打算（plan a trip 计划旅行）", "make a plan 制定计划；a plan for the holiday 假期计划", "We made a plan for the weekend. 我们制定了周末计划。"], [1, "follow", "跟随;跟着", "/ˈfɒləʊ/", "v.", "跟随；跟着", "遵循；听懂（follow the rules 遵守规则）", "follow me 跟我来；follow the rules 遵守规则；follow the story 听懂故事", "The little dog follows the boy everywhere. 小狗走到哪儿都跟着男孩。"], [2, "use the computer", "使用电脑", "/juːz ðə kəmˈpjuːtə/", "phr.", "使用电脑", "—", "learn to use the computer 学习用电脑；use the computer for homework 用电脑写作业", "We use the computer to find information. 我们用电脑查找信息。"], [2, "player", "运动员;参赛选手", "/ˈpleɪə/", "n.", "运动员；参赛选手", "播放器（a music player 音乐播放器）", "a football player 足球运动员；a team player 有团队精神的人", "He is a good basketball player. 他是一名优秀的篮球运动员。"], [2, "be proud of", "为......自豪", "/biː praʊd ɒv/", "phr.", "为……自豪", "—", "be proud of you 为你自豪；be proud of one's work 为自己的作品自豪", "We are proud of our school. 我们为我们的学校感到自豪。"], [2, "garden", "花园;果园;菜园", "/ˈɡɑːdn/", "n.", "花园；果园；菜园", "园艺（do some gardening 做园艺）", "in the garden 在花园里；a vegetable garden 菜园；a beautiful garden 美丽的花园", "Grandma grows tomatoes in her garden. 奶奶在菜园里种番茄。"], [2, "tomato", "番茄;西红柿", "/təˈmɑːtəʊ/", "n.", "番茄；西红柿", "—", "a tomato plant 番茄苗；tomato soup 番茄汤", "I put a tomato in the salad. 我在沙拉里放了一个番茄。"], [2, "water vapour", "水蒸气", "/ˈwɔːtə ˈveɪpə/", "n.", "水蒸气", "vapour 也可拼作 vapor", "turn into water vapour 变成水蒸气；water vapour in the air 空气中的水蒸气", "When water boils, it makes water vapour. 水烧开时会产生水蒸气。"], [2, "become", "变成", "/bɪˈkʌm/", "v.", "变成；成为", "适宜（Red becomes you. 红色很衬你。）", "become a teacher 成为老师；become happy 变得开心", "The caterpillar becomes a butterfly. 毛毛虫变成了蝴蝶。"], [2, "water drop", "水滴", "/ˈwɔːtə drɒp/", "n.", "水滴", "—", "a water drop on the leaf 叶子上的水滴", "A water drop fell from the leaf. 一滴水从叶子上落下来。"], [2, "chore", "日常事务", "/tʃɔː/", "n.", "日常事务；杂务", "令人厌烦的事（a chore 苦差事）", "do household chores 做家务；a daily chore 日常琐事", "Washing dishes is a daily chore. 洗碗是每天的家务。"], [2, "give your seat", "让座", "/ɡɪv jɔː siːt/", "phr.", "让座", "—", "give your seat to the old 给老人让座", "Please give your seat to the old man. 请把座位让给那位老人。"], [3, "Excuse me.", "劳驾", "/ɪkˈskjuːz miː/", "phr.", "劳驾；打扰一下", "请原谅（Excuse me for being late. 原谅我迟到了。）", "Excuse me, where is the toilet? 劳驾，厕所在哪？", "Excuse me, can you help me? 打扰一下，你能帮我吗？"], [3, "scared", "害怕的;恐惧的", "/skeəd/", "adj.", "害怕的；恐惧的", "v. scare 使害怕； scarecrow 稻草人", "be scared of 害怕……；feel scared 感到害怕", "The little boy was scared of the dark. 小男孩怕黑。"], [3, "driver", "驾驶员;司机", "/ˈdraɪvə/", "n.", "驾驶员；司机", "驱动程序（a printer driver 打印机驱动）", "a bus driver 公交车司机；a taxi driver 出租车司机", "The driver stopped the bus. 司机停下了公交车。"], [3, "police officer", "警察;警员", "/pəˈliːs ˈɒfɪsə/", "n.", "警察；警员", "—", "a police officer on duty 值班警察", "The police officer helped the lost child. 警察帮助了迷路的孩子。"], [3, "engineer", "工程师;设计师", "/ˌendʒɪˈnɪə/", "n.", "工程师；设计师", "火车司机（a train engineer）", "a software engineer 软件工程师；a train engineer 火车司机", "My father is an engineer. 我爸爸是一名工程师。"], [3, "chef", "厨师", "/ʃef/", "n.", "厨师", "主厨（head chef）", "a head chef 主厨；become a chef 成为厨师", "The chef cooked a delicious meal. 厨师做了一顿美味的饭。"], [3, "astronaut", "宇航员;航天员", "/ˈæstrənɔːt/", "n.", "宇航员；航天员", "—", "a Chinese astronaut 中国宇航员", "The astronaut flew to space. 宇航员飞上了太空。"], [3, "spaceship", "(航天)飞船", "/ˈspeɪsʃɪp/", "n.", "（航天）飞船", "—", "travel by spaceship 乘飞船旅行", "The spaceship flew to the moon. 宇宙飞船飞向月球。"], [3, "difficult", "困难的;难做的", "/ˈdɪfɪkəlt/", "adj.", "困难的；难做的", "不易相处的（a difficult child 难管的孩子）", "a difficult question 难题；find it difficult 觉得困难", "Math can be difficult, but we can try. 数学可能很难，但我们可以试试。"], [3, "find the way", "找到路", "/faɪnd ðə weɪ/", "phr.", "找到路", "—", "find the way home 找到回家的路", "The dog helped the boy find the way. 狗帮男孩找到了路。"], [4, "walk along", "沿着......走", "/wɔːk əˈlɒŋ/", "phr.", "沿着……走", "—", "walk along the river 沿着河边走", "We walked along the street. 我们沿着街道走。"], [4, "museum", "博物馆", "/mjuˈziːəm/", "n.", "博物馆", "—", "a science museum 科学博物馆；visit a museum 参观博物馆", "We saw old ships in the museum. 我们在博物馆看到了旧船。"], [4, "phone", "n.电话", "/fəʊn/", "n.", "电话", "v. 打电话（phone a friend 给朋友打电话）", "answer the phone 接电话；on the phone 在打电话；phone a friend 给朋友打电话", "The phone is ringing. 电话在响。"], [4, "lost", "迷路", "/lɒst/", "adj.", "迷路的；丢失的", "v. lose 的过去式（丢失）", "get lost 迷路；a lost dog 走丢的狗", "The child was lost in the city. 孩子在城市里迷路了。"], [4, "call", "v.打电话叫", "/kɔːl/", "v.", "打电话；叫", "n. 电话；呼唤（give a call 打个电话）", "call a taxi 叫出租车；call for help 呼救；give a call 打个电话", "Please call the doctor. 请打电话给医生。"], [4, "special", "特别的", "/ˈspeʃl/", "adj.", "特别的；特殊的", "n. 特价品（today's special 今日特价）", "a special day 特别的一天；something special 特别的东西", "Today is a special day for me. 今天对我来说是特别的一天。"], [4, "the Double Ninth Festival", "重阳节", "/ðə ˌdʌbl ˈnaɪnθ ˈfestəvl/", "n.", "重阳节", "农历九月初九，敬老的节日", "celebrate the Double Ninth Festival 庆祝重阳节", "We climb hills on the Double Ninth Festival. 重阳节我们登高。"], [4, "the Lantern Festival", "元宵节", "/ðə ˈlæntən ˈfestəvl/", "n.", "元宵节", "农历正月十五，赏花灯、吃汤圆", "eat yuanxiao on the Lantern Festival 元宵节吃元宵", "We eat sweet dumplings on the Lantern Festival. 元宵节我们吃汤圆。"], [4, "celebrate", "庆祝;庆贺", "/ˈselɪbreɪt/", "v.", "庆祝；庆贺", "赞扬（celebrate a hero 颂扬英雄）", "celebrate a birthday 庆祝生日；celebrate Spring Festival 过春节", "We celebrate New Year with fireworks. 我们用烟花庆祝新年。"], [4, "holiday", "假期", "/ˈhɒlədeɪ/", "n.", "假期；假日", "（英）度假（on holiday 在度假）", "summer holiday 暑假；a public holiday 公共假日；on holiday 在度假", "We went to the beach for the holiday. 假期我们去了海滩。"], [5, "dragon dance", "舞龙表演", "/ˈdræɡən dɑːns/", "n.", "舞龙表演", "—", "perform a dragon dance 表演舞龙", "They did a dragon dance at the festival. 节庆时他们表演了舞龙。"], [5, "famous", "著名的;出名的", "/ˈfeɪməs/", "adj.", "著名的；出名的", "v. 使出名（He famoused it. 较少用）", "a famous writer 著名作家；be famous for 因……而闻名", "Hangzhou is famous for the West Lake. 杭州以西湖闻名。"], [5, "sandwich", "三明治", "/ˈsæmwɪdʒ/", "n.", "三明治", "—", "make a sandwich 做三明治；a chicken sandwich 鸡肉三明治", "I ate a sandwich for lunch. 我午餐吃了一个三明治。"], [5, "different", "不同的;有区别的", "/ˈdɪfrənt/", "adj.", "不同的；有区别的", "各种的（many different 许多不同的）", "be different from 与……不同；many different 许多不同的", "These two books are different. 这两本书不一样。"], [5, "fish and chips", "炸鱼薯条", "/fɪʃ ənd tʃɪps/", "n.", "炸鱼薯条", "英国传统快餐", "buy fish and chips 买炸鱼薯条", "Fish and chips is a traditional British food. 炸鱼薯条是英国传统食物。"], [5, "beef", "牛肉", "/biːf/", "n.", "牛肉", "—", "beef noodles 牛肉面；roast beef 烤牛肉", "I like beef better than pork. 我更喜欢牛肉而不是猪肉。"], [5, "flour", "面粉", "/ˈflaʊə/", "n.", "面粉", "—", "a bag of flour 一袋面粉；mix flour and water 把面粉和水混合", "We need flour to make bread. 我们需要面粉来做面包。"], [5, "far", "adv.远", "/fɑː/", "adv./adj.", "远（的）", "—", "far away 遥远；how far 多远；not far from 离……不远", "My school is not far from home. 学校离家不远。"], [5, "play volleyball", "打排球", "/pleɪ ˈvɒlibɔːl/", "phr.", "打排球", "—", "like to play volleyball 喜欢打排球", "We play volleyball after school. 放学后我们打排球。"], [5, "healthy", "健康的;健壮的", "/ˈhelθi/", "adj.", "健康的；健壮的", "有益健康的（healthy food 健康食品）", "keep healthy 保持健康；healthy food 健康食品", "Apples are healthy food. 苹果是健康食品。"], [6, "both", "两者都", "/bəʊθ/", "pron./adj.", "两者都", "—", "both of us 我们俩都；both...and... 既……又……", "Both girls like reading. 两个女孩都喜欢阅读。"], [6, "win", "获胜", "/wɪn/", "v.", "获胜；赢", "n. 胜利（a big win 大胜）", "win a game 赢一场比赛；win a prize 获奖", "Our team won the match. 我们队赢了比赛。"], [6, "bookshelf", "书架", "/ˈbʊkʃelf/", "n.", "书架", "—", "a wooden bookshelf 木书架；on the bookshelf 在书架上", "The books are on the bookshelf. 书在书架上。"], [6, "storybook", "儿童故事书", "/ˈstɔːribʊk/", "n.", "儿童故事书", "—", "a picture storybook 图画故事书", "She reads a storybook every night. 她每晚读一本故事书。"], [6, "buzz", "发出嗡嗡声", "/bʌz/", "v.", "发出嗡嗡声", "n. 嗡嗡声", "bees buzz 蜜蜂嗡嗡叫", "The bees buzz around the flowers. 蜜蜂在花丛中嗡嗡飞。"], [6, "peach stone", "桃核", "/piːtʃ stəʊn/", "n.", "桃核", "—", "a peach stone 一个桃核", "Don't swallow the peach stone. 别吞下桃核。"], [6, "soil", "土壤", "/sɔɪl/", "n.", "土壤；泥土", "v. 弄脏（soil one's clothes 弄脏衣服）", "rich soil 肥沃的土壤；in the soil 在土壤里", "Plants grow in the soil. 植物在土壤里生长。"], [6, "seedling", "秧苗;幼苗", "/ˈsiːdlɪŋ/", "n.", "秧苗；幼苗", "—", "plant a seedling 种下一株幼苗", "The seedling grew into a big tree. 幼苗长成了大树。"], [6, "dead", "枯萎的", "/ded/", "adj.", "枯萎的；死的", "adv. 完全地（dead tired 累坏了）", "a dead flower 枯萎的花；dead leaves 枯叶", "The plant is dead. 这株植物枯死了。"], [6, "hobby", "业余爱好", "/ˈhɒbi/", "n.", "业余爱好", "—", "my hobby is... 我的爱好是……；collect stamps as a hobby 以集邮为爱好", "Her hobby is painting. 她的爱好是画画。"], [7, "free", "空闲的", "/friː/", "adj.", "空闲的；自由的", "免费的（a free ticket 免费票）", "free time 空闲时间；feel free 随意；free of charge 免费", "Are you free this weekend? 你这个周末有空吗？"], [7, "popular", "大众喜爱的;广受欢迎的", "/ˈpɒpjələ/", "adj.", "大众喜爱的；广受欢迎的", "流行的（popular music 流行音乐）", "a popular song 流行歌曲；be popular with 受……欢迎", "Ping-pong is popular in China. 乒乓球在中国很受欢迎。"], [7, "wonderful", "精彩的;令人高兴的", "/ˈwʌndəfl/", "adj.", "精彩的；令人高兴的", "奇妙的（a wonderful idea 绝妙的主意）", "a wonderful day 美好的一天；wonderful news 好消息", "We had a wonderful time at the party. 我们在聚会上玩得很开心。"], [7, "team", "(一起工作的)组", "/tiːm/", "n.", "（一起工作的）组；队", "—", "a football team 足球队；team work 团队合作", "He is a member of the school team. 他是校队的一员。"], [7, "sweep the floor", "扫地", "/swiːp ðə flɔː/", "phr.", "扫地", "—", "help sweep the floor 帮忙扫地", "I sweep the floor every day. 我每天扫地。"], [7, "voice", "声音", "/vɔɪs/", "n.", "声音", "v. 表达（voice one's idea 说出想法）", "in a loud voice 大声地；a sweet voice 甜美的嗓音", "She has a beautiful singing voice. 她有一副美妙的歌喉。"], [7, "helper", "帮手", "/ˈhelpə/", "n.", "帮手；助手", "—", "a little helper 小帮手", "The child is a good helper at home. 这孩子在家是个好帮手。"], [7, "heart", "心", "/hɑːt/", "n.", "心；心脏", "中心；核心（the heart of the city 市中心）", "heart disease 心脏病；by heart 凭记忆；warm heart 热心", "The heart pumps blood. 心脏泵送血液。"], [7, "nothing", "没有什么;没有一件东西", "/ˈnʌθɪŋ/", "pron.", "没有什么；没有一件东西", "无关紧要的事（It's nothing. 没什么。）", "nothing else 没有别的；have nothing to do 无事可做", "There is nothing in the box. 盒子里什么也没有。"], [7, "fresh", "清新的", "/freʃ/", "adj.", "清新的；新鲜的", "精神饱满的（feel fresh 感到神清气爽）", "fresh air 清新的空气；fresh fruit 新鲜水果；fresh water 淡水", "We breathe fresh air in the park. 我们在公园呼吸清新的空气。"], [8, "travel", "旅行", "/ˈtrævl/", "v./n.", "旅行", "—", "travel by train 乘火车旅行；space travel 太空旅行", "We love to travel in summer. 我们喜欢夏天去旅行。"], [8, "plane", "飞机", "/pleɪn/", "n.", "飞机", "adj. 平坦的（a plane surface 平面）", "by plane 乘飞机；take a plane 坐飞机；a plane ticket 机票", "We flew to Beijing by plane. 我们乘飞机去了北京。"], [8, "West Lake", "西湖", "/west leɪk/", "n.", "西湖（杭州）", "—", "visit the West Lake 游览西湖", "The West Lake is beautiful. 西湖很美。"], [8, "capital", "首都", "/ˈkæpɪtl/", "n.", "首都；省会", "大写字母（capital letter）；资金", "the capital city 首都；capital letter 大写字母", "Beijing is the capital of China. 北京是中国的首都。"], [8, "the Palace Museum", "故宫博物院", "/ðə ˈpælɪs mjuˈziːəm/", "n.", "故宫博物院", "—", "visit the Palace Museum 参观故宫", "The Palace Museum is in Beijing. 故宫博物院在北京。"], [8, "city", "都市;城市", "/ˈsɪti/", "n.", "都市；城市", "—", "a big city 大城市；city life 城市生活", "Shanghai is a big city. 上海是一座大城市。"], [8, "London", "伦敦", "/ˈlʌndən/", "n.", "伦敦（英国首都）", "—", "in London 在伦敦", "London is the capital of the UK. 伦敦是英国的首都。"], [8, "the Eiffel Tower", "埃菲尔铁塔", "/ðiː ˈaɪfl ˈtaʊə/", "n.", "埃菲尔铁塔（巴黎）", "—", "the top of the Eiffel Tower 埃菲尔铁塔顶端", "The Eiffel Tower is in Paris. 埃菲尔铁塔在巴黎。"], [8, "Paris", "巴黎", "/ˈpærɪs/", "n.", "巴黎（法国首都）", "—", "in Paris 在巴黎", "Paris is famous for art. 巴黎以艺术闻名。"], [8, "Postcard", "明信片", "/ˈpəʊstkɑːd/", "n.", "明信片", "—", "send a postcard 寄明信片；a beautiful postcard 漂亮的明信片", "I sent you a postcard from London. 我从伦敦给你寄了一张明信片。"], [9, "show thanks", "表示感谢", "/ʃəʊ θæŋks/", "phr.", "表示感谢", "—", "show thanks to sb. 向某人表示感谢", "We show thanks to our teachers. 我们向老师表示感谢。"], [9, "take part in", "参加", "/teɪk pɑːt ɪn/", "phr.", "参加", "—", "take part in a race 参加比赛；take part in activities 参加活动", "She took part in the school play. 她参加了学校的戏剧表演。"], [9, "stair", "楼梯", "/steə/", "n.", "楼梯；台阶", "v. 凝视（stare 拼写不同）", "go up the stairs 上楼梯；a flight of stairs 一段楼梯", "Be careful on the stairs. 在楼梯上要小心。"], [9, "hurt", "v.(使)疼痛,受伤", "/hɜːt/", "v.", "（使）疼痛；受伤", "adj. 受伤的（hurt leg 受伤的腿）", "get hurt 受伤；hurt one's leg 伤到腿", "He hurt his knee when he fell. 他摔倒时伤到了膝盖。"], [9, "firefighter", "消防队员", "/ˈfaɪəfaɪtə/", "n.", "消防队员", "—", "a brave firefighter 勇敢的消防员", "The firefighter put out the fire. 消防员扑灭了火。"], [9, "put out the fire", "灭火", "/pʊt aʊt ðə ˈfaɪə/", "phr.", "灭火", "—", "help put out the fire 帮忙灭火", "They put out the fire quickly. 他们很快把火扑灭了。"], [9, "swimming pool", "游泳池", "/ˈswɪmɪŋ puːl/", "n.", "游泳池", "—", "in the swimming pool 在游泳池里；an indoor swimming pool 室内游泳池", "We swim in the swimming pool. 我们在游泳池里游泳。"], [9, "adult", "成年人", "/ˈædʌlt/", "n.", "成年人", "adj. 成年的（adult ticket 成人票）", "an adult ticket 成人票；for adults 供成人", "Adults must go with children. 成年人必须陪着孩子。"], [9, "must", "必须", "/mʌst/", "modal v.", "必须；一定", "—", "must do 必须做；must not 不准", "You must wear a helmet. 你必须戴头盔。"], [9, "safe", "处境(或情况)安全的", "/seɪf/", "adj.", "处境（或情况）安全的", "n. 保险箱", "keep safe 保持安全；safe and sound 平安无事", "The children are safe at home. 孩子们在家里很安全。"], [9, "near", "在......附近;靠近", "/nɪə/", "prep./adv.", "在……附近；靠近", "adj. 近的（the near bank 近岸）", "near the school 在学校附近；come near 靠近", "There is a park near my house. 我家附近有一个公园。"], [9, "save", "挽救;救助", "/seɪv/", "v.", "挽救；救助", "节省；保存（save money 省钱；save water 节水）", "save a life 救一条命；save money 省钱；save water 节约用水", "The doctor saved the boy's life. 医生救了男孩的命。"], [10, "sports field", "运动场", "/spɔːts fiːld/", "n.", "运动场", "—", "on the sports field 在运动场上", "We play football on the sports field. 我们在运动场上踢足球。"], [10, "project", "学校的课题", "/ˈprɒdʒekt/", "n.", "学校的课题；项目", "v. 投射（project a picture 投影）", "a school project 学校课题；work on a project 做一个项目", "We made a poster for our project. 我们为课题做了一张海报。"], [10, "bamboo", "竹子", "/bæmˈbuː/", "n.", "竹子", "—", "a bamboo forest 竹林；bamboo shoots 竹笋", "Pandas eat bamboo. 熊猫吃竹子。"], [10, "art", "美术;艺术", "/ɑːt/", "n.", "美术；艺术", "技艺（the art of cooking 烹饪技艺）", "an art class 美术课；a work of art 艺术品", "She is good at art. 她擅长美术。"], [10, "hometown", "家乡", "/ˈhəʊmtaʊn/", "n.", "家乡", "—", "return to one's hometown 回到家乡", "My hometown is a small village. 我的家乡是一个小村庄。"], [10, "India", "印度", "/ˈɪndiə/", "n.", "印度", "—", "in India 在印度", "India is a big country. 印度是一个大国。"], [10, "Africa", "非洲", "/ˈæfrɪkə/", "n.", "非洲", "—", "in Africa 在非洲", "Many animals live in Africa. 许多动物生活在非洲。"], [10, "polar bear", "北极熊", "/ˈpəʊlə beə/", "n.", "北极熊", "—", "a polar bear in the snow 雪地里的北极熊", "The polar bear lives in the Arctic. 北极熊生活在北极。"], [10, "the North Pole", "北极", "/ðə nɔːθ pəʊl/", "n.", "北极", "—", "near the North Pole 靠近北极", "Santa lives at the North Pole. 圣诞老人住在北极。"], [10, "invitation", "(口头或书面的)邀请", "/ˌɪnvɪˈteɪʃn/", "n.", "（口头或书面的）邀请", "—", "an invitation letter 邀请函；accept an invitation 接受邀请", "I got an invitation to her party. 我收到了她派对的邀请。"], [10, "tradition", "传统", "/trəˈdɪʃn/", "n.", "传统", "—", "a Chinese tradition 中国传统；family tradition 家庭传统", "Eating dumplings is a tradition. 吃饺子是一种传统。"], [10, "bridge", "桥", "/brɪdʒ/", "n.", "桥", "v. 架桥；消除（bridge the gap 消除隔阂）", "cross a bridge 过桥；a stone bridge 石桥", "The bridge goes over the river. 桥横跨在河上。"], [11, "amazing", "令人大为惊奇的", "/əˈmeɪzɪŋ/", "adj.", "令人大为惊奇的", "v. amaze 使惊奇", "an amazing story 惊人的故事；amazing news 惊人的消息", "The view from the mountain is amazing. 山上的风景令人惊叹。"], [11, "out of power", "没电", "/aʊt ɒv ˈpaʊə/", "phr.", "没电；断电", "—", "the phone is out of power 手机没电了", "My tablet is out of power. 我的平板没电了。"], [11, "fly south", "往南飞", "/flaɪ saʊθ/", "phr.", "往南飞", "—", "birds fly south for winter 鸟儿南飞过冬", "The geese fly south in autumn. 大雁秋天往南飞。"], [11, "golden", "金色的", "/ˈɡəʊldən/", "adj.", "金色的；金制的", "珍贵的（golden time 黄金时光）", "golden hair 金发；a golden rule 黄金法则", "The leaves turn golden in autumn. 秋天叶子变成金色。"], [11, "worker", "工作者", "/ˈwɜːkə/", "n.", "工作者；工人", "—", "a factory worker 工厂工人；a social worker 社工", "My uncle is a construction worker. 我叔叔是一名建筑工人。"], [11, "menu", "菜单", "/ˈmenjuː/", "n.", "菜单", "—", "look at the menu 看菜单；order from the menu 按菜单点餐", "The menu has many dishes. 菜单上有很多菜。"], [11, "soya milk", "豆浆", "/ˈsɔɪə mɪlk/", "n.", "豆浆", "soy milk 另一种写法", "a cup of soya milk 一杯豆浆", "I drink soya milk for breakfast. 我早餐喝豆浆。"], [11, "energy", "能量", "/ˈenədʒi/", "n.", "能量；精力", "—", "save energy 节约能源；full of energy 精力充沛", "Food gives us energy. 食物给我们能量。"], [11, "protein", "蛋白质", "/ˈprəʊtiːn/", "n.", "蛋白质", "—", "high in protein 高蛋白", "Eggs have a lot of protein. 鸡蛋含很多蛋白质。"], [11, "vitamin", "维生素", "/ˈvɪtəmɪn/", "n.", "维生素", "—", "vitamin C 维生素C；take vitamins 服用维生素", "Oranges are full of vitamin C. 橙子富含维生素C。"], [11, "honest", "诚实的;正直的", "/ˈɒnɪst/", "adj.", "诚实的；正直的", "坦诚的（to be honest 老实说）", "an honest boy 诚实的男孩；to be honest 老实说", "He is an honest student. 他是个诚实的学生。"], [11, "tell the truth", "说真话", "/tel ðə truːθ/", "phr.", "说真话", "—", "always tell the truth 总是说真话", "Please tell the truth. 请说真话。"], [12, "break", "打碎;打破", "/breɪk/", "v.", "打碎；打破", "n. 休息（have a break 休息一下）", "break a cup 打碎杯子；break the rule 违反规则；have a break 休息一下", "He broke his glasses. 他打碎了眼镜。"], [12, "empty", "空的", "/ˈempti/", "adj.", "空的", "v. 倒空（empty the bottle 倒空瓶子）", "an empty box 空盒子；empty the bottle 倒空瓶子", "The glass is empty. 杯子是空的。"], [12, "pot", "罐;壶;锅", "/pɒt/", "n.", "罐；壶；锅", "花盆（a flower pot）", "a flower pot 花盆；a cooking pot 煮锅", "She cooked soup in the pot. 她用锅煮了汤。"], [12, "minute", "分钟", "/ˈmɪnɪt/", "n.", "分钟", "adj. 微小的（a minute difference 细微差别）", "in a minute 马上；wait a minute 等一下", "The class lasts 40 minutes. 一节课持续40分钟。"], [12, "weather report", "气象报告", "/ˈweðə rɪˈpɔːt/", "n.", "气象报告", "—", "watch the weather report 看气象报告", "The weather report says it will rain. 气象报告说会下雨。"], [12, "degree", "度(温度单位)", "/dɪˈɡriː/", "n.", "度（温度单位）；度数", "学位（a college degree 大学学位）", "30 degrees 30度；a low degree 低温", "It is 25 degrees today. 今天25度。"], [12, "weather reporter", "天气预报员", "/ˈweðə rɪˈpɔːtə/", "n.", "天气预报员", "—", "a weather reporter on TV 电视上的天气预报员", "The weather reporter tells us the forecast. 天气预报员告诉我们预报。"], [12, "lamb", "小羊", "/læm/", "n.", "小羊；羔羊", "羔羊肉", "a little lamb 小羊羔", "The lamb follows its mother. 小羊跟着妈妈。"], [12, "hurry", "赶快;急忙(做某事)", "/ˈhʌri/", "v.", "赶快；急忙（做某事）", "n. 匆忙（in a hurry 匆忙地）", "hurry up 快点；in a hurry 匆忙地", "Hurry up, or we'll be late! 快点，不然我们要迟到了！"], [12, "flag raising", "升旗", "/flæɡ ˈreɪzɪŋ/", "n.", "升旗", "—", "the flag-raising ceremony 升旗仪式", "We watch the flag raising every Monday. 我们每周一看升旗。"], [12, "PE(Physical Education)", "体育(课)", "/ˌpiː ˈiː/", "n.", "体育（课）", "Physical Education 的缩写", "a PE class 一节体育课；PE teacher 体育老师", "We have PE on Friday. 我们周五有体育课。"], [12, "Science", "科学;自然科学", "/ˈsaɪəns/", "n.", "科学；自然科学", "—", "a science lesson 科学课；science museum 科学博物馆", "He likes Science best. 他最喜欢科学。"], [13, "subject", "科目", "/ˈsʌbdʒɪkt/", "n.", "科目；学科", "主题；题目（the subject of the story 故事主题）", "my favourite subject 我最喜欢的科目；a school subject 学校科目", "Math is my favourite subject. 数学是我最喜欢的科目。"], [13, "mother tongue", "母语", "/ˈmʌðə tʌŋ/", "n.", "母语", "—", "speak one's mother tongue 说母语", "Chinese is my mother tongue. 汉语是我的母语。"], [13, "typhoon", "台风", "/taɪˈfuːn/", "n.", "台风", "—", "a strong typhoon 强台风", "The typhoon brought heavy rain. 台风带来了大雨。"], [13, "first-aid-kit", "急救箱", "/ˈfɜːst eɪd kɪt/", "n.", "急救箱", "—", "a first-aid kit at home 家里的急救箱", "Keep a first-aid kit at home. 在家里备一个急救箱。"], [13, "go-bag", "应急撤离包", "/ɡəʊ bæɡ/", "n.", "应急撤离包", "—", "pack a go-bag 收拾应急包", "We keep a go-bag ready for emergencies. 我们备好应急包以防万一。"], [13, "flood", "洪水;水灾", "/flʌd/", "n.", "洪水；水灾", "v. 淹没（The river flooded the fields. 河水淹没了田地。）", "a big flood 大洪水；the flood water 洪水", "The flood destroyed the bridge. 洪水冲毁了桥。"], [13, "carry away", "带走", "/ˈkæri əˈweɪ/", "phr.", "带走；冲走", "—", "be carried away by the wind 被风带走", "The wind carried the leaves away. 风把叶子吹走了。"], [13, "hero", "英雄", "/ˈhɪərəʊ/", "n.", "英雄", "（故事）男主角", "a national hero 民族英雄；my hero 我心目中的英雄", "The firefighter is a hero. 那位消防员是个英雄。"], [13, "country", "国家", "/ˈkʌntri/", "n.", "国家；乡村", "—", "my country 我的国家；in the country 在乡村", "China is a big country. 中国是一个大国。"], [13, "tip", "指点;实用的提示", "/tɪp/", "n.", "指点；实用的提示", "小费；尖端（the tip of a pen 笔尖）", "a helpful tip 有用的提示；travel tips 旅行小贴士", "Here is a tip for learning words. 这是一条记单词的小贴士。"], [13, "palm", "手掌", "/pɑːm/", "n.", "手掌", "棕榈树", "the palm of the hand 手掌心", "He held the coin in his palm. 他把硬币握在手掌里。"], [13, "thumb", "拇指", "/θʌm/", "n.", "拇指", "—", "thumb up 点赞；竖起大拇指", "He gave me a thumb up. 他给我竖起了大拇指。"], [14, "fingertip", "指尖", "/ˈfɪŋɡətɪp/", "n.", "指尖", "—", "touch with a fingertip 用指尖触摸", "She painted with her fingertips. 她用指尖画画。"], [14, "wrist", "手腕", "/rɪst/", "n.", "手腕", "—", "wear a watch on the wrist 手腕上戴表", "He hurt his wrist. 他伤到了手腕。"], [14, "advice", "建议", "/ədˈvaɪs/", "n.", "建议；劝告", "不可数名词（a piece of advice 一条建议）", "give advice 给建议；a piece of advice 一条建议；take one's advice 接受建议", "She gave me good advice. 她给了我好建议。"], [14, "stomach ache", "胃痛;腹痛", "/ˈstʌmək eɪk/", "n.", "胃痛；腹痛", "—", "have a stomach ache 胃痛", "I have a stomach ache after eating too much. 我吃太多后肚子痛。"], [14, "metro", "地铁", "/ˈmetrəʊ/", "n.", "地铁（尤指巴黎等城市）", "大都会（metro area 大都市区）", "by metro 乘地铁；the metro station 地铁站", "We go to school by metro. 我们乘地铁上学。"], [14, "watch your step", "注意脚下", "/wɒtʃ jɔː step/", "phr.", "注意脚下", "—", "please watch your step 请注意脚下", "Watch your step on the wet floor. 湿地板上请注意脚下。"], [14, "mind your head", "当心碰头", "/maɪnd jɔː hed/", "phr.", "当心碰头", "—", "mind your head when you enter 进门时当心碰头", "Mind your head, the door is low. 当心碰头，门很低。"], [14, "in order/out of order", "有序的/无序的", "/ɪn ˈɔːdə/", "phr.", "有序的／整齐的；出故障的", "out of order 意为「无序的；出故障的」", "keep in order 保持整齐；out of order (机器)坏了", "Put your books in order. 把你的书整理好。"], [14, "potato", "土豆", "/pəˈteɪtəʊ/", "n.", "土豆；马铃薯", "—", "mashed potato 土豆泥；sweet potato 红薯", "We planted potatoes in the garden. 我们在菜园里种了土豆。"], [14, "spring roll", "春卷", "/sprɪŋ rəʊl/", "n.", "春卷", "—", "eat a spring roll 吃春卷", "Spring rolls are tasty. 春卷很好吃。"], [14, "serving", "一份食物", "/ˈsɜːvɪŋ/", "n.", "一份（食物）", "v. serve 的现在分词（serving food 上菜）", "a serving of rice 一份米饭", "One serving of vegetables is good for you. 一份蔬菜对你有好处。"], [14, "pocket money", "零花钱", "/ˈpɒkɪt mʌni/", "n.", "零花钱", "—", "get pocket money 得到零花钱；save pocket money 攒零花钱", "I buy books with my pocket money. 我用零花钱买书。"], [15, "vlog", "视频博客", "/vlɒɡ/", "n.", "视频博客", "—", "make a vlog 做视频博客；a travel vlog 旅行视频博客", "She posts a vlog every week. 她每周发一个视频博客。"], [15, "safety", "安全;平安", "/ˈseɪfti/", "n.", "安全；平安", "安全设备（a safety helmet 安全帽）", "road safety 道路安全；for your safety 为了你的安全", "Safety first! 安全第一！"], [15, "exit", "出口", "/ˈeksɪt/", "n.", "出口", "v. 退出（exit the game 退出游戏）", "the emergency exit 紧急出口；find the exit 找到出口", "Where is the exit? 出口在哪里？"], [15, "market", "集市;市场", "/ˈmɑːkɪt/", "n.", "集市；市场", "v. 推销（market a product 推销产品）", "a fish market 鱼市；go to the market 去市场", "We buy fruit at the market. 我们在市场买水果。"], [15, "low", "adv.低;向下", "/ləʊ/", "adv./adj.", "低；向下（的）", "—", "speak low 小声说；a low price 低价", "The plane flew low. 飞机飞得很低。"], [15, "the internet", "互联网", "/ðə ˈɪntənet/", "n.", "互联网", "—", "on the internet 在网上；surf the internet 上网", "We find information on the internet. 我们在互联网上查找信息。"], [15, "online", "在线的;联网的", "/ˌɒnˈlaɪn/", "adj./adv.", "在线的；联网的", "—", "online class 网课；shop online 网上购物", "We take online classes. 我们上网课。"], [15, "photographer", "摄影师", "/fəˈtɒɡrəfə/", "n.", "摄影师", "—", "a wedding photographer 婚礼摄影师", "The photographer took our picture. 摄影师给我们拍了照。"], [15, "France", "法国", "/frɑːns/", "n.", "法国", "—", "in France 在法国", "France is in Europe. 法国在欧洲。"], [15, "Kenya", "肯尼亚", "/ˈkenjə/", "n.", "肯尼亚（非洲国家）", "—", "in Kenya 在肯尼亚", "Kenya is famous for its wild animals. 肯尼亚以野生动物闻名。"], [15, "opera", "歌剧", "/ˈɒpərə/", "n.", "歌剧", "—", "Beijing Opera 京剧；go to the opera 去看歌剧", "We watched an opera last night. 我们昨晚看了一场歌剧。"], [15, "Italian", "意大利的", "/ɪˈtæljən/", "adj.", "意大利的", "n. 意大利人；意大利语", "Italian food 意大利食物；speak Italian 说意大利语", "Pizza is Italian food. 披萨是意大利食物。"], [15, "boat trip", "乘船旅行", "/bəʊt trɪp/", "n.", "乘船旅行", "—", "go on a boat trip 去乘船游览", "We had a boat trip on the lake. 我们在湖上乘船游览。"], [15, "waterfall", "瀑布", "/ˈwɔːtəfɔːl/", "n.", "瀑布", "—", "a beautiful waterfall 美丽的瀑布", "The waterfall is very tall. 瀑布很高。"]];
+const WORDS = [[1, "stay", "停留;待", "/steɪ/", "v.", "停留；待", "保持（stay healthy 保持健康）", "stay at home 待在家里；stay up late 熬夜；stay healthy 保持健康", "We stay at my grandma's house every summer. 每年夏天我们都待在奶奶家。"], [1, "brave", "勇敢的", "/breɪv/", "adj.", "勇敢的", "v. 勇敢面对（brave the wind 顶着风）", "a brave boy 勇敢的男孩；a brave soldier 勇敢的士兵", "The brave firefighter saved the cat. 那位勇敢的消防员救了猫。"], [1, "writer", "作家", "/ˈraɪtə/", "n.", "作家；作者", "写字的人（a letter writer 写信人）", "a famous writer 著名作家；a story writer 故事作家", "She wants to be a writer when she grows up. 她长大后想当作家。"], [1, "doctor", "医生", "/ˈdɒktə/", "n.", "医生", "博士（a Doctor of Science 理学博士）", "see a doctor 看医生；a doctor's office 诊室", "The doctor helped the sick child. 医生帮助了那个生病的孩子。"], [1, "job", "工作;职业", "/dʒɒb/", "n.", "工作；职业", "任务；活儿（a good job 干得好）", "a good job 一份好工作；do a good job 干得好；part-time job 兼职", "My mother has an important job. 妈妈有一份重要的工作。"], [1, "unhappy", "不快乐的;悲伤的", "/ʌnˈhæpi/", "adj.", "不快乐的；悲伤的", "不满意的（an unhappy customer 不满意的顾客）", "feel unhappy 感到不快乐；an unhappy face 不高兴的脸", "She was unhappy because it rained. 因为下雨，她不开心。"], [1, "from", "从......起;来自", "/frɒm/", "prep.", "从……起；来自", "由……制成（made from wood 木头做的）", "from China 来自中国；from Monday to Friday 从周一到周五；far from 离……远", "I am from Shanghai. 我来自上海。"], [1, "goal", "目标;目的", "/ɡəʊl/", "n.", "目标；目的", "（足球等）球门；进球得分", "reach one's goal 实现目标；score a goal 进一球", "His goal is to read 20 books this year. 他的目标是今年读20本书。"], [1, "plan", "n.计划;打算", "/plæn/", "n.", "计划；打算", "v. 计划；打算（plan a trip 计划旅行）", "make a plan 制定计划；a plan for the holiday 假期计划", "We made a plan for the weekend. 我们制定了周末计划。"], [1, "follow", "跟随;跟着", "/ˈfɒləʊ/", "v.", "跟随；跟着", "遵循；听懂（follow the rules 遵守规则）", "follow me 跟我来；follow the rules 遵守规则；follow the story 听懂故事", "The little dog follows the boy everywhere. 小狗走到哪儿都跟着男孩。"], [2, "use the computer", "使用电脑", "/juːz ðə kəmˈpjuːtə/", "phr.", "使用电脑", "—", "learn to use the computer 学习用电脑；use the computer for homework 用电脑写作业", "We use the computer to find information. 我们用电脑查找信息。"], [2, "player", "运动员;参赛选手", "/ˈpleɪə/", "n.", "运动员；参赛选手", "播放器（a music player 音乐播放器）", "a football player 足球运动员；a team player 有团队精神的人", "He is a good basketball player. 他是一名优秀的篮球运动员。"], [2, "be proud of", "为......自豪", "/biː praʊd ɒv/", "phr.", "为……自豪", "—", "be proud of you 为你自豪；be proud of one's work 为自己的作品自豪", "We are proud of our school. 我们为我们的学校感到自豪。"], [2, "garden", "花园;果园;菜园", "/ˈɡɑːdn/", "n.", "花园；果园；菜园", "园艺（do some gardening 做园艺）", "in the garden 在花园里；a vegetable garden 菜园；a beautiful garden 美丽的花园", "Grandma grows tomatoes in her garden. 奶奶在菜园里种番茄。"], [2, "tomato", "番茄;西红柿", "/təˈmɑːtəʊ/", "n.", "番茄；西红柿", "—", "a tomato plant 番茄苗；tomato soup 番茄汤", "I put a tomato in the salad. 我在沙拉里放了一个番茄。"], [2, "water vapour", "水蒸气", "/ˈwɔːtə ˈveɪpə/", "n.", "水蒸气", "vapour 也可拼作 vapor", "turn into water vapour 变成水蒸气；water vapour in the air 空气中的水蒸气", "When water boils, it makes water vapour. 水烧开时会产生水蒸气。"], [2, "become", "变成", "/bɪˈkʌm/", "v.", "变成；成为", "适宜（Red becomes you. 红色很衬你。）", "become a teacher 成为老师；become happy 变得开心", "The caterpillar becomes a butterfly. 毛毛虫变成了蝴蝶。"], [2, "water drop", "水滴", "/ˈwɔːtə drɒp/", "n.", "水滴", "—", "a water drop on the leaf 叶子上的水滴", "A water drop fell from the leaf. 一滴水从叶子上落下来。"], [2, "chore", "日常事务", "/tʃɔː/", "n.", "日常事务；杂务", "令人厌烦的事（a chore 苦差事）", "do household chores 做家务；a daily chore 日常琐事", "Washing dishes is a daily chore. 洗碗是每天的家务。"], [2, "give your seat", "让座", "/ɡɪv jɔː siːt/", "phr.", "让座", "—", "give your seat to the old 给老人让座", "Please give your seat to the old man. 请把座位让给那位老人。"], [3, "Excuse me.", "劳驾", "/ɪkˈskjuːz miː/", "phr.", "劳驾；打扰一下", "请原谅（Excuse me for being late. 原谅我迟到了。）", "Excuse me, where is the toilet? 劳驾，厕所在哪？", "Excuse me, can you help me? 打扰一下，你能帮我吗？"], [3, "scared", "害怕的;恐惧的", "/skeəd/", "adj.", "害怕的；恐惧的", "v. scare 使害怕； scarecrow 稻草人", "be scared of 害怕……；feel scared 感到害怕", "The little boy was scared of the dark. 小男孩怕黑。"], [3, "driver", "驾驶员;司机", "/ˈdraɪvə/", "n.", "驾驶员；司机", "驱动程序（a printer driver 打印机驱动）", "a bus driver 公交车司机；a taxi driver 出租车司机", "The driver stopped the bus. 司机停下了公交车。"], [3, "police officer", "警察;警员", "/pəˈliːs ˈɒfɪsə/", "n.", "警察；警员", "—", "a police officer on duty 值班警察", "The police officer helped the lost child. 警察帮助了迷路的孩子。"], [3, "engineer", "工程师;设计师", "/ˌendʒɪˈnɪə/", "n.", "工程师；设计师", "火车司机（a train engineer）", "a software engineer 软件工程师；a train engineer 火车司机", "My father is an engineer. 我爸爸是一名工程师。"], [3, "chef", "厨师", "/ʃef/", "n.", "厨师", "主厨（head chef）", "a head chef 主厨；become a chef 成为厨师", "The chef cooked a delicious meal. 厨师做了一顿美味的饭。"], [3, "astronaut", "宇航员;航天员", "/ˈæstrənɔːt/", "n.", "宇航员；航天员", "—", "a Chinese astronaut 中国宇航员", "The astronaut flew to space. 宇航员飞上了太空。"], [3, "spaceship", "(航天)飞船", "/ˈspeɪsʃɪp/", "n.", "（航天）飞船", "—", "travel by spaceship 乘飞船旅行", "The spaceship flew to the moon. 宇宙飞船飞向月球。"], [3, "difficult", "困难的;难做的", "/ˈdɪfɪkʌlt/", "adj.", "困难的；难做的", "不易相处的（a difficult child 难管的孩子）", "a difficult question 难题；find it difficult 觉得困难", "Math can be difficult, but we can try. 数学可能很难，但我们可以试试。"], [3, "find the way", "找到路", "/faɪnd ðə weɪ/", "phr.", "找到路", "—", "find the way home 找到回家的路", "The dog helped the boy find the way. 狗帮男孩找到了路。"], [4, "walk along", "沿着......走", "/wɔːk əˈlɒŋ/", "phr.", "沿着……走", "—", "walk along the river 沿着河边走", "We walked along the street. 我们沿着街道走。"], [4, "museum", "博物馆", "/mjuːˈziːəm/", "n.", "博物馆", "—", "a science museum 科学博物馆；visit a museum 参观博物馆", "We saw old ships in the museum. 我们在博物馆看到了旧船。"], [4, "phone", "n.电话", "/fəʊn/", "n.", "电话", "v. 打电话（phone a friend 给朋友打电话）", "answer the phone 接电话；on the phone 在打电话；phone a friend 给朋友打电话", "The phone is ringing. 电话在响。"], [4, "lost", "迷路", "/lɒst/", "adj.", "迷路的；丢失的", "v. lose 的过去式（丢失）", "get lost 迷路；a lost dog 走丢的狗", "The child was lost in the city. 孩子在城市里迷路了。"], [4, "call", "v.打电话叫", "/kɔːl/", "v.", "打电话；叫", "n. 电话；呼唤（give a call 打个电话）", "call a taxi 叫出租车；call for help 呼救；give a call 打个电话", "Please call the doctor. 请打电话给医生。"], [4, "special", "特别的", "/ˈspeʃl/", "adj.", "特别的；特殊的", "n. 特价品（today's special 今日特价）", "a special day 特别的一天；something special 特别的东西", "Today is a special day for me. 今天对我来说是特别的一天。"], [4, "the Double Ninth Festival", "重阳节", "/ðə ˌdʌbl ˈnaɪnθ ˈfestəvl/", "n.", "重阳节", "农历九月初九，敬老的节日", "celebrate the Double Ninth Festival 庆祝重阳节", "We climb hills on the Double Ninth Festival. 重阳节我们登高。"], [4, "the Lantern Festival", "元宵节", "/ðə ˈlæntən ˈfestəvl/", "n.", "元宵节", "农历正月十五，赏花灯、吃汤圆", "eat yuanxiao on the Lantern Festival 元宵节吃元宵", "We eat sweet dumplings on the Lantern Festival. 元宵节我们吃汤圆。"], [4, "celebrate", "庆祝;庆贺", "/ˈselɪbreɪt/", "v.", "庆祝；庆贺", "赞扬（celebrate a hero 颂扬英雄）", "celebrate a birthday 庆祝生日；celebrate Spring Festival 过春节", "We celebrate New Year with fireworks. 我们用烟花庆祝新年。"], [4, "holiday", "假期", "/ˈhɒlədeɪ/", "n.", "假期；假日", "（英）度假（on holiday 在度假）", "summer holiday 暑假；a public holiday 公共假日；on holiday 在度假", "We went to the beach for the holiday. 假期我们去了海滩。"], [5, "dragon dance", "舞龙表演", "/ˈdræɡən dɑːns/", "n.", "舞龙表演", "—", "perform a dragon dance 表演舞龙", "They did a dragon dance at the festival. 节庆时他们表演了舞龙。"], [5, "famous", "著名的;出名的", "/ˈfeɪməs/", "adj.", "著名的；出名的", "v. 使出名（He famoused it. 较少用）", "a famous writer 著名作家；be famous for 因……而闻名", "Hangzhou is famous for the West Lake. 杭州以西湖闻名。"], [5, "sandwich", "三明治", "/ˈsæmwɪdʒ/", "n.", "三明治", "—", "make a sandwich 做三明治；a chicken sandwich 鸡肉三明治", "I ate a sandwich for lunch. 我午餐吃了一个三明治。"], [5, "different", "不同的;有区别的", "/ˈdɪfrənt/", "adj.", "不同的；有区别的", "各种的（many different 许多不同的）", "be different from 与……不同；many different 许多不同的", "These two books are different. 这两本书不一样。"], [5, "fish and chips", "炸鱼薯条", "/fɪʃ ənd tʃɪps/", "n.", "炸鱼薯条", "英国传统快餐", "buy fish and chips 买炸鱼薯条", "Fish and chips is a traditional British food. 炸鱼薯条是英国传统食物。"], [5, "beef", "牛肉", "/biːf/", "n.", "牛肉", "—", "beef noodles 牛肉面；roast beef 烤牛肉", "I like beef better than pork. 我更喜欢牛肉而不是猪肉。"], [5, "flour", "面粉", "/ˈflaʊə/", "n.", "面粉", "—", "a bag of flour 一袋面粉；mix flour and water 把面粉和水混合", "We need flour to make bread. 我们需要面粉来做面包。"], [5, "far", "adv.远", "/fɑː/", "adv./adj.", "远（的）", "—", "far away 遥远；how far 多远；not far from 离……不远", "My school is not far from home. 学校离家不远。"], [5, "play volleyball", "打排球", "/pleɪ ˈvɒlibɔːl/", "phr.", "打排球", "—", "like to play volleyball 喜欢打排球", "We play volleyball after school. 放学后我们打排球。"], [5, "healthy", "健康的;健壮的", "/ˈhelθi/", "adj.", "健康的；健壮的", "有益健康的（healthy food 健康食品）", "keep healthy 保持健康；healthy food 健康食品", "Apples are healthy food. 苹果是健康食品。"], [6, "both", "两者都", "/bəʊθ/", "pron./adj.", "两者都", "—", "both of us 我们俩都；both...and... 既……又……", "Both girls like reading. 两个女孩都喜欢阅读。"], [6, "win", "获胜", "/wɪn/", "v.", "获胜；赢", "n. 胜利（a big win 大胜）", "win a game 赢一场比赛；win a prize 获奖", "Our team won the match. 我们队赢了比赛。"], [6, "bookshelf", "书架", "/ˈbʊkʃelf/", "n.", "书架", "—", "a wooden bookshelf 木书架；on the bookshelf 在书架上", "The books are on the bookshelf. 书在书架上。"], [6, "storybook", "儿童故事书", "/ˈstɔːribʊk/", "n.", "儿童故事书", "—", "a picture storybook 图画故事书", "She reads a storybook every night. 她每晚读一本故事书。"], [6, "buzz", "发出嗡嗡声", "/bʌz/", "v.", "发出嗡嗡声", "n. 嗡嗡声", "bees buzz 蜜蜂嗡嗡叫", "The bees buzz around the flowers. 蜜蜂在花丛中嗡嗡飞。"], [6, "peach stone", "桃核", "/piːtʃ stəʊn/", "n.", "桃核", "—", "a peach stone 一个桃核", "Don't swallow the peach stone. 别吞下桃核。"], [6, "soil", "土壤", "/sɔɪl/", "n.", "土壤；泥土", "v. 弄脏（soil one's clothes 弄脏衣服）", "rich soil 肥沃的土壤；in the soil 在土壤里", "Plants grow in the soil. 植物在土壤里生长。"], [6, "seedling", "秧苗;幼苗", "/ˈsiːdlɪŋ/", "n.", "秧苗；幼苗", "—", "plant a seedling 种下一株幼苗", "The seedling grew into a big tree. 幼苗长成了大树。"], [6, "dead", "枯萎的", "/ded/", "adj.", "枯萎的；死的", "adv. 完全地（dead tired 累坏了）", "a dead flower 枯萎的花；dead leaves 枯叶", "The plant is dead. 这株植物枯死了。"], [6, "hobby", "业余爱好", "/ˈhɒbi/", "n.", "业余爱好", "—", "my hobby is... 我的爱好是……；collect stamps as a hobby 以集邮为爱好", "Her hobby is painting. 她的爱好是画画。"], [7, "free", "空闲的", "/friː/", "adj.", "空闲的；自由的", "免费的（a free ticket 免费票）", "free time 空闲时间；feel free 随意；free of charge 免费", "Are you free this weekend? 你这个周末有空吗？"], [7, "popular", "大众喜爱的;广受欢迎的", "/ˈpɒpjələ/", "adj.", "大众喜爱的；广受欢迎的", "流行的（popular music 流行音乐）", "a popular song 流行歌曲；be popular with 受……欢迎", "Ping-pong is popular in China. 乒乓球在中国很受欢迎。"], [7, "wonderful", "精彩的;令人高兴的", "/ˈwʌndəfl/", "adj.", "精彩的；令人高兴的", "奇妙的（a wonderful idea 绝妙的主意）", "a wonderful day 美好的一天；wonderful news 好消息", "We had a wonderful time at the party. 我们在聚会上玩得很开心。"], [7, "team", "(一起工作的)组", "/tiːm/", "n.", "（一起工作的）组；队", "—", "a football team 足球队；team work 团队合作", "He is a member of the school team. 他是校队的一员。"], [7, "sweep the floor", "扫地", "/swiːp ðə flɔːr/", "phr.", "扫地", "—", "help sweep the floor 帮忙扫地", "I sweep the floor every day. 我每天扫地。"], [7, "voice", "声音", "/vɔɪs/", "n.", "声音", "v. 表达（voice one's idea 说出想法）", "in a loud voice 大声地；a sweet voice 甜美的嗓音", "She has a beautiful singing voice. 她有一副美妙的歌喉。"], [7, "helper", "帮手", "/ˈhelpə/", "n.", "帮手；助手", "—", "a little helper 小帮手", "The child is a good helper at home. 这孩子在家是个好帮手。"], [7, "heart", "心", "/hɑːt/", "n.", "心；心脏", "中心；核心（the heart of the city 市中心）", "heart disease 心脏病；by heart 凭记忆；warm heart 热心", "The heart pumps blood. 心脏泵送血液。"], [7, "nothing", "没有什么;没有一件东西", "/ˈnʌθɪŋ/", "pron.", "没有什么；没有一件东西", "无关紧要的事（It's nothing. 没什么。）", "nothing else 没有别的；have nothing to do 无事可做", "There is nothing in the box. 盒子里什么也没有。"], [7, "fresh", "清新的", "/freʃ/", "adj.", "清新的；新鲜的", "精神饱满的（feel fresh 感到神清气爽）", "fresh air 清新的空气；fresh fruit 新鲜水果；fresh water 淡水", "We breathe fresh air in the park. 我们在公园呼吸清新的空气。"], [8, "travel", "旅行", "/ˈtrævl/", "v./n.", "旅行", "—", "travel by train 乘火车旅行；space travel 太空旅行", "We love to travel in summer. 我们喜欢夏天去旅行。"], [8, "plane", "飞机", "/pleɪn/", "n.", "飞机", "adj. 平坦的（a plane surface 平面）", "by plane 乘飞机；take a plane 坐飞机；a plane ticket 机票", "We flew to Beijing by plane. 我们乘飞机去了北京。"], [8, "West Lake", "西湖", "/west leɪk/", "n.", "西湖（杭州）", "—", "visit the West Lake 游览西湖", "The West Lake is beautiful. 西湖很美。"], [8, "capital", "首都", "/ˈkæpɪtl/", "n.", "首都；省会", "大写字母（capital letter）；资金", "the capital city 首都；capital letter 大写字母", "Beijing is the capital of China. 北京是中国的首都。"], [8, "the Palace Museum", "故宫博物院", "/ðə ˈpælɪs mjuˈziːəm/", "n.", "故宫博物院", "—", "visit the Palace Museum 参观故宫", "The Palace Museum is in Beijing. 故宫博物院在北京。"], [8, "city", "都市;城市", "/ˈsɪti/", "n.", "都市；城市", "—", "a big city 大城市；city life 城市生活", "Shanghai is a big city. 上海是一座大城市。"], [8, "London", "伦敦", "/ˈlʌndən/", "n.", "伦敦（英国首都）", "—", "in London 在伦敦", "London is the capital of the UK. 伦敦是英国的首都。"], [8, "the Eiffel Tower", "埃菲尔铁塔", "/ðiː ˈaɪfl ˈtaʊə/", "n.", "埃菲尔铁塔（巴黎）", "—", "the top of the Eiffel Tower 埃菲尔铁塔顶端", "The Eiffel Tower is in Paris. 埃菲尔铁塔在巴黎。"], [8, "Paris", "巴黎", "/ˈpærɪs/", "n.", "巴黎（法国首都）", "—", "in Paris 在巴黎", "Paris is famous for art. 巴黎以艺术闻名。"], [8, "Postcard", "明信片", "/ˈpəʊstkɑːd/", "n.", "明信片", "—", "send a postcard 寄明信片；a beautiful postcard 漂亮的明信片", "I sent you a postcard from London. 我从伦敦给你寄了一张明信片。"], [9, "show thanks", "表示感谢", "/ʃəʊ θæŋks/", "phr.", "表示感谢", "—", "show thanks to sb. 向某人表示感谢", "We show thanks to our teachers. 我们向老师表示感谢。"], [9, "take part in", "参加", "/teɪk pɑːt ɪn/", "phr.", "参加", "—", "take part in a race 参加比赛；take part in activities 参加活动", "She took part in the school play. 她参加了学校的戏剧表演。"], [9, "stair", "楼梯", "/steə/", "n.", "楼梯；台阶", "v. 凝视（stare 拼写不同）", "go up the stairs 上楼梯；a flight of stairs 一段楼梯", "Be careful on the stairs. 在楼梯上要小心。"], [9, "hurt", "v.(使)疼痛,受伤", "/hɜːt/", "v.", "（使）疼痛；受伤", "adj. 受伤的（hurt leg 受伤的腿）", "get hurt 受伤；hurt one's leg 伤到腿", "He hurt his knee when he fell. 他摔倒时伤到了膝盖。"], [9, "firefighter", "消防队员", "/ˈfaɪəfaɪtə/", "n.", "消防队员", "—", "a brave firefighter 勇敢的消防员", "The firefighter put out the fire. 消防员扑灭了火。"], [9, "put out the fire", "灭火", "/pʊt aʊt ðə ˈfaɪər/", "phr.", "灭火", "—", "help put out the fire 帮忙灭火", "They put out the fire quickly. 他们很快把火扑灭了。"], [9, "swimming pool", "游泳池", "/ˈswɪmɪŋ puːl/", "n.", "游泳池", "—", "in the swimming pool 在游泳池里；an indoor swimming pool 室内游泳池", "We swim in the swimming pool. 我们在游泳池里游泳。"], [9, "adult", "成年人", "/ˈædʌlt/", "n.", "成年人", "adj. 成年的（adult ticket 成人票）", "an adult ticket 成人票；for adults 供成人", "Adults must go with children. 成年人必须陪着孩子。"], [9, "must", "必须", "/mʌst/", "modal v.", "必须；一定", "—", "must do 必须做；must not 不准", "You must wear a helmet. 你必须戴头盔。"], [9, "safe", "处境(或情况)安全的", "/seɪf/", "adj.", "处境（或情况）安全的", "n. 保险箱", "keep safe 保持安全；safe and sound 平安无事", "The children are safe at home. 孩子们在家里很安全。"], [9, "near", "在......附近;靠近", "/nɪə/", "prep./adv.", "在……附近；靠近", "adj. 近的（the near bank 近岸）", "near the school 在学校附近；come near 靠近", "There is a park near my house. 我家附近有一个公园。"], [9, "save", "挽救;救助", "/seɪv/", "v.", "挽救；救助", "节省；保存（save money 省钱；save water 节水）", "save a life 救一条命；save money 省钱；save water 节约用水", "The doctor saved the boy's life. 医生救了男孩的命。"], [10, "sports field", "运动场", "/spɔːts fiːld/", "n.", "运动场", "—", "on the sports field 在运动场上", "We play football on the sports field. 我们在运动场上踢足球。"], [10, "project", "学校的课题", "/ˈprɒdʒekt/", "n.", "学校的课题；项目", "v. 投射（project a picture 投影）", "a school project 学校课题；work on a project 做一个项目", "We made a poster for our project. 我们为课题做了一张海报。"], [10, "bamboo", "竹子", "/bæmˈbuː/", "n.", "竹子", "—", "a bamboo forest 竹林；bamboo shoots 竹笋", "Pandas eat bamboo. 熊猫吃竹子。"], [10, "art", "美术;艺术", "/ɑːt/", "n.", "美术；艺术", "技艺（the art of cooking 烹饪技艺）", "an art class 美术课；a work of art 艺术品", "She is good at art. 她擅长美术。"], [10, "hometown", "家乡", "/ˈhəʊmtaʊn/", "n.", "家乡", "—", "return to one's hometown 回到家乡", "My hometown is a small village. 我的家乡是一个小村庄。"], [10, "India", "印度", "/ˈɪndiə/", "n.", "印度", "—", "in India 在印度", "India is a big country. 印度是一个大国。"], [10, "Africa", "非洲", "/ˈæfrɪkə/", "n.", "非洲", "—", "in Africa 在非洲", "Many animals live in Africa. 许多动物生活在非洲。"], [10, "polar bear", "北极熊", "/ˈpəʊlə beə/", "n.", "北极熊", "—", "a polar bear in the snow 雪地里的北极熊", "The polar bear lives in the Arctic. 北极熊生活在北极。"], [10, "the North Pole", "北极", "/ðə nɔːθ pəʊl/", "n.", "北极", "—", "near the North Pole 靠近北极", "Santa lives at the North Pole. 圣诞老人住在北极。"], [10, "invitation", "(口头或书面的)邀请", "/ˌɪnvɪˈteɪʃn/", "n.", "（口头或书面的）邀请", "—", "an invitation letter 邀请函；accept an invitation 接受邀请", "I got an invitation to her party. 我收到了她派对的邀请。"], [10, "tradition", "传统", "/trəˈdɪʃn/", "n.", "传统", "—", "a Chinese tradition 中国传统；family tradition 家庭传统", "Eating dumplings is a tradition. 吃饺子是一种传统。"], [10, "bridge", "桥", "/brɪdʒ/", "n.", "桥", "v. 架桥；消除（bridge the gap 消除隔阂）", "cross a bridge 过桥；a stone bridge 石桥", "The bridge goes over the river. 桥横跨在河上。"], [11, "amazing", "令人大为惊奇的", "/əˈmeɪzɪŋ/", "adj.", "令人大为惊奇的", "v. amaze 使惊奇", "an amazing story 惊人的故事；amazing news 惊人的消息", "The view from the mountain is amazing. 山上的风景令人惊叹。"], [11, "out of power", "没电", "/aʊt ɒv ˈpaʊər/", "phr.", "没电；断电", "—", "the phone is out of power 手机没电了", "My tablet is out of power. 我的平板没电了。"], [11, "fly south", "往南飞", "/flaɪ saʊθ/", "phr.", "往南飞", "—", "birds fly south for winter 鸟儿南飞过冬", "The geese fly south in autumn. 大雁秋天往南飞。"], [11, "golden", "金色的", "/ˈɡəʊldən/", "adj.", "金色的；金制的", "珍贵的（golden time 黄金时光）", "golden hair 金发；a golden rule 黄金法则", "The leaves turn golden in autumn. 秋天叶子变成金色。"], [11, "worker", "工作者", "/ˈwɜːkə/", "n.", "工作者；工人", "—", "a factory worker 工厂工人；a social worker 社工", "My uncle is a construction worker. 我叔叔是一名建筑工人。"], [11, "menu", "菜单", "/ˈmenjuː/", "n.", "菜单", "—", "look at the menu 看菜单；order from the menu 按菜单点餐", "The menu has many dishes. 菜单上有很多菜。"], [11, "soya milk", "豆浆", "/ˈsɔɪə mɪlk/", "n.", "豆浆", "soy milk 另一种写法", "a cup of soya milk 一杯豆浆", "I drink soya milk for breakfast. 我早餐喝豆浆。"], [11, "energy", "能量", "/ˈenədʒi/", "n.", "能量；精力", "—", "save energy 节约能源；full of energy 精力充沛", "Food gives us energy. 食物给我们能量。"], [11, "protein", "蛋白质", "/ˈprəʊtiːn/", "n.", "蛋白质", "—", "high in protein 高蛋白", "Eggs have a lot of protein. 鸡蛋含很多蛋白质。"], [11, "vitamin", "维生素", "/ˈvɪtəmɪn/", "n.", "维生素", "—", "vitamin C 维生素C；take vitamins 服用维生素", "Oranges are full of vitamin C. 橙子富含维生素C。"], [11, "honest", "诚实的;正直的", "/ˈɒnɪst/", "adj.", "诚实的；正直的", "坦诚的（to be honest 老实说）", "an honest boy 诚实的男孩；to be honest 老实说", "He is an honest student. 他是个诚实的学生。"], [11, "tell the truth", "说真话", "/tel ðə truːθ/", "phr.", "说真话", "—", "always tell the truth 总是说真话", "Please tell the truth. 请说真话。"], [12, "break", "打碎;打破", "/breɪk/", "v.", "打碎；打破", "n. 休息（have a break 休息一下）", "break a cup 打碎杯子；break the rule 违反规则；have a break 休息一下", "He broke his glasses. 他打碎了眼镜。"], [12, "empty", "空的", "/ˈempti/", "adj.", "空的", "v. 倒空（empty the bottle 倒空瓶子）", "an empty box 空盒子；empty the bottle 倒空瓶子", "The glass is empty. 杯子是空的。"], [12, "pot", "罐;壶;锅", "/pɒt/", "n.", "罐；壶；锅", "花盆（a flower pot）", "a flower pot 花盆；a cooking pot 煮锅", "She cooked soup in the pot. 她用锅煮了汤。"], [12, "minute", "分钟", "/ˈmɪnɪt/", "n.", "分钟", "adj. 微小的（a minute difference 细微差别）", "in a minute 马上；wait a minute 等一下", "The class lasts 40 minutes. 一节课持续40分钟。"], [12, "weather report", "气象报告", "/ˈweðə rɪˈpɔːt/", "n.", "气象报告", "—", "watch the weather report 看气象报告", "The weather report says it will rain. 气象报告说会下雨。"], [12, "degree", "度(温度单位)", "/dɪˈɡriː/", "n.", "度（温度单位）；度数", "学位（a college degree 大学学位）", "30 degrees 30度；a low degree 低温", "It is 25 degrees today. 今天25度。"], [12, "weather reporter", "天气预报员", "/ˈweðə rɪˈpɔːtə/", "n.", "天气预报员", "—", "a weather reporter on TV 电视上的天气预报员", "The weather reporter tells us the forecast. 天气预报员告诉我们预报。"], [12, "lamb", "小羊", "/læm/", "n.", "小羊；羔羊", "羔羊肉", "a little lamb 小羊羔", "The lamb follows its mother. 小羊跟着妈妈。"], [12, "hurry", "赶快;急忙(做某事)", "/ˈhʌri/", "v.", "赶快；急忙（做某事）", "n. 匆忙（in a hurry 匆忙地）", "hurry up 快点；in a hurry 匆忙地", "Hurry up, or we'll be late! 快点，不然我们要迟到了！"], [12, "flag raising", "升旗", "/flæɡ ˈreɪzɪŋ/", "n.", "升旗", "—", "the flag-raising ceremony 升旗仪式", "We watch the flag raising every Monday. 我们每周一看升旗。"], [12, "PE(Physical Education)", "体育(课)", "/ˌpiː ˈiː/", "n.", "体育（课）", "Physical Education 的缩写", "a PE class 一节体育课；PE teacher 体育老师", "We have PE on Friday. 我们周五有体育课。"], [12, "Science", "科学;自然科学", "/ˈsaɪəns/", "n.", "科学；自然科学", "—", "a science lesson 科学课；science museum 科学博物馆", "He likes Science best. 他最喜欢科学。"], [13, "subject", "科目", "/ˈsʌbdʒɪkt/", "n.", "科目；学科", "主题；题目（the subject of the story 故事主题）", "my favourite subject 我最喜欢的科目；a school subject 学校科目", "Math is my favourite subject. 数学是我最喜欢的科目。"], [13, "mother tongue", "母语", "/ˈmʌðə tʌŋ/", "n.", "母语", "—", "speak one's mother tongue 说母语", "Chinese is my mother tongue. 汉语是我的母语。"], [13, "typhoon", "台风", "/taɪˈfuːn/", "n.", "台风", "—", "a strong typhoon 强台风", "The typhoon brought heavy rain. 台风带来了大雨。"], [13, "first-aid-kit", "急救箱", "/ˈfɜːst eɪd kɪt/", "n.", "急救箱", "—", "a first-aid kit at home 家里的急救箱", "Keep a first-aid kit at home. 在家里备一个急救箱。"], [13, "go-bag", "应急撤离包", "/ɡəʊ bæɡ/", "n.", "应急撤离包", "—", "pack a go-bag 收拾应急包", "We keep a go-bag ready for emergencies. 我们备好应急包以防万一。"], [13, "flood", "洪水;水灾", "/flʌd/", "n.", "洪水；水灾", "v. 淹没（The river flooded the fields. 河水淹没了田地。）", "a big flood 大洪水；the flood water 洪水", "The flood destroyed the bridge. 洪水冲毁了桥。"], [13, "carry away", "带走", "/ˈkæri əˈweɪ/", "phr.", "带走；冲走", "—", "be carried away by the wind 被风带走", "The wind carried the leaves away. 风把叶子吹走了。"], [13, "hero", "英雄", "/ˈhɪərəʊ/", "n.", "英雄", "（故事）男主角", "a national hero 民族英雄；my hero 我心目中的英雄", "The firefighter is a hero. 那位消防员是个英雄。"], [13, "country", "国家", "/ˈkʌntri/", "n.", "国家；乡村", "—", "my country 我的国家；in the country 在乡村", "China is a big country. 中国是一个大国。"], [13, "tip", "指点;实用的提示", "/tɪp/", "n.", "指点；实用的提示", "小费；尖端（the tip of a pen 笔尖）", "a helpful tip 有用的提示；travel tips 旅行小贴士", "Here is a tip for learning words. 这是一条记单词的小贴士。"], [13, "palm", "手掌", "/pɑːm/", "n.", "手掌", "棕榈树", "the palm of the hand 手掌心", "He held the coin in his palm. 他把硬币握在手掌里。"], [13, "thumb", "拇指", "/θʌm/", "n.", "拇指", "—", "thumb up 点赞；竖起大拇指", "He gave me a thumb up. 他给我竖起了大拇指。"], [14, "fingertip", "指尖", "/ˈfɪŋɡətɪp/", "n.", "指尖", "—", "touch with a fingertip 用指尖触摸", "She painted with her fingertips. 她用指尖画画。"], [14, "wrist", "手腕", "/rɪst/", "n.", "手腕", "—", "wear a watch on the wrist 手腕上戴表", "He hurt his wrist. 他伤到了手腕。"], [14, "advice", "建议", "/ədˈvaɪs/", "n.", "建议；劝告", "不可数名词（a piece of advice 一条建议）", "give advice 给建议；a piece of advice 一条建议；take one's advice 接受建议", "She gave me good advice. 她给了我好建议。"], [14, "stomach ache", "胃痛;腹痛", "/ˈstʌmək eɪk/", "n.", "胃痛；腹痛", "—", "have a stomach ache 胃痛", "I have a stomach ache after eating too much. 我吃太多后肚子痛。"], [14, "metro", "地铁", "/ˈmetrəʊ/", "n.", "地铁（尤指巴黎等城市）", "大都会（metro area 大都市区）", "by metro 乘地铁；the metro station 地铁站", "We go to school by metro. 我们乘地铁上学。"], [14, "watch your step", "注意脚下", "/wɒtʃ jɔː step/", "phr.", "注意脚下", "—", "please watch your step 请注意脚下", "Watch your step on the wet floor. 湿地板上请注意脚下。"], [14, "mind your head", "当心碰头", "/maɪnd jɔː hed/", "phr.", "当心碰头", "—", "mind your head when you enter 进门时当心碰头", "Mind your head, the door is low. 当心碰头，门很低。"], [14, "in order/out of order", "有序的/无序的", "/ɪn ˈɔːdər/", "phr.", "有序的／整齐的；出故障的", "out of order 意为「无序的；出故障的」", "keep in order 保持整齐；out of order (机器)坏了", "Put your books in order. 把你的书整理好。"], [14, "potato", "土豆", "/pəˈteɪtəʊ/", "n.", "土豆；马铃薯", "—", "mashed potato 土豆泥；sweet potato 红薯", "We planted potatoes in the garden. 我们在菜园里种了土豆。"], [14, "spring roll", "春卷", "/sprɪŋ rəʊl/", "n.", "春卷", "—", "eat a spring roll 吃春卷", "Spring rolls are tasty. 春卷很好吃。"], [14, "serving", "一份食物", "/ˈsɜːvɪŋ/", "n.", "一份（食物）", "v. serve 的现在分词（serving food 上菜）", "a serving of rice 一份米饭", "One serving of vegetables is good for you. 一份蔬菜对你有好处。"], [14, "pocket money", "零花钱", "/ˈpɒkɪt mʌni/", "n.", "零花钱", "—", "get pocket money 得到零花钱；save pocket money 攒零花钱", "I buy books with my pocket money. 我用零花钱买书。"], [15, "vlog", "视频博客", "/vlɒɡ/", "n.", "视频博客", "—", "make a vlog 做视频博客；a travel vlog 旅行视频博客", "She posts a vlog every week. 她每周发一个视频博客。"], [15, "safety", "安全;平安", "/ˈseɪfti/", "n.", "安全；平安", "安全设备（a safety helmet 安全帽）", "road safety 道路安全；for your safety 为了你的安全", "Safety first! 安全第一！"], [15, "exit", "出口", "/ˈeksɪt/", "n.", "出口", "v. 退出（exit the game 退出游戏）", "the emergency exit 紧急出口；find the exit 找到出口", "Where is the exit? 出口在哪里？"], [15, "market", "集市;市场", "/ˈmɑːkɪt/", "n.", "集市；市场", "v. 推销（market a product 推销产品）", "a fish market 鱼市；go to the market 去市场", "We buy fruit at the market. 我们在市场买水果。"], [15, "low", "adv.低;向下", "/ləʊ/", "adv./adj.", "低；向下（的）", "—", "speak low 小声说；a low price 低价", "The plane flew low. 飞机飞得很低。"], [15, "the internet", "互联网", "/ðə ˈɪntənet/", "n.", "互联网", "—", "on the internet 在网上；surf the internet 上网", "We find information on the internet. 我们在互联网上查找信息。"], [15, "online", "在线的;联网的", "/ˌɒnˈlaɪn/", "adj./adv.", "在线的；联网的", "—", "online class 网课；shop online 网上购物", "We take online classes. 我们上网课。"], [15, "photographer", "摄影师", "/fəˈtɒɡrəfər/", "n.", "摄影师", "—", "a wedding photographer 婚礼摄影师", "The photographer took our picture. 摄影师给我们拍了照。"], [15, "France", "法国", "/frɑːns/", "n.", "法国", "—", "in France 在法国", "France is in Europe. 法国在欧洲。"], [15, "Kenya", "肯尼亚", "/ˈkenjə/", "n.", "肯尼亚（非洲国家）", "—", "in Kenya 在肯尼亚", "Kenya is famous for its wild animals. 肯尼亚以野生动物闻名。"], [15, "opera", "歌剧", "/ˈɒpərə/", "n.", "歌剧", "—", "Beijing Opera 京剧；go to the opera 去看歌剧", "We watched an opera last night. 我们昨晚看了一场歌剧。"], [15, "Italian", "意大利的", "/ɪˈˈtæljən/", "adj.", "意大利的", "n. 意大利人；意大利语", "Italian food 意大利食物；speak Italian 说意大利语", "Pizza is Italian food. 披萨是意大利食物。"], [15, "boat trip", "乘船旅行", "/bəʊt trɪp/", "n.", "乘船旅行", "—", "go on a boat trip 去乘船游览", "We had a boat trip on the lake. 我们在湖上乘船游览。"], [15, "waterfall", "瀑布", "/ˈwɔːtəfɔːl/", "n.", "瀑布", "—", "a beautiful waterfall 美丽的瀑布", "The waterfall is very tall. 瀑布很高。"]];
 const KEY = "dao_dun_vocab_v3";
 const NEW_COUNT = 10;   // 每次新增单词数（复习错词额外叠加）
 
@@ -212,6 +697,45 @@ function sfxWrong(){ beep(196,0.22,"square",0.13); beep(146,0.26,"square",0.11,0
 function sfxWin(){ const m=[[523,0.13],[659,0.13],[784,0.13],[1047,0.32]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"sine",0.20,w); w+=d*0.92; }); }
 function sfxLose(){ const m=[[440,0.16],[392,0.20],[330,0.30]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"triangle",0.16,w); w+=d*0.92; }); }
 function initMute(){ const b=$("muteBtn"); if(!b) return; b.textContent = muted? "🔇":"🔊"; b.onclick=()=>{ muted=!muted; localStorage.setItem("dd_muted", muted?"1":"0"); b.textContent = muted? "🔇":"🔊"; if(!muted) sfxClick(); }; }
+
+let currentWord="";
+function speakWord(word, accent){
+  if(muted) return;
+  if(!word || word.trim()==="") return;
+  window.speechSynthesis.cancel();
+  const type = accent==='uk' ? 1 : 2;
+  const btnUK = $("playPronounceUK") || $("rvPronounceUK");
+  const btnUS = $("playPronounceUS") || $("rvPronounceUS");
+  if(accent==='uk' && btnUK) btnUK.classList.add("play");
+  if(accent==='us' && btnUS) btnUS.classList.add("play");
+
+  let triedFallback=false;
+  function clearPlay(){
+    if(btnUK) btnUK.classList.remove("play");
+    if(btnUS) btnUS.classList.remove("play");
+  }
+  function fallbackTTS(){
+    if(triedFallback) return;
+    triedFallback=true;
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.rate = 0.9; utterance.pitch = 1; utterance.volume = 1;
+    utterance.lang = accent==='uk' ? 'en-GB' : 'en-US';
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find(v => v.lang === utterance.lang) || voices.find(v => v.lang.startsWith('en'));
+    if(voice) utterance.voice = voice;
+    utterance.onend = clearPlay;
+    utterance.onerror = clearPlay;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  try{
+    const audio = new Audio();
+    audio.src = "https://dict.youdao.com/dictvoice?audio="+encodeURIComponent(word)+"&type="+type;
+    audio.onended = clearPlay;
+    audio.onerror = fallbackTTS;
+    audio.play().catch(fallbackTTS);
+  }catch(e){ fallbackTTS(); }
+}
 
 /* ===== 存储 / 时间 ===== */
 function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};} }
@@ -267,7 +791,7 @@ function renderHistory(){
   html+='<div class="stat-row"><span>📅 开始日期</span><b>'+todayStr()+'</b></div>';
   html+='<div class="stat-row"><span>📚 已学单词</span><b>'+Math.min(S.seq, WORDS.length)+' / '+WORDS.length+'</b></div>';
   if(S.seq>0){
-    html+='<div style="margin-top:10px;font-weight:700;color:#A06A4E;font-size:14px;">✅ 已掌握的单词：</div>';
+    html+='<div style="margin-top:10px;font-weight:700;color:#8B7D6B;font-size:14px;">🌱 已开花的单词：</div>';
     html+='<div class="list">';
     const learned=new Set();
     for(let i=0;i<S.seq && i<WORDS.length;i++){ learned.add(normalize(WORDS[i][1])); }
@@ -277,18 +801,18 @@ function renderHistory(){
       const w=findWord(en);
       if(w){ html+='<li><b>'+escapeHtml(w[1])+'</b>　'+escapeHtml(w[4])+'　'+escapeHtml(w[2]||w[5])+'</li>'; }
     });
-    if(mastered.length===0){ html+='<li style="color:#A06A4E;">暂无完全掌握的单词，继续加油！</li>'; }
-    else if(learned.size-mastered.size>0){ html+='<li style="color:#A06A4E;font-size:12px;">...还有 '+Math.min(learned.size-mastered.size,10)+' 个在复习中</li>'; }
+    if(mastered.length===0){ html+='<li style="color:#8B7D6B;">暂无完全掌握的单词，继续加油！</li>'; }
+    else if(learned.size-mastered.size>0){ html+='<li style="color:#8B7D6B;font-size:12px;">...还有 '+Math.min(learned.size-mastered.size,10)+' 个在复习中</li>'; }
     html+='</div>';
   }
   if(S.dayErrors && S.dayErrors.length>0){
-    html+='<div style="margin-top:10px;font-weight:700;color:var(--red);font-size:14px;">🔄 需加强的单词：</div>';
+    html+='<div style="margin-top:10px;font-weight:700;color:var(--red);font-size:14px;">🪴 需继续浇水的单词：</div>';
     html+='<div class="list">';
     S.dayErrors.slice(0,20).forEach(en=>{
       const w=findWord(en);
       if(w){ html+='<li><b>'+escapeHtml(w[1])+'</b>　'+escapeHtml(w[4])+'　'+escapeHtml(w[2]||w[5])+'</li>'; }
     });
-    if(S.dayErrors.length>20){ html+='<li style="color:#A06A4E;font-size:12px;">...还有 '+Math.min(S.dayErrors.length-20,10)+' 个需加强</li>'; }
+    if(S.dayErrors.length>20){ html+='<li style="color:#8B7D6B;font-size:12px;">...还有 '+Math.min(S.dayErrors.length-20,10)+' 个需继续浇水</li>'; }
     html+='</div>';
   }
   body.innerHTML=html;
@@ -299,9 +823,9 @@ function initWelcome(){
   if(S.nick) $("nick").value=S.nick;
   let tip="";
   if(S.cur && !S.cur.finished){
-    tip="🔁 检测到上次进度，点开始继续闯关～";
+    tip="🔁 检测到上次进度，点开始继续学习～";
   } else if(S.dayErrors && S.dayErrors.length){
-    tip="🛡️ 已记下 "+S.dayErrors.length+" 个待复习错词，这次优先安排它们！";
+    tip="🌿 已记下 "+S.dayErrors.length+" 个待复习错词，这次优先安排它们！";
   } else if(S.seq>0){
     tip="📚 已顺着词库学到第 "+Math.min(S.seq+1, WORDS.length)+" 个词～";
   } else {
@@ -318,7 +842,7 @@ $("startBtn").onclick=()=>{
   newSession();
 };
 
-/* ===== 新一次闯关 ===== */
+/* ===== 新一次学习 ===== */
 function newSession(){
   const b=buildPool();
   S.cur={
@@ -346,7 +870,7 @@ function renderPreview(){
   html+='<div class="stat-row"><span>📚 本次单词总数</span><b>'+c.pool.length+' 个</b></div>';
   html+='<div class="stat-row"><span>🔁 复习（上次错词）</span><b>'+c.reviewCount+' 个</b></div>';
   html+='<div class="stat-row"><span>✨ 新学单词</span><b>'+(c.pool.length-c.reviewCount)+' 个</b></div>';
-  html+='<div style="margin-top:10px;font-weight:800;color:var(--shield-d);">📝 即将默写清单</div>';
+  html+='<div style="margin-top:10px;font-weight:800;color:var(--leaf-d);">📝 即将学习清单</div>';
   html+='<ul class="list">';
   c.pool.forEach((it,i)=>{
     const tag = (i<c.reviewCount)?'<span class="tag">复习</span>':'<span class="tag new">新学</span>';
@@ -369,8 +893,9 @@ function renderQuestion(){
   const q=S.cur.queue;
   if(S.cur.qi>=q.length){ roundEnd(); return; }
   const item=S.cur.pool[q[S.cur.qi]];
+  currentWord=item.en;
   submitted=false;
-  $("counter").textContent="进度 "+(S.cur.qi+1)+" / "+q.length+"　🛡️ 本次共 "+S.cur.pool.length+" 词";
+  $("counter").textContent="进度 "+(S.cur.qi+1)+" / "+q.length+"　🌿 本次共 "+S.cur.pool.length+" 词";
   $("qDef").textContent=item.def;
   $("qPos").textContent=item.pos;
   $("qHint").textContent="请写出它的英文拼写";
@@ -378,7 +903,10 @@ function renderQuestion(){
   $("nextBtn").style.display="none";
   $("submitBtn").style.display="block";
   const inp=$("ans"); inp.value=""; inp.disabled=false; inp.focus();
+  $("progressFill").style.width = ((S.cur.qi) / q.length * 100) + "%";
 }
+$("playPronounceUK").onclick=()=>{ sfxClick(); speakWord(currentWord, 'uk'); };
+$("playPronounceUS").onclick=()=>{ sfxClick(); speakWord(currentWord, 'us'); };
 $("submitBtn").onclick=submit;
 $("ans").addEventListener("keydown",e=>{ if(e.key==="Enter") submit(); });
 function submit(){
@@ -394,7 +922,7 @@ function submit(){
   const fb=$("fb");
   if(isCorrect(item,ans)){
     S.cur.curCorrect.push({en:item.en, pos:item.pos, def:item.def});
-    fb.className="feedback ok"; fb.innerHTML="✅ 正确！这一刀漂亮～"; fb.style.display="block";
+    fb.className="feedback ok"; fb.innerHTML="✅ 正确！答对了，真棒～"; fb.style.display="block";
     fb.classList.add("shield-flash"); setTimeout(()=>fb.classList.remove("shield-flash"),500);
     flashOk(); sfxCorrect();
   } else {
@@ -402,13 +930,13 @@ function submit(){
     S.cur.curWrong.push({en:item.en, ans:shown, pos:item.pos, def:item.def});
     S.cur.curWrongIdx.push(idx);
     fb.className="feedback no"; fb.style.display="block";
-    fb.innerHTML='❌ 这一刀偏了！<br>你拼的：<span class="cmp wrong">'+escapeHtml(shown)+'</span>　正确：<span class="cmp right">'+escapeHtml(item.en)+'</span>';
+    fb.innerHTML='❌ 没关系，再记一次！<br>你写的：<span class="cmp wrong">'+escapeHtml(shown)+'</span>　正确：<span class="cmp right">'+escapeHtml(item.en)+'</span>';
     const card=document.querySelector("#play .card"); card.classList.add("shake");
     setTimeout(()=>card.classList.remove("shake"),400); sfxWrong();
   }
   save(S);
   const nb=$("nextBtn"); nb.style.display="block";
-  nb.textContent = (S.cur.qi+1 < q.length) ? "➡️ 下一个单词" : "📜 查看本轮战报";
+  nb.textContent = (S.cur.qi+1 < q.length) ? "➡️ 下一个单词" : "📜 查看本轮记录";
 }
 $("nextBtn").onclick=()=>{
   submitted=false;
@@ -423,13 +951,15 @@ function flushCurWrong(){
   c.curWrong.forEach(w=>{ const en=normalize(w.en); if(!S.dayErrors.includes(en)) S.dayErrors.push(en); });
   save(S);
 }
-/* 拼写页：进入复习 / 返回首页（错词实时入复习库） */
+/* 拼写页：进入复习 / 返回花园（错词实时入复习库） */
 $("playReviewBtn").onclick=()=>{ sfxClick(); flushCurWrong(); startReview(); };
 $("playHomeBtn").onclick=()=>{ sfxClick(); flushCurWrong(); initWelcome(); show("welcome"); };
 function flashOk(){
   const inp=$("ans");
-  inp.style.boxShadow="0 0 0 5px #9FE3C8, 0 0 16px #2FA37A";
-  setTimeout(()=>{ inp.style.boxShadow=""; }, 480);
+  inp.style.boxShadow="0 0 0 5px #A5D6A7, 0 0 16px #5CB870";
+  const card = document.querySelector("#play .card");
+  if(card) card.classList.add("celebrate");
+  setTimeout(()=>{ inp.style.boxShadow=""; if(card) card.classList.remove("celebrate"); }, 600);
 }
 
 /* ===== 轮次结束 ===== */
@@ -443,18 +973,18 @@ function roundEnd(){
   c.curCorrect=[]; c.curWrong=[]; c.curWrongIdx=[];
   save(S);
   const total=c.queue.length;
-  $("sumTitle").textContent=c.group+" · 第 "+c.rounds.length+" 轮 战报";
+  $("sumTitle").textContent=c.group+" · 第 "+c.rounds.length+" 轮 成长记录";
   let html="";
   html+='<div class="stat-row"><span>本轮正确</span><b>'+c.rounds[c.rounds.length-1].correct.length+' / '+total+'</b></div>';
   if(wrongN>0){
-    html+='<div style="margin-top:10px;color:#A06A4E;font-size:14px;font-weight:700;">🛡️ 还需复练的单词（'+wrongN+' 个）：</div>';
+    html+='<div style="margin-top:10px;color:#8B7D6B;font-size:14px;font-weight:700;">🪴 还需要浇水的单词（'+wrongN+' 个）：</div>';
     html+='<ul class="list">';
     wrongList.forEach(idx=>{ const it=c.pool[idx]; html+='<li><b>'+escapeHtml(it.en)+'</b>　'+escapeHtml(it.pos)+'　'+escapeHtml(it.def)+'</li>'; });
     html+='</ul>';
-    $("nextRoundBtn").textContent="⚔️ 出错单词，再战！";
+    $("nextRoundBtn").textContent="🪴 需要浇水的单词，再来一次！";
   } else {
-    html+='<div style="margin-top:12px;color:var(--green);font-weight:800;font-size:17px;text-align:center;">🎉 本轮全部正确，闯关成功！</div>';
-    $("nextRoundBtn").textContent="🏆 查看结算战报";
+    html+='<div style="margin-top:12px;color:var(--green);font-weight:800;font-size:17px;text-align:center;">🎉 本轮全部开花，学习成功！</div>';
+    $("nextRoundBtn").textContent="🏆 全部开花了！查看成长记录";
   }
   $("sumBody").innerHTML=html;
   if(wrongN>0) sfxLose(); else sfxWin();
@@ -489,17 +1019,17 @@ function renderFinal(f){
   const mm=Math.floor(sec/60), ss=sec%60;
   const el=(mm>0? mm+" 分 ":"")+ss+" 秒";
   let html="";
-  html+='<div class="stat-row"><span>🛡️ 小英雄</span><b>'+escapeHtml(f.nick)+'</b></div>';
+  html+='<div class="stat-row"><span>🌿 小园丁</span><b>'+escapeHtml(f.nick)+'</b></div>';
   html+='<div class="stat-row"><span>📅 日期</span><b>'+f.date+'</b></div>';
   html+='<div class="stat-row"><span>⏱️ 累计耗时</span><b>'+el+'</b></div>';
   html+='<div class="stat-row"><span>🌅 开始</span><b>'+fmtTime(f.startTime)+'</b></div>';
   html+='<div class="stat-row"><span>🌇 结束</span><b>'+fmtTime(f.endTime)+'</b></div>';
   f.rounds.forEach((r,i)=>{
-    html+='<div style="margin-top:10px;font-weight:800;color:var(--shield-d);">'+r.group+' · 第 '+(i+1)+' 轮</div>';
+    html+='<div style="margin-top:10px;font-weight:800;color:var(--leaf-d);">'+r.group+' · 第 '+(i+1)+' 轮</div>';
     html+='<div class="stat-row"><span>正确</span><b>'+r.correct.length+'</b></div>';
     html+='<div class="stat-row"><span>错误</span><b>'+r.wrong.length+'</b></div>';
     if(r.wrong.length){
-      html+='<div style="font-size:13px;color:#A06A4E;padding:2px 4px 8px;line-height:1.7;">';
+      html+='<div style="font-size:13px;color:#8B7D6B;padding:2px 4px 8px;line-height:1.7;">';
       r.wrong.forEach(w=>{
         html+='你拼：<span class="cmp wrong">'+escapeHtml(w.ans)+'</span>　正确：<span class="cmp right">'+escapeHtml(w.en)+'</span><br>';
       });
@@ -507,20 +1037,20 @@ function renderFinal(f){
     }
   });
   if(f.allCorrect){
-    html+='<div style="margin-top:12px;color:var(--green);font-weight:800;font-size:18px;text-align:center;">🏆 全部正确！刀盾小英雄太棒了！</div>';
+    html+='<div style="margin-top:12px;color:var(--green);font-weight:800;font-size:18px;text-align:center;">🏆 全部开花！小园丁太棒了！</div>';
   }
   $("finalBody").innerHTML=html;
 }
 function roundText(f){
-  let s="【单词背诵默写神器·战报】\n";
-  s+="小英雄："+f.nick+"　日期："+f.date+"\n";
+  let s="【单词花园·成长记录】\n";
+  s+="小园丁："+f.nick+"　日期："+f.date+"\n";
   const sec=Math.round(f.elapsed/1000); const mm=Math.floor(sec/60), ss=sec%60;
   s+="耗时："+(mm>0?mm+"分":"")+ss+"秒　开始 "+fmtTime(f.startTime)+" 结束 "+fmtTime(f.endTime)+"\n";
   f.rounds.forEach((r,i)=>{
     s+=r.group+" 第"+(i+1)+"轮：对"+r.correct.length+" 错"+r.wrong.length+"\n";
     r.wrong.forEach(w=>{ s+="  你拼:"+w.ans+" → 正确:"+w.en+"\n"; });
   });
-  if(f.allCorrect) s+="🏆 全部正确！\n";
+  if(f.allCorrect) s+="🏆 全部开花！\n";
   return s;
 }
 $("copyBtn").onclick=()=>{
@@ -528,13 +1058,13 @@ $("copyBtn").onclick=()=>{
   sfxClick();
   navigator.clipboard.writeText(roundText(f)).then(()=>{
     $("copyBtn").textContent="✅ 已复制，去转发给爸爸吧";
-    setTimeout(()=>$("copyBtn").textContent="📋 复制成绩文字",1800);
+    setTimeout(()=>$("copyBtn").textContent="📋 复制成长记录",1800);
   }).catch(()=>{ alert(roundText(f)); });
 };
 $("saveBtn").onclick=()=>{
   const img=$("cardImg"); if(!img.src) return;
   sfxClick();
-  const a=document.createElement("a"); a.href=img.src; a.download="单词战报_"+todayStr()+".png"; a.click();
+  const a=document.createElement("a"); a.href=img.src; a.download="单词花园成长记录_"+todayStr()+".png"; a.click();
 };
 /* 重来一次：同一组词重新默写，轮次结果合并累计显示 */
 $("redoBtn").onclick=()=>{
@@ -584,6 +1114,7 @@ function makeQ(it, type){
 }
 function renderReview(){
   const q=rvQuestions[rvIdx];
+  currentWord=q.type==='en' ? q.prompt : q.correct;
   rvAnswered=false;
   $("rvCounter").textContent="复习进度 "+(rvIdx+1)+" / "+rvQuestions.length;
   $("rvPrompt").textContent = q.type==='en'
@@ -599,6 +1130,8 @@ function renderReview(){
   $("rvNext").style.display="none";
   $("rvStart").style.display="none";
 }
+$("rvPronounceUK").onclick=()=>{ sfxClick(); speakWord(currentWord, 'uk'); };
+$("rvPronounceUS").onclick=()=>{ sfxClick(); speakWord(currentWord, 'us'); };
 function answerReview(choice){
   if(rvAnswered) return;
   rvAnswered=true;
@@ -613,7 +1146,7 @@ function answerReview(choice){
     else b.classList.add("rv-miss");
   });
   if(rvIdx+1<rvQuestions.length){ $("rvNext").style.display="block"; $("rvNext").textContent="➡️ 下一题"; }
-  else { $("rvNext").style.display="block"; $("rvNext").textContent="🎉 复习完成，去拼写吧！"; $("rvStart").style.display="block"; $("rvStart").textContent="⚔️ 开始拼写"; }
+  else { $("rvNext").style.display="block"; $("rvNext").textContent="🎉 复习完成，去拼写吧！"; $("rvStart").style.display="block"; $("rvStart").textContent="☀️ 开始拼写"; }
 }
 $("rvNext").onclick=()=>{
   if(rvIdx+1>=rvQuestions.length){ sfxClick(); startRound(); return; }
@@ -643,40 +1176,48 @@ function drawCard(f){
   // ---- 第二遍：正式绘制 ----
   const cv=document.createElement("canvas"); cv.width=W; cv.height=H;
   const x=cv.getContext("2d");
-  const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,"#FFF6E9"); g.addColorStop(1,"#F7DCEB");
+  const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,"#F7FFF0"); g.addColorStop(1,"#FFF0F5");
   x.fillStyle=g; x.fillRect(0,0,W,H);
-  x.strokeStyle="#E9C9A8"; x.lineWidth=10; x.strokeRect(14,14,W-28,H-28);
-  drawShield(x, W/2, 110, 70, "#3A7BD5", "#2C5FA8");
-  x.fillStyle="#fff"; x.font="bold 30px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign="center"; x.fillText("背单词战报", W/2, 120);
-  x.fillStyle="#2C5FA8"; x.font="bold 34px PingFang SC, sans-serif"; x.fillText((f.nick||"小英雄")+" 的闯关记录", W/2, 215);
-  x.fillStyle="#A06A4E"; x.font="18px PingFang SC, sans-serif"; x.fillText("📅 "+f.date, W/2, 250);
+  x.strokeStyle="#D4C8B8"; x.lineWidth=10; x.strokeRect(14,14,W-28,H-28);
+  drawTree(x, W/2, 110, 70);
+  x.fillStyle="#fff"; x.font="bold 30px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign="center"; x.fillText("单词花园·成长记录", W/2, 120);
+  x.fillStyle="#4E9A60"; x.font="bold 34px PingFang SC, sans-serif"; x.fillText((f.nick||"小园丁")+" 的成长记录", W/2, 215);
+  x.fillStyle="#8B7D6B"; x.font="18px PingFang SC, sans-serif"; x.fillText("📅 "+f.date, W/2, 250);
   const sec=Math.round(f.elapsed/1000); const mm=Math.floor(sec/60), ss=sec%60;
-  x.fillStyle="#E8503A"; x.font="bold 46px PingFang SC, sans-serif"; x.fillText((mm>0?mm+"分":"")+ss+"秒", W/2, 320);
-  x.fillStyle="#A06A4E"; x.font="16px PingFang SC, sans-serif"; x.fillText("⏱️ 累计耗时　🌅 "+fmtTime(f.startTime)+" → 🌇 "+fmtTime(f.endTime), W/2, 352);
+  x.fillStyle="#E8726A"; x.font="bold 46px PingFang SC, sans-serif"; x.fillText((mm>0?mm+"分":"")+ss+"秒", W/2, 320);
+  x.fillStyle="#8B7D6B"; x.font="16px PingFang SC, sans-serif"; x.fillText("⏱️ 累计耗时　🌅 "+fmtTime(f.startTime)+" → 🌇 "+fmtTime(f.endTime), W/2, 352);
   let y=400;
   f.rounds.forEach((r,i)=>{
     x.textAlign="left";
-    x.fillStyle="#2C5FA8"; x.font="bold 24px PingFang SC, sans-serif";
+    x.fillStyle="#4E9A60"; x.font="bold 24px PingFang SC, sans-serif";
     x.fillText(r.group+" · 第"+(i+1)+"轮　对"+r.correct.length+" 错"+r.wrong.length, 70, y); y+=34;
     if(r.wrong && r.wrong.length){
-      x.fillStyle="#E8503A"; x.font="18px PingFang SC, sans-serif";
+      x.fillStyle="#E8726A"; x.font="18px PingFang SC, sans-serif";
       r.wrong.forEach(w=>{ y = wrapText(x, "✗ "+w.ans+" → ✓ "+w.en, 90, y, MAXW, 24)+8; });
     }
     y+=12;
   });
   x.textAlign="center";
-  if(f.allCorrect){ x.fillStyle="#2FA37A"; x.font="bold 30px PingFang SC, sans-serif"; x.fillText("🏆 全部正确！刀盾小英雄太棒了！", W/2, H-70); }
-  else { x.fillStyle="#FF9F45"; x.font="bold 26px PingFang SC, sans-serif"; x.fillText("🛡️ 继续修炼，下次全对！", W/2, H-70); }
-  x.fillStyle="#C79A7C"; x.font="15px PingFang SC, sans-serif"; x.fillText("—— 单词背诵默写神器 · 刀盾小英雄 ——", W/2, H-40);
+  if(f.allCorrect){ x.fillStyle="#5CB870"; x.font="bold 30px PingFang SC, sans-serif"; x.fillText("🏆 全部开花！小园丁太棒了！", W/2, H-70); }
+  else { x.fillStyle="#F0A868"; x.font="bold 26px PingFang SC, sans-serif"; x.fillText("🌿 继续浇水，下次全开！", W/2, H-70); }
+  x.fillStyle="#B8A88E"; x.font="15px PingFang SC, sans-serif"; x.fillText("—— 单词花园 · 成长记录 ——", W/2, H-40);
   const url=cv.toDataURL("image/png");
   $("cardImg").src=url; $("cardImg").style.display="block";
 }
-function drawShield(x,cx,cy,r,fill,stroke){
-  x.beginPath();
-  x.moveTo(cx,cy-r); x.lineTo(cx+r,cy-r*0.55); x.lineTo(cx+r,cy+r*0.25);
-  x.quadraticCurveTo(cx+r,cy+r*0.95,cx,cy+r); x.quadraticCurveTo(cx-r,cy+r*0.95,cx-r,cy+r*0.25);
-  x.lineTo(cx-r,cy-r*0.55); x.closePath();
-  x.fillStyle=fill; x.fill(); x.lineWidth=4; x.strokeStyle="#fff"; x.stroke();
+function drawTree(x, cx, cy, r){
+  // 树干
+  x.fillStyle="#A0744E";
+  x.fillRect(cx-6, cy, 12, r*0.6);
+  // 树冠
+  x.fillStyle="#6BAF7A";
+  x.beginPath(); x.arc(cx, cy-r*0.2, r*0.7, 0, Math.PI*2); x.fill();
+  x.fillStyle="#5CB870";
+  x.beginPath(); x.arc(cx-r*0.35, cy, r*0.5, 0, Math.PI*2); x.fill();
+  x.beginPath(); x.arc(cx+r*0.35, cy, r*0.5, 0, Math.PI*2); x.fill();
+  // 叶子装饰
+  x.fillStyle="#A8D5BA";
+  x.beginPath(); x.ellipse(cx-r*0.8, cy-r*0.4, 8, 14, -0.3, 0, Math.PI*2); x.fill();
+  x.beginPath(); x.ellipse(cx+r*0.8, cy-r*0.2, 7, 12, 0.3, 0, Math.PI*2); x.fill();
 }
 function wrapText(x,text,x0,y,maxW,lh){
   let line="", yy=y;
@@ -695,6 +1236,11 @@ function textLines(x,text,maxW){
   }
   return n;
 }
+
+/* ===== 底部导航功能 ===== */
+function goHome(){ sfxClick(); if(S.cur && !S.cur.finished){ flushCurWrong(); } S.cur=null; save(S); initWelcome(); show("welcome"); }
+function goReview(){ sfxClick(); if(S.cur && S.cur.pool && S.cur.pool.length>0){ flushCurWrong(); startReview(); } else { alert("还没有学习记录哦，先开始学习吧～"); } }
+function goRecord(){ sfxClick(); initWelcome(); show("welcome"); document.getElementById("historyCard").scrollIntoView({behavior:"smooth"}); }
 
 /* ===== 启动 ===== */
 initMute();
