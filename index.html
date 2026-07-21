@@ -188,6 +188,96 @@
 
   /* ===== 页面入场动画 ===== */
   .screen.show .garden-divider svg *{animation-play-state:running;}
+
+  /* ===== 记录页样式 ===== */
+  .record-tabs{display:flex; gap:4px; margin-bottom:16px; padding:4px; background:rgba(232,223,208,.4); border-radius:16px;}
+  .record-tab{flex:1; padding:10px 4px; text-align:center; font-size:14px; font-weight:700; color:#8B7D6B; border-radius:12px; cursor:pointer; transition:all .2s;}
+  .record-tab.active{background:#FFFDF8; color:#4E9A60; box-shadow:0 2px 4px rgba(160,130,100,.1);}
+  .record-tab.active:active{transform:scale(.98);}
+
+  /* 日历 */
+  .calendar{width:100%;}
+  .calendar-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:16px; font-weight:700; color:#4E9A60;}
+  .calendar-weekdays{display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:12px; color:#8B7D6B; margin-bottom:4px;}
+  .calendar-days{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+  .calendar-day{aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:13px; border-radius:8px; cursor:pointer; transition:all .2s;}
+  .calendar-day.empty{background:transparent; cursor:default;}
+  .calendar-day.today{background:#FBD5A8; color:#8A5A2E; font-weight:700;}
+  .calendar-day.learned{background:#A8D5BA; color:#4E9A60; font-weight:700;}
+  .calendar-day.learned.more{background:#6BAF7A; color:#fff;}
+  .calendar-day.learned.most{background:#4E9A60; color:#fff;}
+  .calendar-stats{display:flex; justify-content:space-around; margin-top:16px; padding:12px; background:#FFF0D6; border-radius:12px;}
+  .calendar-stat{text-align:center;}
+  .calendar-stat .num{font-size:24px; font-weight:800; color:#8A5A2E;}
+  .calendar-stat .label{font-size:11px; color:#8B7D6B;}
+
+  /* 徽章 */
+  .badge-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+  .badge-item{aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:16px; background:#FFFDF8; border:2px solid #E8DFD0; cursor:pointer; transition:all .2s;}
+  .badge-item.unlocked{border-color:#A8D5BA; background:#E8F5E9;}
+  .badge-item.locked{opacity:.4; filter:grayscale(1);}
+  .badge-item:active{transform:scale(.95);}
+  .badge-icon{font-size:28px; margin-bottom:4px;}
+  .badge-name{font-size:10px; text-align:center; color:#8B7D6B; font-weight:700;}
+  .badge-item.unlocked .badge-name{color:#4E9A60;}
+  .badge-modal{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:100;}
+  .badge-modal.show{display:flex;}
+  .badge-modal-content{max-width:320px; width:90%; background:#FFFDF8; border-radius:24px; padding:24px; text-align:center;}
+  .badge-modal-icon{font-size:64px; margin-bottom:12px;}
+  .badge-modal-title{font-size:20px; font-weight:800; color:#4E9A60; margin-bottom:8px;}
+  .badge-modal-desc{font-size:14px; color:#8B7D6B; line-height:1.6;}
+
+  /* 图表 */
+  .chart-container{position:relative; height:180px; margin:16px 0; background:#FFFDF8; border-radius:16px; padding:16px; border:2px solid #E8DFD0;}
+  .chart-y-axis{position:absolute; left:0; top:16px; bottom:16px; width:24px; display:flex; flex-direction:column; justify-content:space-between; font-size:10px; color:#8B7D6B;}
+  .chart-area{position:absolute; left:32px; right:16px; top:16px; bottom:16px;}
+  .chart-grid{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between;}
+  .chart-grid-line{border-bottom:1px dashed #EDE7DB;}
+  .chart-bars{position:absolute; inset:0; display:flex; justify-content:space-around; align-items:flex-end;}
+  .chart-bar{width:24px; border-radius:6px 6px 0 0; transition:height .5s ease;}
+  .chart-bar.correct{background:#6BAF7A;}
+  .chart-bar.wrong{background:#E8726A;}
+  .chart-bar.total{background:#FBD5A8;}
+  .chart-x-axis{position:absolute; left:32px; right:16px; bottom:-20px; display:flex; justify-content:space-around; font-size:10px; color:#8B7D6B;}
+
+  /* 诊断 */
+  .diagnostic-section{margin-bottom:16px;}
+  .diagnostic-title{font-size:14px; font-weight:800; color:#4E9A60; margin-bottom:8px;}
+  .diagnostic-item{display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#FFFDF8; border-radius:10px; margin-bottom:6px;}
+  .diagnostic-item .name{font-size:13px; color:#3D3A36;}
+  .diagnostic-item .value{font-size:13px; font-weight:700; color:#E8726A;}
+  .diagnostic-item .rate{color:#6BAF7A;}
+  .diagnostic-tag{display:inline-block; font-size:11px; padding:2px 8px; border-radius:6px; margin-right:6px; margin-bottom:6px;}
+  .diagnostic-tag.high{background:#E8F5E9; color:#5CB870;}
+  .diagnostic-tag.medium{background:#FFF3D6; color:#F0A868;}
+  .diagnostic-tag.low{background:#FFF0EC; color:#E8726A;}
+
+  /* 记录页卡片切换 */
+  .record-card{display:none;}
+  .record-card.record-card-show{display:block;}
+
+  /* 挑战 */
+  .challenge-card{background:#FFFDF8; border-radius:16px; padding:16px; margin-bottom:12px; border:2px solid #E8DFD0; cursor:pointer; transition:all .2s;}
+  .challenge-card:active{transform:scale(.98); border-color:#A8D5BA;}
+  .challenge-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .challenge-icon{font-size:32px;}
+  .challenge-name{font-size:16px; font-weight:800; color:#4E9A60;}
+  .challenge-desc{font-size:12px; color:#8B7D6B; line-height:1.4;}
+  .challenge-stats{display:flex; gap:16px; margin-top:8px; font-size:11px; color:#8B7D6B;}
+
+  /* 挑战游戏 */
+  .challenge-timer{text-align:center; font-size:24px; font-weight:800; color:#E8726A; margin-bottom:12px;}
+  .challenge-score{text-align:center; font-size:18px; color:#4E9A60; margin-bottom:8px;}
+  .challenge-question{font-size:28px; text-align:center; font-weight:800; color:#3D3A36; margin:16px 0;}
+  .challenge-options{display:flex; flex-direction:column; gap:10px;}
+  .challenge-option{padding:14px; border-radius:12px; border:2px solid #A8D5BA; background:#FFFDF8; font-size:16px; text-align:center; cursor:pointer; transition:all .2s;}
+  .challenge-option:active{background:#E8F5E9;}
+  .challenge-option.correct{background:#E8F5E9; border-color:#5CB870;}
+  .challenge-option.wrong{background:#FFF0EC; border-color:#E8726A;}
+  .challenge-result{text-align:center; padding:20px;}
+  .challenge-result-icon{font-size:48px; margin-bottom:8px;}
+  .challenge-result-title{font-size:20px; font-weight:800; color:#4E9A60; margin-bottom:8px;}
+  .challenge-result-score{font-size:32px; font-weight:800; color:#E8726A; margin-bottom:16px;}
 </style>
 </head>
 <body>
@@ -650,11 +740,117 @@
     <div class="paw">花园小园丁，今天也是花开的一天 ✨</div>
   </section>
 
+  <!-- 记录页 -->
+  <section id="records" class="screen">
+    <h1>📊 我的成长记录</h1>
+    <div class="record-tabs">
+      <div class="record-tab active" id="tabCalendar" onclick="showRecordTab('calendar')">📅 日历</div>
+      <div class="record-tab" id="tabBadges" onclick="showRecordTab('badges')">🏆 徽章</div>
+      <div class="record-tab" id="tabChart" onclick="showRecordTab('chart')">📈 曲线</div>
+      <div class="record-tab" id="tabDiagnostic" onclick="showRecordTab('diagnostic')">🔍 诊断</div>
+    </div>
+
+    <!-- 日历内容 -->
+    <div id="recordCalendar" class="card record-card record-card-show">
+      <div id="calendarContent"></div>
+    </div>
+
+    <!-- 徽章内容 -->
+    <div id="recordBadges" class="card record-card">
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+
+    <!-- 图表内容 -->
+    <div id="recordChart" class="card record-card">
+      <div class="diagnostic-title">📈 近7天学习趋势</div>
+      <div class="chart-container" id="growthChart"></div>
+      <div class="calendar-stats" style="margin-top:32px;">
+        <div class="calendar-stat"><div class="num" id="chartTotal">0</div><div class="label">总单词</div></div>
+        <div class="calendar-stat"><div class="num" id="chartCorrect">0</div><div class="label">正确</div></div>
+        <div class="calendar-stat"><div class="num" id="chartRate">0%</div><div class="label">正确率</div></div>
+      </div>
+    </div>
+
+    <!-- 诊断内容 -->
+    <div id="recordDiagnostic" class="card record-card">
+      <div class="diagnostic-section">
+        <div class="diagnostic-title">🔍 词类分析</div>
+        <div id="diagnosticPos"></div>
+      </div>
+      <div class="diagnostic-section">
+        <div class="diagnostic-title">⚠️ 易错单词</div>
+        <div id="diagnosticErrors"></div>
+      </div>
+      <div class="diagnostic-section">
+        <div class="diagnostic-title">🎯 学习建议</div>
+        <div id="diagnosticTips"></div>
+      </div>
+    </div>
+
+    <!-- 挑战入口 -->
+    <div class="card" style="margin-top:16px;">
+      <div class="diagnostic-title">🎮 趣味挑战</div>
+      <div class="challenge-card" onclick="startChallenge('speed')">
+        <div class="challenge-header">
+          <span class="challenge-icon">⚡</span>
+          <span class="challenge-name">闪电模式</span>
+        </div>
+        <div class="challenge-desc">60秒内尽可能答对更多题目，考验你的反应速度！</div>
+        <div class="challenge-stats">
+          <span>⏱️ 60秒</span>
+          <span>🏆 最高分: <span id="speedHigh">0</span></span>
+        </div>
+      </div>
+      <div class="challenge-card" onclick="startChallenge('streak')">
+        <div class="challenge-header">
+          <span class="challenge-icon">🔥</span>
+          <span class="challenge-name">闯关模式</span>
+        </div>
+        <div class="challenge-desc">连续答对5题解锁下一关，答错从头开始！</div>
+        <div class="challenge-stats">
+          <span>🎯 5题/关</span>
+          <span>🏆 最高关: <span id="streakHigh">0</span></span>
+        </div>
+      </div>
+      <div class="challenge-card" onclick="startChallenge('blind')">
+        <div class="challenge-header">
+          <span class="challenge-icon">👂</span>
+          <span class="challenge-name">盲听模式</span>
+        </div>
+        <div class="challenge-desc">只听发音，写出单词拼写，锻炼听力！</div>
+        <div class="challenge-stats">
+          <span>🔊 听发音</span>
+          <span>🏆 最高分: <span id="blindHigh">0</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="paw">记录每一次成长，见证花园的绽放 🌸</div>
+  </section>
+
+  <!-- 挑战游戏页 -->
+  <section id="challenge" class="screen">
+    <div class="card">
+      <div id="challengeHeader"></div>
+      <div id="challengeBody"></div>
+    </div>
+    <div class="btn ghost" onclick="show('records')">🏠 返回记录</div>
+  </section>
+
+  <!-- 徽章弹窗 -->
+  <div class="badge-modal" id="badgeModal" onclick="closeBadgeModal()">
+    <div class="badge-modal-content" onclick="event.stopPropagation()">
+      <div class="badge-modal-icon" id="badgeModalIcon">🏆</div>
+      <div class="badge-modal-title" id="badgeModalTitle">徽章名称</div>
+      <div class="badge-modal-desc" id="badgeModalDesc">徽章描述</div>
+    </div>
+  </div>
+
   <!-- 底部导航栏 -->
   <nav class="bottom-nav">
     <div class="nav-item" id="navHome" onclick="goHome()"><span class="nav-icon">🏠</span><span>花园</span></div>
     <div class="nav-item" id="navReview" onclick="goReview()"><span class="nav-icon">📚</span><span>复习</span></div>
-    <div class="nav-item" id="navRecord" onclick="goRecord()"><span class="nav-icon">📊</span><span>记录</span></div>
+    <div class="nav-item" id="navRecord" onclick="showRecords()"><span class="nav-icon">📊</span><span>记录</span></div>
   </nav>
 
 </div>
@@ -749,6 +945,9 @@ if(S.seq==null) S.seq=0;
 if(!S.dayErrors) S.dayErrors=[];
 if(!S.dayErrorsDate) S.dayErrorsDate="";
 if(!S.cur) S.cur=null;
+if(!S.learningLogs) S.learningLogs=[];
+if(S.maxStreak==null) S.maxStreak=0;
+if(!S.challengeHighScores) S.challengeHighScores={speed:0, streak:0, blind:0};
 
 function ensureDay(){ const t=todayStr(); if(S.dayErrorsDate!==t){ S.dayErrors=[]; S.dayErrorsDate=t; save(S); } }
 
@@ -945,12 +1144,6 @@ $("nextBtn").onclick=()=>{
   S.cur.qi++; save(S);
   if(S.cur.qi>=S.cur.queue.length) roundEnd(); else renderQuestion();
 };
-/* 记录当前轮已拼错的单词（去重追加到复习库） */
-function flushCurWrong(){
-  const c=S.cur; if(!c||!c.curWrong) return;
-  c.curWrong.forEach(w=>{ const en=normalize(w.en); if(!S.dayErrors.includes(en)) S.dayErrors.push(en); });
-  save(S);
-}
 /* 拼写页：进入复习 / 返回花园（错词实时入复习库） */
 $("playReviewBtn").onclick=()=>{ sfxClick(); flushCurWrong(); startReview(); };
 $("playHomeBtn").onclick=()=>{ sfxClick(); flushCurWrong(); initWelcome(); show("welcome"); };
@@ -963,33 +1156,6 @@ function flashOk(){
 }
 
 /* ===== 轮次结束 ===== */
-function roundEnd(){
-  const c=S.cur;
-  const wrongList = c.curWrongIdx.slice();        // 本轮需复练的索引
-  c.rounds.push({group:c.group, correct:c.curCorrect.slice(), wrong:c.curWrong.slice()});
-  c.curWrong.forEach(w=>{ const en=normalize(w.en); if(!S.dayErrors.includes(en)) S.dayErrors.push(en); });
-  const wrongN = c.rounds[c.rounds.length-1].wrong.length;
-  c.lastWrongIdx = wrongList;
-  c.curCorrect=[]; c.curWrong=[]; c.curWrongIdx=[];
-  save(S);
-  const total=c.queue.length;
-  $("sumTitle").textContent=c.group+" · 第 "+c.rounds.length+" 轮 成长记录";
-  let html="";
-  html+='<div class="stat-row"><span>本轮正确</span><b>'+c.rounds[c.rounds.length-1].correct.length+' / '+total+'</b></div>';
-  if(wrongN>0){
-    html+='<div style="margin-top:10px;color:#8B7D6B;font-size:14px;font-weight:700;">🪴 还需要浇水的单词（'+wrongN+' 个）：</div>';
-    html+='<ul class="list">';
-    wrongList.forEach(idx=>{ const it=c.pool[idx]; html+='<li><b>'+escapeHtml(it.en)+'</b>　'+escapeHtml(it.pos)+'　'+escapeHtml(it.def)+'</li>'; });
-    html+='</ul>';
-    $("nextRoundBtn").textContent="🪴 需要浇水的单词，再来一次！";
-  } else {
-    html+='<div style="margin-top:12px;color:var(--green);font-weight:800;font-size:17px;text-align:center;">🎉 本轮全部开花，学习成功！</div>';
-    $("nextRoundBtn").textContent="🏆 全部开花了！查看成长记录";
-  }
-  $("sumBody").innerHTML=html;
-  if(wrongN>0) sfxLose(); else sfxWin();
-  show("summary");
-}
 $("nextRoundBtn").onclick=()=>{
   const c=S.cur;
   if(c.lastWrongIdx.length===0){ finishSession(); return; }
@@ -1240,12 +1406,513 @@ function textLines(x,text,maxW){
 /* ===== 底部导航功能 ===== */
 function goHome(){ sfxClick(); if(S.cur && !S.cur.finished){ flushCurWrong(); } S.cur=null; save(S); initWelcome(); show("welcome"); }
 function goReview(){ sfxClick(); if(S.cur && S.cur.pool && S.cur.pool.length>0){ flushCurWrong(); startReview(); } else { alert("还没有学习记录哦，先开始学习吧～"); } }
-function goRecord(){ sfxClick(); initWelcome(); show("welcome"); document.getElementById("historyCard").scrollIntoView({behavior:"smooth"}); }
 
 /* ===== 启动 ===== */
 initMute();
 initWelcome();
 show("welcome");
+
+/* ===== 记录页功能 ===== */
+function showRecords(){
+  sfxClick();
+  show("records");
+  setTimeout(()=>{
+    renderCalendar();
+    renderBadges();
+    renderChart();
+    renderDiagnostic();
+    updateChallengeHighScores();
+  }, 50);
+}
+
+function goRecord(){
+  sfxClick();
+  showRecords();
+}
+
+function showRecordTab(tab){
+  sfxClick();
+  document.querySelectorAll(".record-tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("tab"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("active");
+  document.querySelectorAll(".record-card").forEach(card=>{
+    card.classList.remove("record-card-show");
+  });
+  document.getElementById("record"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("record-card-show");
+  
+  if(tab==="calendar") renderCalendar();
+  else if(tab==="badges") renderBadges();
+  else if(tab==="chart") renderChart();
+  else if(tab==="diagnostic") renderDiagnostic();
+}
+
+/* ===== 学习日历 ===== */
+function renderCalendar(){
+  const now=new Date();
+  const year=now.getFullYear();
+  const month=now.getMonth();
+  const today=now.getDate();
+  const firstDay=new Date(year, month, 1).getDay();
+  const daysInMonth=new Date(year, month+1, 0).getDate();
+  
+  let html='<div class="calendar-header">';
+  html+='<span>'+(month+1)+'月</span>';
+  html+='<span style="font-size:14px;color:#8B7D6B;">'+year+'</span>';
+  html+='</div>';
+  
+  html+='<div class="calendar-weekdays">';
+  ["日","一","二","三","四","五","六"].forEach(d=>html+='<span>'+d+'</span>');
+  html+='</div>';
+  
+  html+='<div class="calendar-days">';
+  for(let i=0;i<firstDay;i++){
+    html+='<div class="calendar-day empty"></div>';
+  }
+  
+  const learnedDays=loadLearnedDays();
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=year+"-"+(month+1)+"-"+d;
+    const learned=learnedDays[dateStr]||0;
+    let cls="calendar-day";
+    if(d===today) cls+=" today";
+    if(learned>0){
+      cls+=" learned";
+      if(learned>=10) cls+=" most";
+      else if(learned>=5) cls+=" more";
+    }
+    html+='<div class="'+cls+'" title="学习'+learned+'词">'+d+'</div>';
+  }
+  html+='</div>';
+  
+  const totalDays=Object.keys(learnedDays).length;
+  const currentStreak=calcStreak(learnedDays);
+  const totalWords=Object.values(learnedDays).reduce((a,b)=>a+b,0);
+  
+  html+='<div class="calendar-stats">';
+  html+='<div class="calendar-stat"><div class="num">'+totalDays+'</div><div class="label">学习天数</div></div>';
+  html+='<div class="calendar-stat"><div class="num">'+currentStreak+'</div><div class="label">连续打卡</div></div>';
+  html+='<div class="calendar-stat"><div class="num">'+totalWords+'</div><div class="label">累计单词</div></div>';
+  html+='</div>';
+  
+  $("calendarContent").innerHTML=html;
+}
+
+function loadLearnedDays(){
+  const logs=S.learningLogs||[];
+  const days={};
+  logs.forEach(log=>{
+    if(!days[log.date]) days[log.date]=0;
+    days[log.date]+=log.total;
+  });
+  return days;
+}
+
+function calcStreak(days){
+  let streak=0;
+  const today=new Date();
+  for(let i=0;i<=365;i++){
+    const d=new Date(today);
+    d.setDate(d.getDate()-i);
+    const dateStr=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+    if(days[dateStr]) streak++;
+    else if(i>0) break;
+  }
+  return streak;
+}
+
+function recordLearningLog(total, correct){
+  const logs=S.learningLogs||[];
+  logs.push({
+    date:todayStr(),
+    total,
+    correct,
+    time:Date.now()
+  });
+  if(logs.length>100) logs.shift();
+  S.learningLogs=logs;
+  save(S);
+}
+
+/* ===== 成就徽章系统 ===== */
+const BADGES=[
+  {id:"seed",icon:"🌱",name:"种子破土",desc:"完成第一次学习",check:()=>S.seq>0},
+  {id:"sprout",icon:"🌿",name:"茁壮成长",desc:"累计学习50个单词",check:()=>Math.min(S.seq,WORDS.length)>=50},
+  {id:"flower",icon:"🌸",name:"花开满园",desc:"连续学习7天",check:()=>calcStreak(loadLearnedDays())>=7},
+  {id:"bloom",icon:"🌺",name:"百花齐放",desc:"单日正确率100%",check:()=>{
+    const logs=S.learningLogs||[];
+    return logs.some(log=>log.total>0 && log.correct===log.total);
+  }},
+  {id:"bullseye",icon:"🎯",name:"神射手",desc:"连续答对10题",check:()=>{
+    return S.maxStreak>=10;
+  }},
+  {id:"book",icon:"📚",name:"词海漫游",desc:"累计学习500个单词",check:()=>Math.min(S.seq,WORDS.length)>=500},
+  {id:"star",icon:"⭐",name:"星光璀璨",desc:"累计获得5个徽章",check:()=>{
+    const count = BADGES.filter(b=>b.id!=="star" && b.check()).length;
+    return count>=5;
+  }},
+  {id:"crown",icon:"👑",name:"皇冠园丁",desc:"累计学习1000个单词",check:()=>Math.min(S.seq,WORDS.length)>=1000},
+];
+
+function renderBadges(){
+  let html="";
+  BADGES.forEach(badge=>{
+    const unlocked=badge.check();
+    html+='<div class="badge-item '+ (unlocked?"unlocked":"locked") +'" onclick="showBadgeDetail(\''+badge.id+'\')">';
+    html+='<div class="badge-icon">'+badge.icon+'</div>';
+    html+='<div class="badge-name">'+badge.name+'</div>';
+    html+='</div>';
+  });
+  $("badgeGrid").innerHTML=html;
+}
+
+function showBadgeDetail(id){
+  const badge=BADGES.find(b=>b.id===id);
+  if(!badge) return;
+  $("badgeModalIcon").textContent=badge.icon;
+  $("badgeModalTitle").textContent=badge.name;
+  $("badgeModalDesc").textContent=badge.desc;
+  $("badgeModal").classList.add("show");
+}
+
+function closeBadgeModal(){
+  $("badgeModal").classList.remove("show");
+}
+
+/* ===== 成长曲线图 ===== */
+function renderChart(){
+  const logs=S.learningLogs||[];
+  const last7Days=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i);
+    last7Days.push({
+      date:d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(),
+      day:d.getDate()+"日",
+      total:0,
+      correct:0
+    });
+  }
+  
+  logs.forEach(log=>{
+    const idx=last7Days.findIndex(d=>d.date===log.date);
+    if(idx>=0){
+      last7Days[idx].total+=log.total;
+      last7Days[idx].correct+=log.correct;
+    }
+  });
+  
+  const maxVal=Math.max(...last7Days.map(d=>d.total),5);
+  
+  let bars="";
+  let xLabels="";
+  last7Days.forEach(d=>{
+    const height=(d.total/maxVal)*100;
+    bars+='<div class="chart-bar correct" style="height:'+height+'%;" title="'+d.total+'词"></div>';
+    xLabels+='<span>'+d.day+'</span>';
+  });
+  
+  let html='<div class="chart-y-axis">';
+  html+='<span>'+maxVal+'</span><span>'+Math.round(maxVal*0.75)+'</span><span>'+Math.round(maxVal*0.5)+'</span><span>'+Math.round(maxVal*0.25)+'</span><span>0</span>';
+  html+='</div>';
+  html+='<div class="chart-area">';
+  html+='<div class="chart-grid"><div class="chart-grid-line"></div><div class="chart-grid-line"></div><div class="chart-grid-line"></div><div class="chart-grid-line"></div></div>';
+  html+='<div class="chart-bars">'+bars+'</div>';
+  html+='</div>';
+  html+='<div class="chart-x-axis">'+xLabels+'</div>';
+  
+  $("growthChart").innerHTML=html;
+  
+  const total=last7Days.reduce((a,b)=>a+b.total,0);
+  const correct=last7Days.reduce((a,b)=>a+b.correct,0);
+  const rate=total>0?Math.round(correct/total*100):0;
+  
+  $("chartTotal").textContent=total;
+  $("chartCorrect").textContent=correct;
+  $("chartRate").textContent=rate+"%";
+}
+
+/* ===== 错词诊断报告 ===== */
+function renderDiagnostic(){
+  const posStats={};
+  S.dayErrors.forEach(en=>{
+    const word=findWord(en);
+    if(word){
+      const pos=word[4];
+      if(!posStats[pos]) posStats[pos]={count:0,words:[]};
+      posStats[pos].count++;
+      posStats[pos].words.push(word[1]);
+    }
+  });
+  
+  let posHtml="";
+  Object.entries(posStats).sort((a,b)=>b[1].count-a[1].count).forEach(([pos,data])=>{
+    posHtml+='<div class="diagnostic-item">';
+    posHtml+='<span class="name">'+pos+'</span>';
+    posHtml+='<span class="value">'+data.count+'个</span>';
+    posHtml+='</div>';
+  });
+  
+  if(!posHtml) posHtml='<div style="text-align:center;color:#8B7D6B;font-size:13px;">暂无错词记录，继续保持！</div>';
+  $("diagnosticPos").innerHTML=posHtml;
+  
+  const errHtml=S.dayErrors.slice(0,10).map(en=>{
+    const word=findWord(en);
+    if(!word) return "";
+    return '<div class="diagnostic-item"><span class="name"><b>'+word[1]+'</b> '+word[4]+'</span><span class="value">'+(word[2]||word[5])+'</span></div>';
+  }).join("");
+  
+  if(!errHtml) $("diagnosticErrors").innerHTML='<div style="text-align:center;color:#8B7D6B;font-size:13px;">暂无错词，太棒了！</div>';
+  else $("diagnosticErrors").innerHTML=errHtml;
+  
+  let tips=[];
+  if(S.dayErrors.length>5) tips.push("⚠️ 错词较多，建议先复习再学习新词");
+  if(S.dayErrors.length>0) tips.push("💡 可以尝试使用挑战模式中的盲听模式来加强记忆");
+  if(Object.keys(posStats).length>0){
+    const worstPos=Object.entries(posStats).sort((a,b)=>b[1].count-a[1].count)[0][0];
+    tips.push("🎯 重点关注「"+worstPos+"」类型的单词");
+  }
+  if(S.seq<50) tips.push("🌱 刚开始学习，每天坚持就会有进步！");
+  
+  let tipsHtml=tips.map(t=>'<div style="padding:8px 12px;background:#FFF0D6;border-radius:8px;margin-bottom:6px;font-size:13px;color:#8A5A2E;">'+t+'</div>').join("");
+  if(!tipsHtml) tipsHtml='<div style="text-align:center;color:#8B7D6B;font-size:13px;">继续保持，花园会越来越美！</div>';
+  $("diagnosticTips").innerHTML=tipsHtml;
+}
+
+/* ===== 挑战模式 ===== */
+let challengeType="";
+let challengeScore=0;
+let challengeTime=60;
+let challengeTimer=null;
+let challengeQuestions=[];
+let challengeIdx=0;
+let challengeStreak=0;
+let challengeLevel=1;
+
+function updateChallengeHighScores(){
+  $("speedHigh").textContent=S.challengeHighScores?.speed||0;
+  $("streakHigh").textContent=S.challengeHighScores?.streak||0;
+  $("blindHigh").textContent=S.challengeHighScores?.blind||0;
+}
+
+function startChallenge(type){
+  sfxClick();
+  challengeType=type;
+  challengeScore=0;
+  challengeTime=60;
+  challengeLevel=1;
+  challengeStreak=0;
+  challengeIdx=0;
+  
+  const qs=[];
+  const pool=S.cur?.pool||WORDS.slice(0,50).map(toItem);
+  pool.forEach(it=>{
+    qs.push(makeQ(it,'en'));
+    qs.push(makeQ(it,'cn'));
+  });
+  challengeQuestions=shuffle(qs).slice(0,30);
+  
+  show("challenge");
+  renderChallenge();
+}
+
+function renderChallenge(){
+  let header="";
+  if(challengeType==="speed"){
+    header='<div class="challenge-timer">⏱️ '+challengeTime+'秒</div>';
+    header+='<div class="challenge-score">得分: '+challengeScore+'</div>';
+  } else if(challengeType==="streak"){
+    header='<div class="challenge-score">第'+challengeLevel+'关 · 连续: '+challengeStreak+'/5</div>';
+  } else {
+    header='<div class="challenge-score">得分: '+challengeScore+'</div>';
+  }
+  $("challengeHeader").innerHTML=header;
+  
+  if(challengeIdx>=challengeQuestions.length || (challengeType==="speed" && challengeTime<=0)){
+    renderChallengeResult();
+    return;
+  }
+  
+  const q=challengeQuestions[challengeIdx];
+  let body="";
+  
+  if(challengeType==="blind"){
+    currentWord=q.type==='en' ? q.prompt : q.correct;
+    body+='<div class="challenge-question">👂 请听发音，写出单词</div>';
+    body+='<div class="pronounce-row">';
+    body+='<button class="pronounce-btn uk" onclick="speakWord(currentWord,\'uk\')">英式<br>发音</button>';
+    body+='<button class="pronounce-btn us" onclick="speakWord(currentWord,\'us\')">美式<br>发音</button>';
+    body+='</div>';
+    body+='<input type="text" id="challengeInput" placeholder="写出单词" style="width:100%;font-size:24px;padding:12px;text-align:center;border:2px solid var(--sage);border-radius:12px;margin-bottom:12px;" onkeydown="if(event.key===\'Enter\') checkBlindAnswer()">';
+    body+='<div class="btn" onclick="checkBlindAnswer()">提交答案</div>';
+  } else {
+    currentWord=q.type==='en' ? q.prompt : q.correct;
+    body+='<div class="challenge-question">'+q.prompt+'</div>';
+    body+='<div class="challenge-options">';
+    q.opts.forEach(opt=>{
+      body+='<div class="challenge-option" onclick="checkChallengeAnswer(\''+escapeHtml(opt)+'\',\''+escapeHtml(q.correct)+'\')">'+escapeHtml(opt)+'</div>';
+    });
+    body+='</div>';
+  }
+  
+  $("challengeBody").innerHTML=body;
+  
+  if(challengeType==="speed" && !challengeTimer){
+    challengeTimer=setInterval(()=>{
+      challengeTime--;
+      if(challengeTime<=0){
+        clearInterval(challengeTimer);
+        challengeTimer=null;
+        renderChallenge();
+      } else {
+        $("challengeHeader").innerHTML='<div class="challenge-timer">⏱️ '+challengeTime+'秒</div><div class="challenge-score">得分: '+challengeScore+'</div>';
+      }
+    },1000);
+  }
+}
+
+function checkChallengeAnswer(choice, correct){
+  const ok=normalize(choice)===normalize(correct);
+  const options=$("challengeBody").querySelectorAll(".challenge-option");
+  
+  options.forEach(opt=>{
+    if(normalize(opt.textContent)===normalize(correct)) opt.classList.add("correct");
+    else if(normalize(opt.textContent)===normalize(choice)) opt.classList.add("wrong");
+    opt.style.pointerEvents="none";
+  });
+  
+  if(ok){
+    sfxCorrect();
+    challengeScore+=10;
+    if(challengeType==="streak"){
+      challengeStreak++;
+      if(challengeStreak>=5){
+        challengeLevel++;
+        challengeStreak=0;
+        sfxWin();
+      }
+    }
+  } else {
+    sfxWrong();
+    if(challengeType==="streak"){
+      challengeLevel=1;
+      challengeStreak=0;
+    }
+  }
+  
+  setTimeout(()=>{
+    challengeIdx++;
+    renderChallenge();
+  },800);
+}
+
+function checkBlindAnswer(){
+  const input=$("challengeInput");
+  const ans=input.value.trim();
+  const q=challengeQuestions[challengeIdx];
+  const correct=q.type==='en' ? q.prompt : q.correct;
+  
+  if(isCorrect({en:correct},ans)){
+    sfxCorrect();
+    challengeScore+=20;
+    input.style.borderColor="#5CB870";
+    input.style.backgroundColor="#E8F5E9";
+  } else {
+    sfxWrong();
+    input.style.borderColor="#E8726A";
+    input.style.backgroundColor="#FFF0EC";
+  }
+  
+  setTimeout(()=>{
+    challengeIdx++;
+    renderChallenge();
+  },1000);
+}
+
+function renderChallengeResult(){
+  if(challengeTimer){
+    clearInterval(challengeTimer);
+    challengeTimer=null;
+  }
+  
+  let icon="🏆";
+  let title="挑战完成！";
+  let scoreText="最终得分: "+challengeScore;
+  
+  if(challengeType==="streak"){
+    scoreText="到达第 "+(challengeLevel-1)+" 关";
+    if(challengeLevel>5) icon="👑";
+    else if(challengeLevel>3) icon="⭐";
+  }
+  
+  const highScores=S.challengeHighScores||{};
+  if(challengeType==="speed" && challengeScore>(highScores.speed||0)){
+    highScores.speed=challengeScore;
+    S.challengeHighScores=highScores;
+    save(S);
+    title+=" 新纪录！";
+  } else if(challengeType==="streak" && (challengeLevel-1)>(highScores.streak||0)){
+    highScores.streak=challengeLevel-1;
+    S.challengeHighScores=highScores;
+    save(S);
+    title+=" 新纪录！";
+  } else if(challengeType==="blind" && challengeScore>(highScores.blind||0)){
+    highScores.blind=challengeScore;
+    S.challengeHighScores=highScores;
+    save(S);
+    title+=" 新纪录！";
+  }
+  
+  let body='<div class="challenge-result">';
+  body+='<div class="challenge-result-icon">'+icon+'</div>';
+  body+='<div class="challenge-result-title">'+title+'</div>';
+  body+='<div class="challenge-result-score">'+scoreText+'</div>';
+  body+='<div class="btn orange" onclick="startChallenge(\''+challengeType+'\')">🔄 再试一次</div>';
+  body+='<div class="btn ghost" onclick="show(\'records\')">🏠 返回记录</div>';
+  body+='</div>';
+  
+  $("challengeBody").innerHTML=body;
+}
+
+/* ===== 记录学习日志 ===== */
+function flushCurWrong(){
+  const c=S.cur; if(!c||!c.curWrong) return;
+  c.curWrong.forEach(w=>{ const en=normalize(w.en); if(!S.dayErrors.includes(en)) S.dayErrors.push(en); });
+  save(S);
+}
+
+function roundEnd(){
+  const c=S.cur;
+  const wrongList = c.curWrongIdx.slice();
+  c.rounds.push({group:c.group, correct:c.curCorrect.slice(), wrong:c.curWrong.slice()});
+  c.curWrong.forEach(w=>{ const en=normalize(w.en); if(!S.dayErrors.includes(en)) S.dayErrors.push(en); });
+  const wrongN = c.rounds[c.rounds.length-1].wrong.length;
+  c.lastWrongIdx = wrongList;
+  c.curCorrect=[]; c.curWrong=[]; c.curWrongIdx=[];
+  save(S);
+  
+  const total=c.queue.length;
+  const correct=c.rounds[c.rounds.length-1].correct.length;
+  recordLearningLog(total, correct);
+  
+  if(S.maxStreak===undefined) S.maxStreak=0;
+  if(correct===total) S.maxStreak=Math.max(S.maxStreak, c.rounds.length);
+  
+  $("sumTitle").textContent=c.group+" · 第 "+c.rounds.length+" 轮 成长记录";
+  let html="";
+  html+='<div class="stat-row"><span>本轮正确</span><b>'+c.rounds[c.rounds.length-1].correct.length+' / '+total+'</b></div>';
+  if(wrongN>0){
+    html+='<div style="margin-top:10px;color:#8B7D6B;font-size:14px;font-weight:700;">🪴 还需要浇水的单词（'+wrongN+' 个）：</div>';
+    html+='<ul class="list">';
+    wrongList.forEach(idx=>{ const it=c.pool[idx]; html+='<li><b>'+escapeHtml(it.en)+'</b>　'+escapeHtml(it.pos)+'　'+escapeHtml(it.def)+'</li>'; });
+    html+='</ul>';
+    $("nextRoundBtn").textContent="🪴 需要浇水的单词，再来一次！";
+  } else {
+    html+='<div style="margin-top:12px;color:var(--green);font-weight:800;font-size:17px;text-align:center;">🎉 本轮全部开花，学习成功！</div>';
+    $("nextRoundBtn").textContent="🏆 全部开花了！查看成长记录";
+  }
+  $("sumBody").innerHTML=html;
+  if(wrongN>0) sfxLose(); else sfxWin();
+  show("summary");
+}
 </script>
 </body>
 </html>
