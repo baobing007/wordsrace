@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>单词花园 · 成长记录</title>
+<title>单词花园 · 成长记录 V3（移动端适配版）</title>
 <style>
   :root{
     --leaf:#6BAF7A; --leaf-d:#4E9A60; --red:#E8726A; --orange:#F0A868;
@@ -78,6 +78,10 @@
     background:rgba(255,255,255,.85); box-shadow:0 3px 0 #D9D0C4; display:flex; align-items:center; justify-content:center;
     font-size:20px; cursor:pointer; user-select:none; border:2px solid var(--sage);}
   .mute:active{transform:translateY(2px);}
+  .bgm{position:fixed; top:10px; right:58px; z-index:60; width:42px; height:42px; border-radius:50%;
+    background:rgba(255,255,255,.85); box-shadow:0 3px 0 #D9D0C4; display:flex; align-items:center; justify-content:center;
+    font-size:20px; cursor:pointer; user-select:none; border:2px solid var(--sage);}
+  .bgm:active{transform:translateY(2px);}
   .rv-prompt{font-size:22px; text-align:center; font-weight:800; color:var(--ink); margin:4px 0 14px; line-height:1.4;}
   .steps{display:flex; justify-content:center; gap:8px; margin-bottom:16px;}
   .step-dot{width:10px; height:10px; border-radius:50%; background:#DDD; transition:all .3s;}
@@ -184,6 +188,7 @@
     .anim-sun,.anim-peek,.anim-bee,.anim-sway-slow,.anim-breathe-slow{
       animation:none !important;
     }
+    .garden-divider svg *[class*="anim-"]{animation:none !important;}
   }
 
   /* ===== 页面入场动画 ===== */
@@ -278,15 +283,439 @@
   .challenge-result-icon{font-size:48px; margin-bottom:8px;}
   .challenge-result-title{font-size:20px; font-weight:800; color:#4E9A60; margin-bottom:8px;}
   .challenge-result-score{font-size:32px; font-weight:800; color:#E8726A; margin-bottom:16px;}
+
+  /* ===== 花盆进度条 ===== */
+  .flower-progress-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 4px;
+    max-width: 380px;
+    margin: 0 auto 12px;
+    padding: 30px 6px 8px;
+    position: relative;
+  }
+  .flower-pot-wrapper {
+    position: relative;
+    width: 36px;
+    height: 78px;
+    flex-shrink: 0;
+    overflow: visible;
+  }
+  .flower-pot-wrapper::after {
+    content: '';
+    display: block;
+    width: 34px;
+    height: 6px;
+    background: radial-gradient(ellipse, rgba(120,170,120,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .pot-svg {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    width: 36px;
+    height: 28px;
+  }
+  .flower-svg, .sprout-svg, .seed-svg {
+    position: absolute;
+    left: 50%;
+    bottom: 30px;
+  }
+  .watering-can {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-60%);
+    width: 20px;
+    height: 20px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.3s;
+  }
+  .flower-pot-wrapper.active .watering-can {
+    opacity: 1;
+    animation: waterTilt 1.5s ease-in-out infinite;
+  }
+  @keyframes waterTilt {
+    0%, 100% { transform: translateX(-60%) rotate(0deg); }
+    15% { transform: translateX(-60%) rotate(-15deg); }
+    40% { transform: translateX(-60%) rotate(-22deg); }
+    70% { transform: translateX(-60%) rotate(-10deg); }
+  }
+  .water-drop {
+    position: absolute;
+    width: 3px;
+    height: 4px;
+    background: #A8D5F0;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9;
+    left: calc(50% - 1.5px);
+  }
+  .flower-pot-wrapper.active .water-drop {
+    animation: dropFall 1.5s ease-in infinite;
+  }
+  .water-drop:nth-child(2) { left: calc(50% + 2px) !important; animation-delay: 0s !important; }
+  .water-drop:nth-child(3) { left: calc(50% - 1.5px) !important; animation-delay: 0.35s !important; }
+  .water-drop:nth-child(4) { left: calc(50% - 5px) !important; animation-delay: 0.7s !important; }
+  @keyframes dropFall {
+    0% { top: 18px; opacity: 0; }
+    8% { opacity: 0.85; }
+    85% { opacity: 0.5; }
+    100% { top: 60px; opacity: 0; }
+  }
+  .flower-svg {
+    transform: translateX(-50%) scale(0);
+    transform-origin: center bottom;
+    opacity: 0;
+  }
+  .flower-pot-wrapper.bloom .flower-svg {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    animation: bloomIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               flowerSway 3s ease-in-out 0.6s infinite;
+  }
+  @keyframes bloomIn {
+    0% { transform: translateX(-50%) scale(0); opacity: 0; }
+    50% { transform: translateX(-50%) scale(1.25); opacity: 1; }
+    100% { transform: translateX(-50%) scale(1); opacity: 1; }
+  }
+  @keyframes flowerSway {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(3deg); }
+    75% { transform: translateX(-50%) rotate(-3deg); }
+  }
+  .sprout-svg {
+    transform: translateX(-50%) translateY(8px);
+    transform-origin: center bottom;
+    opacity: 0;
+  }
+  .flower-pot-wrapper.sprout .sprout-svg {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    animation: sproutRise 0.5s ease-out forwards,
+               sproutSway 2.5s ease-in-out 0.5s infinite;
+  }
+  @keyframes sproutRise {
+    0% { transform: translateX(-50%) translateY(8px); opacity: 0; }
+    100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+  }
+  @keyframes sproutSway {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(4deg); }
+    75% { transform: translateX(-50%) rotate(-4deg); }
+  }
+  .seed-svg {
+    transform: translateX(-50%);
+    opacity: 0;
+  }
+  .flower-pot-wrapper.seed .seed-svg {
+    opacity: 1;
+  }
+  .flower-pot-wrapper.seed .flower-svg,
+  .flower-pot-wrapper.seed .sprout-svg,
+  .flower-pot-wrapper.sprout .flower-svg,
+  .flower-pot-wrapper.sprout .seed-svg,
+  .flower-pot-wrapper.bloom .sprout-svg,
+  .flower-pot-wrapper.bloom .seed-svg {
+    display: none;
+  }
+  /* ===== V3 新增：iPhone SE 小屏适配 ===== */
+  @media (max-width: 380px) {
+    #app { padding: 12px 10px 72px; }
+    .card { padding: 14px 12px; border-radius: 18px; border-width: 2px; }
+    h1 { font-size: 22px; }
+    .q-def { font-size: 22px; }
+    .input-play { font-size: 22px !important; padding: 12px !important; }
+    .fox-bubble .bubble-def { font-size: 20px; }
+    .sunflower-btn { width: 80px; height: 80px; font-size: 14px; }
+    .badge-grid { gap: 8px; }
+    .final-grid { gap: 8px; }
+    .flower-pot-wrapper { transform: scale(0.85); transform-origin: bottom center; }
+    .flower-progress-container { gap: 2px; }
+  }
+
+  /* ===== V2 新增：欢迎页优化 ===== */
+  .welcome-deco{position:relative;overflow:visible;}
+  .welcome-deco::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:90%;height:40px;background:radial-gradient(ellipse at 50% 0%,rgba(168,213,186,.25) 0%,transparent 70%);pointer-events:none;}
+  .streak-bar{display:flex;justify-content:center;gap:4px;margin:8px 0 14px;flex-wrap:wrap;}
+  .streak-sun{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:#FFF8E0;border:2px solid #F5C842;box-shadow:0 2px 0 #E0B830;transition:all .2s;}
+  .streak-sun.active{background:#F5C842;box-shadow:0 0 8px rgba(245,200,66,.5);}
+  .streak-sun.future{opacity:.3;}
+  .sunflower-btn{display:flex;align-items:center;justify-content:center;width:100px;height:100px;border-radius:50%;border:4px solid var(--gold);background:radial-gradient(circle at 40% 40%,#FDE68A,#F5C842,#E0A820);box-shadow:0 6px 0 #C48830,0 8px 20px rgba(200,160,40,.3);font-size:16px;font-weight:800;color:#7A5A1E;cursor:pointer;margin:16px auto;transition:all .15s;flex-direction:column;line-height:1.3;}
+  .sunflower-btn:active{transform:translateY(3px);box-shadow:0 3px 0 #C48830;}
+  .sunflower-btn .btn-icon{font-size:28px;margin-bottom:2px;}
+  .fence-border{border:3px solid var(--earth) !important;border-image:repeating-linear-gradient(90deg,var(--earth) 0px,var(--earth) 8px,transparent 8px,transparent 10px,var(--sage) 10px,var(--sage) 18px,transparent 18px,transparent 20px) 8 !important;border-radius:0 !important;position:relative;}
+  .fence-border::before,.fence-border::after{content:'';position:absolute;width:4px;height:12px;background:var(--earth);border-radius:1px;top:-14px;}
+  .fence-border::before{left:20px;}
+  .fence-border::after{right:20px;}
+  .history-scroll{display:flex;gap:10px;overflow-x:auto;padding:8px 4px 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+  .history-scroll::-webkit-scrollbar{display:none;}
+  .history-mini-card{min-width:140px;flex-shrink:0;background:linear-gradient(135deg,#FFFDF8,#F7FFF0);border-radius:14px;padding:12px;border:2px solid #E8DFD0;box-shadow:0 2px 8px rgba(160,130,100,.1);scroll-snap-align:start;}
+  .history-mini-card .hmc-date{font-size:11px;color:#8B7D6B;}
+  .history-mini-card .hmc-score{font-size:18px;font-weight:800;color:var(--leaf-d);margin:4px 0 2px;}
+  .history-mini-card .hmc-words{font-size:12px;color:#8B7D6B;}
+
+  /* ===== V2 新增：默写页紧凑化 ===== */
+  .steps-compact{display:flex;justify-content:center;align-items:center;height:6px;margin-bottom:10px;background:#EDE7DB;border-radius:3px;overflow:hidden;max-width:300px;margin-left:auto;margin-right:auto;}
+  .steps-compact .step-seg{height:100%;background:#DDD;transition:background .3s;flex:1;}
+  .steps-compact .step-seg.done{background:var(--leaf-d);}
+  .steps-compact .step-seg.active{background:var(--leaf);animation:seg-pulse 1.5s ease-in-out infinite;}
+  @keyframes seg-pulse{0%,100%{opacity:1}50%{opacity:.6}}
+  .flower-progress-container.compact{padding-top:20px;margin-bottom:8px;}
+  .flower-progress-container.compact .flower-pot-wrapper{transform:scale(0.85);transform-origin:bottom center;}
+  .fox-bubble{position:relative;background:#FFFDF8;border:2px solid var(--sage);border-radius:18px;padding:16px 16px 12px;margin-bottom:10px;text-align:center;}
+  .fox-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid var(--sage);}
+  .fox-bubble::before{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #FFFDF8;z-index:1;}
+  .fox-bubble .bubble-def{font-size:24px;font-weight:800;color:var(--ink);line-height:1.4;margin-bottom:4px;}
+  .fox-bubble .bubble-pos{font-size:14px;color:var(--red);font-weight:800;margin-bottom:6px;}
+  .fox-bubble .bubble-pron{display:flex;justify-content:center;gap:12px;margin-bottom:4px;}
+  .fox-bubble .bubble-pron .pronounce-btn{width:52px;height:52px;font-size:10px;}
+  .fox-bubble .bubble-fox{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:24px;animation:peek 3s ease-in-out infinite;}
+  .input-play{font-size:26px !important;padding:16px !important;border-width:4px !important;border-color:var(--sage) !important;transition:all .2s !important;}
+  .input-play:focus{box-shadow:0 0 0 4px rgba(168,213,186,.4) !important;}
+  .input-play.correct-glow{border-color:var(--green) !important;box-shadow:0 0 0 5px rgba(92,184,112,.3),0 0 20px rgba(92,184,112,.2) !important;background:#F0FFF0 !important;}
+  .input-play.wrong-shake{border-color:var(--red) !important;box-shadow:0 0 0 5px rgba(232,114,106,.3) !important;animation:shk .4s !important;}
+  .btn-row{display:flex;gap:10px;margin-top:14px;}
+  .btn-row .btn{flex:1;margin-top:0;}
+  .feedback-banner{position:fixed;top:0;left:50%;transform:translateX(-50%);max-width:480px;width:100%;padding:12px 16px;font-size:15px;font-weight:700;text-align:center;z-index:100;display:none;animation:slideDown .3s ease;}
+  .feedback-banner.ok{display:block;background:linear-gradient(90deg,#A5D6A7,#6BAF7A);color:#fff;}
+  .feedback-banner.no{display:block;background:linear-gradient(90deg,#F4B6A8,#E8726A);color:#fff;}
+  @keyframes slideDown{from{transform:translateX(-50%) translateY(-100%);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+  .play .garden-divider svg{max-height:30px;}
+
+  /* ===== V2 新增：轮次小结重构 ===== */
+  .wilted-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+  .wilted-card{background:linear-gradient(135deg,#FFF0EC,#FFFDF8);border-radius:14px;padding:10px;border:2px solid #F4B6A8;position:relative;overflow:hidden;}
+  .wilted-card .wc-icon{font-size:22px;position:absolute;top:4px;right:6px;opacity:.7;}
+  .wilted-card .wc-wrong{text-decoration:line-through;color:var(--red);font-size:13px;font-weight:700;}
+  .wilted-card .wc-right{color:var(--green);font-size:14px;font-weight:800;margin-top:2px;}
+  .wilted-card .wc-def{font-size:11px;color:#8B7D6B;margin-top:2px;}
+  .celebrate-scene{text-align:center;padding:20px 0;}
+  .celebrate-scene .cs-banner{font-size:24px;font-weight:800;color:var(--gold);animation:celebrate .8s ease infinite;}
+  .celebrate-scene .cs-bunny{font-size:48px;display:inline-block;animation:hop 1s ease-in-out infinite;}
+  .watering-pulse{animation:w-pulse 1.5s ease-in-out infinite;}
+  @keyframes w-pulse{0%,100%{transform:scale(1);box-shadow:0 5px 0 #3D7A4A}50%{transform:scale(1.05);box-shadow:0 5px 0 #3D7A4A,0 0 16px rgba(92,184,112,.4)}}
+
+  /* ===== V2 新增：结算页 2x2 网格 ===== */
+  .final-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  .final-grid .fg-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;border-radius:16px;border:2px solid #E8DFD0;background:#FFFDF8;cursor:pointer;transition:all .2s;font-family:inherit;font-size:13px;font-weight:700;color:var(--ink);text-align:center;line-height:1.4;}
+  .final-grid .fg-btn:active{transform:scale(.96);}
+  .final-grid .fg-btn .fg-icon{font-size:28px;margin-bottom:4px;}
+  .final-grid .fg-btn.fg-orange{border-color:#FBD5A8;background:linear-gradient(135deg,#FFF8EC,#FFFDF8);}
+  .final-grid .fg-btn.fg-green{border-color:#A8D5BA;background:linear-gradient(135deg,#F0FFF0,#FFFDF8);}
+  .final-grid .fg-btn.fg-pink{border-color:#F2A6B3;background:linear-gradient(135deg,#FFF0F5,#FFFDF8);}
+  .final-grid .fg-btn.fg-ghost{border-color:var(--sage);}
+  .accordion-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#8B7D6B;padding:8px 0;user-select:none;}
+  .accordion-toggle .acc-icon{transition:transform .2s;font-size:12px;}
+  .accordion-toggle.open .acc-icon{transform:rotate(45deg);}
+  .accordion-body{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .accordion-body.open{max-height:300px;}
+  .final-rainbow{max-height:35px !important;}
+  .final-rainbow svg{max-height:35px;}
+
+  /* ===== V2 新增：记录仪表板 ===== */
+  .streak-vine{display:flex;align-items:center;gap:3px;margin-bottom:14px;padding:8px 12px;background:linear-gradient(90deg,#F0FFF0,#FFFDF8);border-radius:12px;border:2px solid var(--sage);overflow-x:auto;}
+  .streak-vine::-webkit-scrollbar{display:none;}
+  .vine-leaf{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all .2s;}
+  .vine-leaf.grown{background:#A8D5BA;border:2px solid var(--leaf-d);}
+  .vine-leaf.today{background:#F5C842;border:2px solid #E0A820;animation:breathe 2s ease-in-out infinite;}
+  .vine-leaf.empty{background:#EDE7DB;border:2px dashed #CCC;opacity:.5;}
+  .vine-stem{width:12px;height:3px;background:var(--leaf);border-radius:2px;flex-shrink:0;}
+  .record-tabs-v2{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;}
+  .record-tabs-v2::-webkit-scrollbar{display:none;}
+  .tab-pill{display:flex;align-items:center;gap:4px;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:700;color:#8B7D6B;background:#FFFDF8;border:2px solid #E8DFD0;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+  .tab-pill.active{color:#fff;background:var(--leaf-d);border-color:var(--leaf-d);box-shadow:0 3px 0 #3D7A4A;}
+  .badge-scroll{display:flex;gap:12px;overflow-x:auto;padding:8px 0;-webkit-overflow-scrolling:touch;}
+  .badge-scroll::-webkit-scrollbar{display:none;}
+  .badge-card{min-width:120px;flex-shrink:0;background:linear-gradient(135deg,#FFFDF8,#F7FFF0);border-radius:16px;padding:14px 12px;border:2px solid #E8DFD0;text-align:center;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;}
+  .badge-card.unlocked{border-color:var(--gold);background:linear-gradient(135deg,#FFF8E0,#FFFDF8);}
+  .badge-card.locked{filter:grayscale(0.8);opacity:.5;}
+  .badge-card:active{transform:scale(.96);}
+  .badge-card .bc-icon{font-size:36px;margin-bottom:4px;}
+  .badge-card .bc-name{font-size:12px;font-weight:800;color:#4E9A60;}
+  .badge-card.locked .bc-name{color:#8B7D6B;}
+  .badge-card .bc-silhouette{font-size:36px;filter:brightness(0) opacity(0.15);position:absolute;top:14px;left:50%;transform:translateX(-50%);}
+  .ring-gauges{display:flex;justify-content:space-around;margin:16px 0;}
+  .ring-gauge{text-align:center;position:relative;width:90px;height:90px;}
+  .ring-gauge svg{width:90px;height:90px;transform:rotate(-90deg);}
+  .ring-gauge .rg-bg{fill:none;stroke:#EDE7DB;stroke-width:8;}
+  .ring-gauge .rg-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .8s ease;}
+  .ring-gauge .rg-value{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring-gauge .rg-num{font-size:20px;font-weight:800;color:var(--ink);}
+  .ring-gauge .rg-emoji{font-size:16px;margin-bottom:2px;}
+  .ring-gauge .rg-label{font-size:10px;color:#8B7D6B;}
+  .water-need-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:linear-gradient(135deg,#FFF0EC,#FFFDF8);border-radius:12px;margin-bottom:8px;border:2px solid #F4B6A8;}
+  .water-need-card .wnc-icon{font-size:24px;flex-shrink:0;}
+  .water-need-card .wnc-info{flex:1;}
+  .water-need-card .wnc-word{font-size:14px;font-weight:800;color:var(--ink);}
+  .water-need-card .wnc-def{font-size:12px;color:#8B7D6B;}
+  .water-need-card .wnc-bar{height:6px;background:#EDE7DB;border-radius:3px;margin-top:4px;overflow:hidden;}
+  .water-need-card .wnc-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
+
+  /* ===== V2 新增：复习页花瓣网格 ===== */
+  .petal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .petal-btn{padding:16px 10px;border-radius:20px;border:3px solid transparent;font-size:16px;font-weight:700;text-align:center;cursor:pointer;transition:all .2s;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15);font-family:inherit;position:relative;overflow:hidden;}
+  .petal-btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.15);}
+  .petal-btn.p0{background:linear-gradient(135deg,#F2A6B3,#E08A98);border-color:#D9899A;}
+  .petal-btn.p1{background:linear-gradient(135deg,#C8B6E2,#A993C9);border-color:#9680B3;}
+  .petal-btn.p2{background:linear-gradient(135deg,#FBD5A8,#E8A060);border-color:#D08840;}
+  .petal-btn.p3{background:linear-gradient(135deg,#A8D5BA,#7FBD96);border-color:#5CB870;}
+  .petal-btn.rv-hit{outline:3px solid var(--gold);box-shadow:0 0 12px rgba(245,200,66,.5);animation:petal-bloom .4s ease;}
+  .petal-btn.rv-miss{opacity:.4;filter:grayscale(0.5);animation:petal-wilt .4s ease;}
+  @keyframes petal-bloom{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+  @keyframes petal-wilt{0%{transform:scale(1)}50%{transform:scale(0.92)}100%{transform:scale(0.95)}}
+  .bird-bubble{position:relative;background:#FFFDF8;border:2px solid var(--sage);border-radius:18px;padding:14px 16px;margin-bottom:12px;text-align:center;}
+  .bird-bubble::after{content:'';position:absolute;bottom:-10px;left:30px;border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid var(--sage);}
+  .bird-bubble::before{content:'';position:absolute;bottom:-7px;left:31px;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #FFFDF8;z-index:1;}
+  .bird-bubble .bb-bird{position:absolute;top:-20px;left:16px;font-size:22px;animation:peck 3s ease-in-out infinite;}
+  .bird-bubble .bb-text{font-size:20px;font-weight:800;color:var(--ink);line-height:1.4;}
+
+  /* ===== V2 新增：挑战模式差异化 ===== */
+  .challenge-sunset{background:linear-gradient(180deg,#FF9A56 0%,#FF7EB3 50%,#C8B6E2 100%) !important;}
+  .challenge-sunset .card{background:rgba(255,253,248,.92) !important;}
+  .sun-timer{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;position:relative;display:flex;align-items:center;justify-content:center;}
+  .sun-timer svg{position:absolute;inset:0;transform:rotate(-90deg);}
+  .sun-timer .st-bg{fill:none;stroke:#EDE7DB;stroke-width:6;}
+  .sun-timer .st-fill{fill:none;stroke:#F5C842;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
+  .sun-timer .st-time{font-size:22px;font-weight:800;color:var(--red);z-index:1;}
+  .sun-timer .st-face{font-size:28px;position:absolute;}
+  .score-flower{display:flex;justify-content:center;margin-bottom:12px;}
+  .score-flower .sf-petal{width:16px;height:16px;border-radius:50% 50% 50% 0;background:var(--pink);transform:rotate(-45deg);margin:0 2px;opacity:0;transition:all .3s;}
+  .score-flower .sf-petal.grown{opacity:1;}
+  .streak-fire{display:flex;justify-content:center;gap:2px;margin-bottom:8px;}
+  .streak-fire .fire-chain{font-size:16px;animation:fire-flicker .3s ease infinite alternate;}
+  @keyframes fire-flicker{from{transform:scaleY(1)}to{transform:scaleY(1.1)}}
+  .bee-transition{position:fixed;top:50%;left:-40px;font-size:28px;z-index:200;animation:bee-cross .3s ease-in-out forwards;pointer-events:none;}
+  @keyframes bee-cross{from{left:-40px;top:50%}to{left:calc(100% + 40px);top:40%}}
+
+  /* ===== V2 新增：导航优化 ===== */
+  .bottom-nav-v2{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,253,248,.94);backdrop-filter:blur(10px);border-top:2px solid #E8DFD0;display:flex;justify-content:space-around;align-items:flex-end;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:50;}
+  .nav-island{display:flex;flex-direction:column;align-items:center;font-size:10px;color:#8B7D6B;cursor:pointer;padding:4px 16px 6px;border-radius:14px 14px 8px 8px;transition:all .25s;position:relative;}
+  .nav-island .nav-icon{font-size:22px;margin-bottom:1px;transition:transform .25s;}
+  .nav-island.active{color:var(--leaf-d);background:linear-gradient(180deg,rgba(168,213,186,.3),rgba(168,213,186,.1));transform:translateY(-4px);box-shadow:0 4px 12px rgba(107,175,122,.2);}
+  .nav-island.active .nav-icon{transform:scale(1.15);}
+  .nav-island .nav-mascot{position:absolute;top:-18px;font-size:16px;opacity:0;transition:opacity .2s;}
+  .nav-island.active .nav-mascot{opacity:1;animation:hop 2s ease-in-out infinite;}
+  .nav-flower-sep{font-size:10px;color:var(--sage);align-self:center;opacity:.6;padding-bottom:4px;}
+
+  /* ===== V2 新增：页面过渡动画 ===== */
+  .screen.slide-up{animation:slideUp .4s ease;}
+  @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  .screen.slide-down{animation:slideDown .4s ease;}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ===== V2 新增：新手引导 ===== */
+  .guide-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;}
+  .guide-overlay.show{display:flex;}
+  .guide-bubble{background:#FFFDF8;border-radius:20px;padding:20px 24px;max-width:280px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);border:3px solid var(--sage);position:relative;animation:rise-in .5s ease;}
+  .guide-bubble .gb-icon{font-size:40px;margin-bottom:8px;}
+  .guide-bubble .gb-text{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.5;}
+  .guide-bubble .gb-step{display:flex;justify-content:center;gap:6px;margin-bottom:12px;}
+  .guide-bubble .gb-dot{width:8px;height:8px;border-radius:50%;background:#DDD;}
+  .guide-bubble .gb-dot.active{background:var(--leaf-d);}
+  .guide-bubble .gb-btn{display:inline-block;padding:10px 24px;border-radius:14px;background:var(--leaf-d);color:#fff;font-weight:700;font-size:14px;cursor:pointer;border:none;font-family:inherit;}
+  .guide-bubble .gb-arrow{position:absolute;width:0;height:0;}
+  .guide-bubble .gb-arrow.bottom{bottom:-12px;left:50%;transform:translateX(-50%);border-left:12px solid transparent;border-right:12px solid transparent;border-top:12px solid var(--sage);}
+
+  /* ===== V3 新增：触摸目标增强 ===== */
+  .pronounce-btn{width:72px; height:72px; min-width:72px; min-height:72px;}
+  .fox-bubble .bubble-pron .pronounce-btn{width:56px; height:56px; min-width:56px; min-height:56px;}
+  .mute{width:46px; height:46px; font-size:22px; top:max(12px, env(safe-area-inset-top)); right:max(12px, env(safe-area-inset-right));}
+  .bgm{width:46px; height:46px; font-size:22px; top:max(12px, env(safe-area-inset-top)); right:max(66px, calc(env(safe-area-inset-right) + 54px));}
+  .nav-island{padding:8px 20px 10px; min-height:50px; border-radius:16px 16px 10px 10px;}
+  .nav-island .nav-icon{font-size:24px;}
+  .challenge-option{padding:16px 20px; font-size:17px; min-height:52px;}
+
+  /* ===== V3 新增：安全区域补全 ===== */
+  .feedback-banner{padding-top:max(12px, env(safe-area-inset-top));}
+  #app{padding-top:max(18px, env(safe-area-inset-top));}
+
+  /* ===== V3 新增：GPU 加速提示 ===== */
+  .anim-flutter,.anim-peek,.anim-hop,.anim-bee{will-change:transform;}
+
+  /* ===== V3 新增：iPad 适配 ===== */
+  @media (min-width: 768px) {
+    #app{max-width:600px; padding:24px 28px 90px; padding-top:max(24px, env(safe-area-inset-top));}
+    body{font-size:17px;}
+    .sub{font-size:16px;}
+    .counter{font-size:15px;}
+    .q-hint{font-size:14px;}
+    .paw{font-size:14px;}
+    .mini{font-size:14px;}
+    .tag{font-size:13px; padding:2px 10px;}
+    .nav-island{font-size:12px; padding:8px 20px 10px; min-height:50px; border-radius:16px 16px 10px 10px;}
+    .nav-island .nav-icon{font-size:24px;}
+    .pronounce-btn{width:80px; height:80px; min-width:80px; min-height:80px; font-size:13px;}
+    .mute{width:48px; height:48px; font-size:22px; top:max(12px, env(safe-area-inset-top));}
+    .bgm{width:48px; height:48px; font-size:22px; top:max(12px, env(safe-area-inset-top)); right:max(68px, calc(env(safe-area-inset-right) + 56px));}
+    .badge-scroll{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; overflow-x:visible;}
+    .badge-card{min-width:auto;}
+    .petal-grid{gap:16px; max-width:500px; margin:0 auto;}
+    .petal-btn{padding:20px 16px; font-size:18px; border-radius:24px;}
+    .final-grid{gap:14px; max-width:480px; margin-left:auto; margin-right:auto;}
+    .final-grid .fg-btn{padding:22px 12px;}
+    .final-grid .fg-btn .fg-icon{font-size:32px;}
+    .history-scroll{gap:14px; padding:10px 8px 16px;}
+    .history-mini-card{min-width:180px; padding:16px;}
+    .calendar-day{font-size:15px; border-radius:10px;}
+    .calendar-weekdays{font-size:14px;}
+    .calendar-stats{padding:16px;}
+    .calendar-stat .num{font-size:28px;}
+    /* 减少非关键动画提升性能 */
+    .anim-petal:nth-child(n+3),.anim-twinkle:nth-child(n+2){animation:none !important;}
+    /* iPad 外接键盘 Enter 提示 */
+  }
+  @media (min-width: 768px) and (hover: hover) {
+    .input-play::after{content:'按 Enter 提交'; font-size:11px; color:#8B7D6B; display:block; margin-top:4px;}
+  }
+
+  /* ===== V3 新增：iPad 大屏 ===== */
+  @media (min-width: 1024px) {
+    #app{max-width:640px; padding:28px 32px 100px; padding-top:max(28px, env(safe-area-inset-top));}
+  }
+
+  /* ===== V3 新增：iPad 分屏窄模式 ===== */
+  @media (min-width: 768px) and (max-width: 500px) {
+    #app{max-width:100%; padding:12px 10px 70px; padding-top:max(12px, env(safe-area-inset-top));}
+    .garden-divider svg{max-height:30px;}
+    .badge-scroll{gap:8px;}
+    .badge-card{min-width:100px;}
+  }
+
+  /* ===== V3 新增：横屏紧凑布局 ===== */
+  @media (orientation: landscape) and (max-height: 500px) {
+    #app{max-width:100%; padding:8px 16px 70px; min-height:auto; padding-top:max(8px, env(safe-area-inset-top));}
+    .garden-divider{margin:8px 0;}
+    .garden-divider svg{max-height:25px;}
+    .card{padding:12px 14px;}
+    h1{font-size:20px; margin:2px 0;}
+    .logo svg{width:60px; height:60px;}
+    .flower-progress-container.compact{padding-top:10px; margin-bottom:4px;}
+    .paw{display:none;}
+    .bottom-nav-v2{max-width:100%;}
+    .feedback-banner{max-width:100%;}
+  }
 </style>
 </head>
 <body>
 <div id="app">
   <div id="muteBtn" class="mute" title="声音开关">🔊</div>
+  <div id="bgmBtn" class="bgm" title="背景音乐开关">🎵</div>
+
+  <!-- V2 新增：顶部横幅通知 -->
+  <div class="feedback-banner" id="topBanner"></div>
 
   <!-- 欢迎页 -->
   <section id="welcome" class="screen">
-    <div class="logo">
+    <div class="logo welcome-deco">
       <svg width="120" height="120" viewBox="0 0 120 120">
         <!-- 树干 -->
         <rect x="52" y="70" width="16" height="35" rx="4" fill="#A0744E"/>
@@ -313,10 +742,12 @@
     </div>
     <h1>单词花园</h1>
     <div class="sub">🌿 种下单词的种子，收获知识的花朵 🌱</div>
+    <!-- V2: 连续打卡天数横条 -->
+    <div class="streak-bar" id="streakBar"></div>
     <div class="card">
       <label>小园丁的昵称</label>
-      <input id="nick" type="text" placeholder="例如：可可 / 小熊猫" maxlength="12">
-      <div class="btn orange" id="startBtn">🌻 种下种子，开始学习</div>
+      <input id="nick" type="text" class="fence-border" placeholder="例如：可可 / 小熊猫" maxlength="12">
+      <div class="sunflower-btn" id="startBtn"><span class="btn-icon">🌻</span>开始学习</div>
       <div class="mini" id="resumeTip"></div>
     </div>
 
@@ -375,7 +806,7 @@
 
     <div class="card" id="historyCard" style="display:none;">
       <div style="font-weight:800;color:var(--leaf-d);font-size:16px;margin-bottom:8px;">📊 成长日记</div>
-      <div id="historyBody"></div>
+      <div class="history-scroll" id="historyBody"></div>
     </div>
     <div class="paw">—— 每次新学 10 词 · 顺着词库慢慢浇水 · 错词自动进复习花园 ——</div>
   </section>
@@ -438,29 +869,35 @@
 
   <!-- 默写页 -->
   <section id="play" class="screen">
-    <div class="steps" id="playSteps">
-      <div class="step-dot done"></div>
-      <div class="step-dot done"></div>
-      <div class="step-dot active"></div>
-      <div class="step-dot"></div>
-    </div>
+    <!-- V2: 细长进度导轨 -->
+    <div class="steps-compact" id="playSteps"></div>
     <div class="counter" id="counter"></div>
+    <!-- 花盆进度条（紧凑模式） -->
+    <div class="flower-progress-container compact" id="flowerProgress"></div>
     <div class="card">
-      <div class="q-def" id="qDef"></div>
-      <div class="q-pos" id="qPos"></div>
-      <div class="pronounce-row">
-        <button class="pronounce-btn uk" id="playPronounceUK" title="英式发音">英式<br>发音</button>
-        <button class="pronounce-btn us" id="playPronounceUS" title="美式发音">美式<br>发音</button>
+      <!-- V2: 小狐狸气泡框 -->
+      <div class="fox-bubble" id="foxBubble">
+        <span class="bubble-fox">🦊</span>
+        <div class="bubble-def" id="qDef"></div>
+        <div class="bubble-pos" id="qPos"></div>
+        <div class="bubble-pron">
+          <button class="pronounce-btn uk" id="playPronounceUK" title="英式发音">英式<br>发音</button>
+          <button class="pronounce-btn us" id="playPronounceUS" title="美式发音">美式<br>发音</button>
+        </div>
       </div>
       <div class="q-hint" id="qHint"></div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-      <input id="ans" type="text" placeholder="写出英文拼写" autocomplete="off">
-      <div class="btn" id="submitBtn">🌿 提交答案</div>
-      <div class="feedback" id="fb"></div>
-      <div class="btn orange" id="nextBtn" style="display:none;">➡️ 下一个单词</div>
+      <input id="ans" type="text" class="input-play" placeholder="写出英文拼写" autocomplete="off">
+      <!-- V2: 按钮并排 -->
+      <div class="btn-row">
+        <div class="btn" id="submitBtn">🌿 提交答案</div>
+        <div class="btn orange" id="nextBtn" style="display:none;">➡️ 下一个</div>
+      </div>
     </div>
-    <div class="btn ghost" id="playReviewBtn">📚 进入复习</div>
-    <div class="btn ghost" id="playHomeBtn">🏠 返回花园</div>
+    <!-- V2: 底部按钮并排 -->
+    <div class="btn-row" style="max-width:300px;margin:10px auto 0;">
+      <div class="btn ghost" id="playReviewBtn" style="font-size:14px;padding:10px;">📚 复习</div>
+      <div class="btn ghost" id="playHomeBtn" style="font-size:14px;padding:10px;">🏠 花园</div>
+    </div>
 
     <!-- 默写页底部：小狐狸鼓励场景插画 -->
     <div class="garden-divider">
@@ -529,20 +966,21 @@
 
   <!-- 复习页（选择题） -->
   <section id="review" class="screen">
-    <div class="steps" id="rvSteps">
-      <div class="step-dot done"></div>
-      <div class="step-dot active"></div>
-      <div class="step-dot"></div>
-      <div class="step-dot"></div>
-    </div>
+    <!-- V2: 细长进度导轨 -->
+    <div class="steps-compact" id="rvSteps"></div>
     <div class="counter" id="rvCounter"></div>
     <div class="card">
-      <div class="rv-prompt" id="rvPrompt"></div>
+      <!-- V2: 小鸟气泡框 -->
+      <div class="bird-bubble" id="birdBubble">
+        <span class="bb-bird">🐤</span>
+        <div class="bb-text" id="rvPrompt"></div>
+      </div>
       <div class="pronounce-row">
         <button class="pronounce-btn uk" id="rvPronounceUK" title="英式发音">英式<br>发音</button>
         <button class="pronounce-btn us" id="rvPronounceUS" title="美式发音">美式<br>发音</button>
       </div>
-      <div id="rvOpts"></div>
+      <!-- V2: 花瓣2x2网格 -->
+      <div class="petal-grid" id="rvOpts"></div>
       <div class="feedback" id="rvFb"></div>
       <div class="btn orange" id="rvNext" style="display:none;">➡️ 下一题</div>
       <div class="btn" id="rvStart">☀️ 开始拼写</div>
@@ -643,7 +1081,7 @@
 
     <div class="card">
       <div id="sumBody"></div>
-      <div class="btn orange" id="nextRoundBtn">⚔️ 出错单词，再战！</div>
+      <div class="btn orange watering-pulse" id="nextRoundBtn">🪣 需要浇水，再来一次！</div>
     </div>
   </section>
 
@@ -651,9 +1089,9 @@
   <section id="final" class="screen">
     <h1>🏆 成长记录 · 花园战报</h1>
 
-    <!-- 结算页顶部：花开满园庆祝插画 -->
-    <div class="garden-divider">
-      <svg width="360" height="55" viewBox="0 0 360 55">
+    <!-- 结算页顶部：花开满园庆祝插画（V2: 缩小为横幅） -->
+    <div class="garden-divider final-rainbow">
+      <svg width="360" height="35" viewBox="0 0 360 35">
         <!-- 彩虹 -->
         <path d="M60,50 Q180,-10 300,50" stroke="#F2A6B3" stroke-width="4" fill="none" opacity=".3"/>
         <path d="M70,50 Q180,-5 290,50" stroke="#FBD5A8" stroke-width="4" fill="none" opacity=".3"/>
@@ -730,12 +1168,21 @@
     <div class="card">
       <div id="finalBody"></div>
       <img id="cardImg" alt="成长卡片">
-      <div class="btn orange" id="redoBtn">🔄 再浇一次水（同一组词）</div>
-      <div class="btn" id="nextGroupBtn">➡️ 种下一批种子（后续新词）</div>
-      <div class="btn pink" id="saveBtn">📥 保存成长图片</div>
-      <div class="btn ghost" id="copyBtn">📋 复制成长记录</div>
-      <div class="tip">📷 <b>微信里查看时</b>：长按上方成长图片即可<b>保存或转发给爸爸</b>。<br>
-      🔁 下次再打开，会顺着词库顺序出新词，并把之前没背对的词加进复习花园，反复练到全对。</div>
+      <!-- V2: 2x2 网格按钮 -->
+      <div class="final-grid">
+        <div class="fg-btn fg-orange" id="redoBtn"><span class="fg-icon">🪣</span>再浇一次水</div>
+        <div class="fg-btn fg-green" id="nextGroupBtn"><span class="fg-icon">🌱</span>种新种子</div>
+        <div class="fg-btn fg-pink" id="saveBtn"><span class="fg-icon">📥</span>保存图片</div>
+        <div class="fg-btn fg-ghost" id="copyBtn"><span class="fg-icon">📋</span>复制记录</div>
+      </div>
+      <!-- V2: 可折叠提示 -->
+      <div class="accordion-toggle" id="accToggle" onclick="this.classList.toggle('open');document.getElementById('accBody').classList.toggle('open')">
+        <span class="acc-icon">+</span> 使用提示
+      </div>
+      <div class="accordion-body" id="accBody">
+        <div class="tip" style="margin-top:8px;">📷 <b>微信里查看时</b>：长按上方成长图片即可<b>保存或转发给爸爸</b>。<br>
+        🔁 下次再打开，会顺着词库顺序出新词，并把之前没背对的词加进复习花园，反复练到全对。</div>
+      </div>
     </div>
     <div class="paw">花园小园丁，今天也是花开的一天 ✨</div>
   </section>
@@ -743,11 +1190,14 @@
   <!-- 记录页 -->
   <section id="records" class="screen">
     <h1>📊 我的成长记录</h1>
-    <div class="record-tabs">
-      <div class="record-tab active" id="tabCalendar" onclick="showRecordTab('calendar')">📅 日历</div>
-      <div class="record-tab" id="tabBadges" onclick="showRecordTab('badges')">🏆 徽章</div>
-      <div class="record-tab" id="tabChart" onclick="showRecordTab('chart')">📈 曲线</div>
-      <div class="record-tab" id="tabDiagnostic" onclick="showRecordTab('diagnostic')">🔍 诊断</div>
+    <!-- V2: 连续学习藤蔓 -->
+    <div class="streak-vine" id="streakVine"></div>
+    <!-- V2: 胶囊式导航 -->
+    <div class="record-tabs-v2">
+      <div class="tab-pill active" id="tabCalendar" onclick="showRecordTab('calendar')">📅 日历</div>
+      <div class="tab-pill" id="tabBadges" onclick="showRecordTab('badges')">🏆 徽章</div>
+      <div class="tab-pill" id="tabChart" onclick="showRecordTab('chart')">📈 曲线</div>
+      <div class="tab-pill" id="tabDiagnostic" onclick="showRecordTab('diagnostic')">🔍 诊断</div>
     </div>
 
     <!-- 日历内容 -->
@@ -757,11 +1207,13 @@
 
     <!-- 徽章内容 -->
     <div id="recordBadges" class="card record-card">
-      <div class="badge-grid" id="badgeGrid"></div>
+      <div class="badge-scroll" id="badgeGrid"></div>
     </div>
 
     <!-- 图表内容 -->
     <div id="recordChart" class="card record-card">
+      <!-- V2: 环形仪表盘 -->
+      <div class="ring-gauges" id="ringGauges"></div>
       <div class="diagnostic-title">📈 近7天学习趋势</div>
       <div class="chart-container" id="growthChart"></div>
       <div class="calendar-stats" style="margin-top:32px;">
@@ -834,7 +1286,9 @@
       <div id="challengeHeader"></div>
       <div id="challengeBody"></div>
     </div>
-    <div class="btn ghost" onclick="show('records')">🏠 返回记录</div>
+    <div class="btn-row" style="max-width:300px;margin:10px auto 0;">
+      <div class="btn ghost" onclick="show('records')">🏠 返回记录</div>
+    </div>
   </section>
 
   <!-- 徽章弹窗 -->
@@ -846,16 +1300,342 @@
     </div>
   </div>
 
-  <!-- 底部导航栏 -->
-  <nav class="bottom-nav">
-    <div class="nav-item" id="navHome" onclick="goHome()"><span class="nav-icon">🏠</span><span>花园</span></div>
-    <div class="nav-item" id="navReview" onclick="goReview()"><span class="nav-icon">📚</span><span>复习</span></div>
-    <div class="nav-item" id="navRecord" onclick="showRecords()"><span class="nav-icon">📊</span><span>记录</span></div>
+  <!-- V2: 岛屿式底部导航 -->
+  <nav class="bottom-nav-v2" id="bottomNavV2">
+    <span class="nav-flower-sep">🌸</span>
+    <div class="nav-island active" id="navHome" onclick="goHome()">
+      <span class="nav-mascot">🦊</span>
+      <span class="nav-icon">🏠</span><span>花园</span>
+    </div>
+    <span class="nav-flower-sep">🌼</span>
+    <div class="nav-island" id="navReview" onclick="goReview()">
+      <span class="nav-mascot">🐤</span>
+      <span class="nav-icon">📚</span><span>复习</span>
+    </div>
+    <span class="nav-flower-sep">🌺</span>
+    <div class="nav-island" id="navRecord" onclick="showRecords()">
+      <span class="nav-mascot">🐰</span>
+      <span class="nav-icon">📊</span><span>记录</span>
+    </div>
+    <span class="nav-flower-sep">🌻</span>
   </nav>
+
+  <!-- V2: 新手引导浮层 -->
+  <div class="guide-overlay" id="guideOverlay">
+    <div class="guide-bubble" id="guideBubble">
+      <div class="gb-icon" id="guideIcon">🦊</div>
+      <div class="gb-text" id="guideText">输入你的昵称</div>
+      <div class="gb-step">
+        <div class="gb-dot active" id="gd1"></div>
+        <div class="gb-dot" id="gd2"></div>
+        <div class="gb-dot" id="gd3"></div>
+      </div>
+      <div class="gb-btn" id="guideNextBtn" onclick="nextGuideStep()">知道了</div>
+    </div>
+  </div>
 
 </div>
 
 <script>
+/* ===== 花盆进度条组件（10种花朵，3种状态）===== */
+const FLOWER_DEFS = [
+  { name: '粉色玫瑰',   color: '#F2A6B3', darkColor: '#D9899A' },
+  { name: '薰衣草',     color: '#C8B6E2', darkColor: '#A993C9' },
+  { name: '向日葵',     color: '#F5C842', darkColor: '#D4A820' },
+  { name: '蜜桃郁金香', color: '#FBD5A8', darkColor: '#E4B882' },
+  { name: '蓝色勿忘我', color: '#A8D5F0', darkColor: '#7BBDE0' },
+  { name: '珊瑚雏菊',   color: '#FDA4AF', darkColor: '#E87E8C' },
+  { name: '薄荷铃兰',   color: '#A8D5BA', darkColor: '#7FBD96' },
+  { name: '橙色万寿菊', color: '#F0A868', darkColor: '#D08840' },
+  { name: '淡紫紫罗兰', color: '#B8A0D0', darkColor: '#9680B3' },
+  { name: '金色蒲公英', color: '#F5C842', darkColor: '#D4A820' }
+];
+
+function createFlowerSVG(index) {
+  const f = FLOWER_DEFS[index];
+  const c = f.color;
+  const d = f.darkColor;
+  let s = '';
+  switch (index) {
+    case 0: /* 粉色玫瑰 */
+      s = '<svg width="40" height="42" viewBox="0 0 40 42">'
+        + '<line x1="20" y1="42" x2="20" y2="20" stroke="#6BAF7A" stroke-width="2.5" stroke-linecap="round"/>'
+        + '<ellipse cx="13" cy="33" rx="6" ry="3.5" fill="#A8D5BA" transform="rotate(-30,13,33)"/>'
+        + '<ellipse cx="27" cy="30" rx="6" ry="3.5" fill="#A8D5BA" transform="rotate(25,27,30)"/>'
+        + '<ellipse cx="20" cy="14" rx="6" ry="8" fill="' + c + '" transform="rotate(0,20,18)"/>'
+        + '<ellipse cx="20" cy="14" rx="6" ry="8" fill="' + c + '" transform="rotate(72,20,18)"/>'
+        + '<ellipse cx="20" cy="14" rx="6" ry="8" fill="' + c + '" transform="rotate(144,20,18)"/>'
+        + '<ellipse cx="20" cy="14" rx="6" ry="8" fill="' + c + '" transform="rotate(216,20,18)"/>'
+        + '<ellipse cx="20" cy="14" rx="6" ry="8" fill="' + c + '" transform="rotate(288,20,18)"/>'
+        + '<circle cx="20" cy="18" r="4" fill="' + d + '"/>'
+        + '<circle cx="18" cy="17" r="1" fill="#fff" opacity="0.5"/>'
+        + '</svg>';
+      break;
+    case 1: /* 薰衣草 */
+      s = '<svg width="36" height="48" viewBox="0 0 36 48">'
+        + '<line x1="18" y1="48" x2="18" y2="14" stroke="#6BAF7A" stroke-width="2" stroke-linecap="round"/>'
+        + '<ellipse cx="11" cy="40" rx="5" ry="3" fill="#A8D5BA" transform="rotate(-25,11,40)"/>'
+        + '<ellipse cx="25" cy="37" rx="5" ry="3" fill="#A8D5BA" transform="rotate(20,25,37)"/>'
+        + '<ellipse cx="18" cy="8" rx="3.5" ry="3" fill="' + c + '"/>'
+        + '<ellipse cx="14" cy="12" rx="3" ry="2.8" fill="' + c + '"/>'
+        + '<ellipse cx="22" cy="12" rx="3" ry="2.8" fill="' + c + '"/>'
+        + '<ellipse cx="18" cy="16" rx="3.2" ry="2.8" fill="' + c + '"/>'
+        + '<ellipse cx="14" cy="20" rx="3" ry="2.5" fill="' + d + '"/>'
+        + '<ellipse cx="22" cy="20" rx="3" ry="2.5" fill="' + d + '"/>'
+        + '<ellipse cx="18" cy="24" rx="3.5" ry="2.8" fill="' + d + '"/>'
+        + '</svg>';
+      break;
+    case 2: /* 向日葵 */
+      s = '<svg width="44" height="48" viewBox="0 0 44 48">'
+        + '<line x1="22" y1="48" x2="22" y2="22" stroke="#6BAF7A" stroke-width="3" stroke-linecap="round"/>'
+        + '<ellipse cx="14" cy="40" rx="7" ry="4" fill="#A8D5BA" transform="rotate(-20,14,40)"/>'
+        + '<ellipse cx="30" cy="38" rx="7" ry="4" fill="#A8D5BA" transform="rotate(20,30,38)"/>'
+        + '<ellipse cx="22" cy="10" rx="4" ry="7" fill="' + c + '" transform="rotate(0,22,16)"/>'
+        + '<ellipse cx="22" cy="10" rx="4" ry="7" fill="' + c + '" transform="rotate(30,22,16)"/>'
+        + '<ellipse cx="22" cy="10" rx="4" ry="7" fill="' + c + '" transform="rotate(60,22,16)"/>'
+        + '<ellipse cx="22" cy="10" rx="4" ry="7" fill="' + c + '" transform="rotate(90,22,16)"/>'
+        + '<ellipse cx="22" cy="10" rx="4" ry="7" fill="' + c + '" transform="rotate(120,22,16)"/>'
+        + '<ellipse cx="22" cy="10" rx="4" ry="7" fill="' + c + '" transform="rotate(150,22,16)"/>'
+        + '<circle cx="22" cy="16" r="7" fill="#8B6B4A"/>'
+        + '<circle cx="19" cy="14" r="1.2" fill="#A0744E"/>'
+        + '<circle cx="25" cy="14" r="1.2" fill="#A0744E"/>'
+        + '<circle cx="22" cy="18" r="1.2" fill="#A0744E"/>'
+        + '</svg>';
+      break;
+    case 3: /* 蜜桃郁金香 */
+      s = '<svg width="36" height="44" viewBox="0 0 36 44">'
+        + '<line x1="18" y1="44" x2="18" y2="20" stroke="#6BAF7A" stroke-width="2.5" stroke-linecap="round"/>'
+        + '<ellipse cx="11" cy="36" rx="6" ry="3" fill="#A8D5BA" transform="rotate(-30,11,36)"/>'
+        + '<ellipse cx="25" cy="34" rx="6" ry="3" fill="#A8D5BA" transform="rotate(25,25,34)"/>'
+        + '<path d="M10,22 Q7,8 18,4 Q29,8 26,22 Z" fill="' + c + '"/>'
+        + '<path d="M13,20 Q11,10 18,7 Q25,10 23,20 Z" fill="' + d + '" opacity="0.3"/>'
+        + '</svg>';
+      break;
+    case 4: /* 蓝色勿忘我 */
+      s = '<svg width="38" height="42" viewBox="0 0 38 42">'
+        + '<line x1="14" y1="42" x2="16" y2="14" stroke="#6BAF7A" stroke-width="2" stroke-linecap="round"/>'
+        + '<line x1="24" y1="42" x2="22" y2="16" stroke="#6BAF7A" stroke-width="2" stroke-linecap="round"/>'
+        + '<ellipse cx="8" cy="34" rx="5" ry="2.5" fill="#A8D5BA" transform="rotate(-20,8,34)"/>'
+        + '<ellipse cx="30" cy="32" rx="5" ry="2.5" fill="#A8D5BA" transform="rotate(20,30,32)"/>'
+        + '<circle cx="16" cy="10" r="5" fill="' + c + '"/>'
+        + '<circle cx="22" cy="12" r="5" fill="' + c + '"/>'
+        + '<circle cx="12" cy="16" r="4.5" fill="' + c + '"/>'
+        + '<circle cx="26" cy="17" r="4.5" fill="' + c + '"/>'
+        + '<circle cx="19" cy="18" r="5" fill="' + c + '"/>'
+        + '<circle cx="16" cy="10" r="1.5" fill="#fff" opacity="0.6"/>'
+        + '<circle cx="22" cy="12" r="1.5" fill="#fff" opacity="0.6"/>'
+        + '<circle cx="19" cy="18" r="1.5" fill="#fff" opacity="0.6"/>'
+        + '</svg>';
+      break;
+    case 5: /* 珊瑚雏菊 */
+      s = '<svg width="42" height="42" viewBox="0 0 42 42">'
+        + '<line x1="21" y1="42" x2="21" y2="20" stroke="#6BAF7A" stroke-width="2.5" stroke-linecap="round"/>'
+        + '<ellipse cx="14" cy="34" rx="6" ry="3" fill="#A8D5BA" transform="rotate(-25,14,34)"/>'
+        + '<ellipse cx="28" cy="32" rx="6" ry="3" fill="#A8D5BA" transform="rotate(20,28,32)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(0,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(36,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(72,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(108,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(144,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(180,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(216,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(252,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(288,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3.5" ry="7" fill="' + c + '" transform="rotate(324,21,16)"/>'
+        + '<circle cx="21" cy="16" r="5" fill="#FFF8E0"/>'
+        + '</svg>';
+      break;
+    case 6: /* 薄荷铃兰 */
+      s = '<svg width="34" height="44" viewBox="0 0 34 44">'
+        + '<path d="M17,44 Q17,30 12,20" stroke="#6BAF7A" stroke-width="2" fill="none" stroke-linecap="round"/>'
+        + '<path d="M17,44 Q17,28 24,18" stroke="#6BAF7A" stroke-width="2" fill="none" stroke-linecap="round"/>'
+        + '<ellipse cx="9" cy="36" rx="5" ry="2.5" fill="#A8D5BA" transform="rotate(-30,9,36)"/>'
+        + '<path d="M10,16 Q8,6 17,3 Q26,6 24,16 Q20,20 17,20 Q14,20 10,16 Z" fill="' + c + '"/>'
+        + '<path d="M12,14 Q11,8 17,5 Q23,8 22,14 Q19,16 17,16 Q15,16 12,14 Z" fill="#fff" opacity="0.3"/>'
+        + '<circle cx="17" cy="8" r="1.5" fill="#fff" opacity="0.5"/>'
+        + '</svg>';
+      break;
+    case 7: /* 橙色万寿菊 */
+      s = '<svg width="42" height="44" viewBox="0 0 42 44">'
+        + '<line x1="21" y1="44" x2="21" y2="20" stroke="#6BAF7A" stroke-width="3" stroke-linecap="round"/>'
+        + '<ellipse cx="13" cy="37" rx="6" ry="3.5" fill="#A8D5BA" transform="rotate(-20,13,37)"/>'
+        + '<ellipse cx="29" cy="35" rx="6" ry="3.5" fill="#A8D5BA" transform="rotate(20,29,35)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(0,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(20,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(40,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(60,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(80,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(100,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(120,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(140,21,16)"/>'
+        + '<ellipse cx="21" cy="10" rx="3" ry="8" fill="' + c + '" transform="rotate(160,21,16)"/>'
+        + '<circle cx="21" cy="16" r="5" fill="#D08840"/>'
+        + '</svg>';
+      break;
+    case 8: /* 淡紫紫罗兰 */
+      s = '<svg width="38" height="40" viewBox="0 0 38 40">'
+        + '<line x1="19" y1="40" x2="19" y2="20" stroke="#6BAF7A" stroke-width="2" stroke-linecap="round"/>'
+        + '<ellipse cx="12" cy="32" rx="5" ry="3" fill="#A8D5BA" transform="rotate(-30,12,32)"/>'
+        + '<ellipse cx="26" cy="30" rx="5" ry="3" fill="#A8D5BA" transform="rotate(25,26,30)"/>'
+        + '<ellipse cx="19" cy="12" rx="5.5" ry="6.5" fill="' + c + '" transform="rotate(0,19,16)"/>'
+        + '<ellipse cx="19" cy="12" rx="5.5" ry="6.5" fill="' + c + '" transform="rotate(72,19,16)"/>'
+        + '<ellipse cx="19" cy="12" rx="5.5" ry="6.5" fill="' + c + '" transform="rotate(144,19,16)"/>'
+        + '<ellipse cx="19" cy="12" rx="5.5" ry="6.5" fill="' + c + '" transform="rotate(216,19,16)"/>'
+        + '<ellipse cx="19" cy="12" rx="5.5" ry="6.5" fill="' + c + '" transform="rotate(288,19,16)"/>'
+        + '<circle cx="19" cy="15" r="2" fill="#FFF8E0"/>'
+        + '</svg>';
+      break;
+    case 9: /* 金色蒲公英 */
+      s = '<svg width="42" height="46" viewBox="0 0 42 46">'
+        + '<line x1="21" y1="46" x2="21" y2="24" stroke="#6BAF7A" stroke-width="2.5" stroke-linecap="round"/>'
+        + '<ellipse cx="13" cy="38" rx="6" ry="3" fill="#A8D5BA" transform="rotate(-25,13,38)"/>'
+        + '<ellipse cx="29" cy="36" rx="6" ry="3" fill="#A8D5BA" transform="rotate(20,29,36)"/>'
+        + '<line x1="21" y1="18" x2="21" y2="4" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="10" y2="8" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="32" y2="8" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="7" y2="18" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="35" y2="18" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="12" y2="26" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="30" y2="26" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="15" y2="6" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="27" y2="6" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="8" y2="13" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<line x1="21" y1="18" x2="34" y2="13" stroke="' + c + '" stroke-width="1" stroke-linecap="round"/>'
+        + '<circle cx="21" cy="5" r="1.5" fill="' + c + '"/>'
+        + '<circle cx="10" cy="9" r="1.5" fill="' + c + '"/>'
+        + '<circle cx="32" cy="9" r="1.5" fill="' + c + '"/>'
+        + '<circle cx="7" cy="19" r="1.5" fill="' + c + '"/>'
+        + '<circle cx="35" cy="19" r="1.5" fill="' + c + '"/>'
+        + '<circle cx="12" cy="27" r="1.5" fill="' + c + '"/>'
+        + '<circle cx="30" cy="27" r="1.5" fill="' + c + '"/>'
+        + '<circle cx="21" cy="18" r="3" fill="' + d + '"/>'
+        + '</svg>';
+      break;
+  }
+  return s;
+}
+
+function createSproutSVG() {
+  return '<svg width="30" height="30" viewBox="0 0 30 30">'
+    + '<line x1="15" y1="30" x2="15" y2="10" stroke="#6BAF7A" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<ellipse cx="9" cy="12" rx="7" ry="4" fill="#A8D5BA" transform="rotate(-30,9,12)"/>'
+    + '<ellipse cx="21" cy="8" rx="7" ry="4" fill="#A8D5BA" transform="rotate(25,21,8)"/>'
+    + '<line x1="9" y1="12" x2="15" y2="18" stroke="#6BAF7A" stroke-width="1.5" opacity="0.5"/>'
+    + '<line x1="21" y1="8" x2="15" y2="15" stroke="#6BAF7A" stroke-width="1.5" opacity="0.5"/>'
+    + '</svg>';
+}
+
+function createSeedSVG() {
+  return '<svg width="24" height="12" viewBox="0 0 24 12">'
+    + '<ellipse cx="12" cy="7" rx="5" ry="3.5" fill="#A0744E"/>'
+    + '<ellipse cx="12" cy="6" rx="4" ry="2.5" fill="#C4A882"/>'
+    + '</svg>';
+}
+
+function createPotSVG(faceType) {
+  let face = '';
+  if (faceType === 'happy') {
+    face = '<path d="M13,26 Q15,24 17,26" stroke="#6B4C2A" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+      + '<path d="M21,26 Q23,24 25,26" stroke="#6B4C2A" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+      + '<path d="M15,33 Q19,36 23,33" stroke="#6B4C2A" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+      + '<ellipse cx="12" cy="31" rx="2.5" ry="1.5" fill="#F2A6B3" opacity="0.4"/>'
+      + '<ellipse cx="26" cy="31" rx="2.5" ry="1.5" fill="#F2A6B3" opacity="0.4"/>';
+  } else if (faceType === 'worry') {
+    face = '<circle cx="15" cy="26" r="1.5" fill="#6B4C2A"/>'
+      + '<circle cx="23" cy="26" r="1.5" fill="#6B4C2A"/>'
+      + '<circle cx="15.5" cy="25.5" r="0.5" fill="#fff"/>'
+      + '<circle cx="23.5" cy="25.5" r="0.5" fill="#fff"/>'
+      + '<path d="M16,33 Q19,31 22,33" stroke="#6B4C2A" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
+      + '<ellipse cx="26" cy="24" rx="1" ry="2" fill="#A8D5F0" opacity="0.7"/>';
+  } else {
+    face = '<path d="M13,26 Q15,24 17,26" stroke="#6B4C2A" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
+      + '<path d="M21,26 Q23,24 25,26" stroke="#6B4C2A" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
+      + '<path d="M17,33 Q19,34 21,33" stroke="#6B4C2A" stroke-width="1" fill="none" stroke-linecap="round"/>'
+      + '<text x="27" y="25" font-size="5.5" fill="#B0A0C0" font-style="italic" font-family="serif">z</text>'
+      + '<text x="30" y="21" font-size="4.5" fill="#C0B0D0" font-style="italic" font-family="serif">z</text>'
+      + '<text x="32" y="18" font-size="3.5" fill="#D0C0E0" font-style="italic" font-family="serif">z</text>';
+  }
+
+  return '<svg width="50" height="40" viewBox="0 0 50 40">'
+    + '<path d="M4,9 L46,9 L44,6 L6,6 Z" fill="#D4BC9A" stroke="#A0744E" stroke-width="1" stroke-linejoin="round"/>'
+    + '<path d="M7,9 L43,9 L39,38 L11,38 Z" fill="#C4A882" stroke="#A0744E" stroke-width="1.2" stroke-linejoin="round"/>'
+    + '<path d="M11,11 L15,11 L13,35 L10,35 Z" fill="rgba(255,255,255,0.18)"/>'
+    + '<ellipse cx="25" cy="11" rx="17" ry="4.5" fill="#8B6B4A"/>'
+    + '<ellipse cx="25" cy="10" rx="15" ry="3" fill="#9B7B5A"/>'
+    + face
+    + '</svg>';
+}
+
+function createWateringCanSVG() {
+  return '<svg width="28" height="28" viewBox="0 0 28 28">'
+    + '<rect x="4" y="10" width="16" height="14" rx="3" fill="#A8D5F0" stroke="#7BBDE0" stroke-width="1.2"/>'
+    + '<rect x="5" y="12" width="14" height="4" rx="1.5" fill="#C0E4F8" opacity="0.6"/>'
+    + '<path d="M20,14 L26,8" stroke="#7BBDE0" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<circle cx="26" cy="8" r="2" fill="#7BBDE0"/>'
+    + '<path d="M6,10 Q6,3 12,3 Q18,3 18,10" stroke="#7BBDE0" stroke-width="2" fill="none" stroke-linecap="round"/>'
+    + '</svg>';
+}
+
+/* 初始化花盆进度条 */
+let flowerWrappers = [];
+function initFlowerProgress(count) {
+  const container = document.getElementById('flowerProgress');
+  if (!container) return;
+  container.innerHTML = '';
+  flowerWrappers = [];
+  
+  const maxCount = Math.min(count, 10);
+  for (let i = 0; i < maxCount; i++) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flower-pot-wrapper seed';
+    wrapper.setAttribute('data-index', i);
+    
+    wrapper.innerHTML =
+      '<div class="watering-can">' + createWateringCanSVG() + '</div>'
+      + '<div class="water-drop"></div>'
+      + '<div class="water-drop"></div>'
+      + '<div class="water-drop"></div>'
+      + '<div class="flower-svg">' + createFlowerSVG(i) + '</div>'
+      + '<div class="sprout-svg">' + createSproutSVG() + '</div>'
+      + '<div class="seed-svg">' + createSeedSVG() + '</div>'
+      + '<div class="pot-svg">' + createPotSVG('sleep') + '</div>';
+    
+    container.appendChild(wrapper);
+    flowerWrappers.push(wrapper);
+  }
+}
+
+/* 更新单个花盆状态 */
+function setPotStatus(index, status) {
+  const w = flowerWrappers[index];
+  if (!w) return;
+  w.classList.remove('bloom', 'sprout', 'seed');
+  w.classList.add(status);
+  const potEl = w.querySelector('.pot-svg');
+  const faceType = status === 'bloom' ? 'happy' : (status === 'sprout' ? 'worry' : 'sleep');
+  potEl.innerHTML = createPotSVG(faceType);
+}
+
+/* 全局API：更新花盆进度条 */
+let flowerProgressStatuses = [];
+let flowerCurrentIndex = -1;
+
+function updateFlowerProgress(statuses, currentIndex) {
+  flowerProgressStatuses = statuses.slice();
+  flowerCurrentIndex = currentIndex;
+  
+  for (let i = 0; i < flowerWrappers.length; i++) {
+    flowerWrappers[i].classList.remove('active');
+    if (i < statuses.length) {
+      setPotStatus(i, statuses[i]);
+    }
+  }
+  
+  if (currentIndex >= 0 && currentIndex < flowerWrappers.length) {
+    flowerWrappers[currentIndex].classList.add('active');
+  }
+}
+
 const WORDS = [[1, "stay", "停留;待", "/steɪ/", "v.", "停留；待", "保持（stay healthy 保持健康）", "stay at home 待在家里；stay up late 熬夜；stay healthy 保持健康", "We stay at my grandma's house every summer. 每年夏天我们都待在奶奶家。"], [1, "brave", "勇敢的", "/breɪv/", "adj.", "勇敢的", "v. 勇敢面对（brave the wind 顶着风）", "a brave boy 勇敢的男孩；a brave soldier 勇敢的士兵", "The brave firefighter saved the cat. 那位勇敢的消防员救了猫。"], [1, "writer", "作家", "/ˈraɪtə/", "n.", "作家；作者", "写字的人（a letter writer 写信人）", "a famous writer 著名作家；a story writer 故事作家", "She wants to be a writer when she grows up. 她长大后想当作家。"], [1, "doctor", "医生", "/ˈdɒktə/", "n.", "医生", "博士（a Doctor of Science 理学博士）", "see a doctor 看医生；a doctor's office 诊室", "The doctor helped the sick child. 医生帮助了那个生病的孩子。"], [1, "job", "工作;职业", "/dʒɒb/", "n.", "工作；职业", "任务；活儿（a good job 干得好）", "a good job 一份好工作；do a good job 干得好；part-time job 兼职", "My mother has an important job. 妈妈有一份重要的工作。"], [1, "unhappy", "不快乐的;悲伤的", "/ʌnˈhæpi/", "adj.", "不快乐的；悲伤的", "不满意的（an unhappy customer 不满意的顾客）", "feel unhappy 感到不快乐；an unhappy face 不高兴的脸", "She was unhappy because it rained. 因为下雨，她不开心。"], [1, "from", "从......起;来自", "/frɒm/", "prep.", "从……起；来自", "由……制成（made from wood 木头做的）", "from China 来自中国；from Monday to Friday 从周一到周五；far from 离……远", "I am from Shanghai. 我来自上海。"], [1, "goal", "目标;目的", "/ɡəʊl/", "n.", "目标；目的", "（足球等）球门；进球得分", "reach one's goal 实现目标；score a goal 进一球", "His goal is to read 20 books this year. 他的目标是今年读20本书。"], [1, "plan", "n.计划;打算", "/plæn/", "n.", "计划；打算", "v. 计划；打算（plan a trip 计划旅行）", "make a plan 制定计划；a plan for the holiday 假期计划", "We made a plan for the weekend. 我们制定了周末计划。"], [1, "follow", "跟随;跟着", "/ˈfɒləʊ/", "v.", "跟随；跟着", "遵循；听懂（follow the rules 遵守规则）", "follow me 跟我来；follow the rules 遵守规则；follow the story 听懂故事", "The little dog follows the boy everywhere. 小狗走到哪儿都跟着男孩。"], [2, "use the computer", "使用电脑", "/juːz ðə kəmˈpjuːtə/", "phr.", "使用电脑", "—", "learn to use the computer 学习用电脑；use the computer for homework 用电脑写作业", "We use the computer to find information. 我们用电脑查找信息。"], [2, "player", "运动员;参赛选手", "/ˈpleɪə/", "n.", "运动员；参赛选手", "播放器（a music player 音乐播放器）", "a football player 足球运动员；a team player 有团队精神的人", "He is a good basketball player. 他是一名优秀的篮球运动员。"], [2, "be proud of", "为......自豪", "/biː praʊd ɒv/", "phr.", "为……自豪", "—", "be proud of you 为你自豪；be proud of one's work 为自己的作品自豪", "We are proud of our school. 我们为我们的学校感到自豪。"], [2, "garden", "花园;果园;菜园", "/ˈɡɑːdn/", "n.", "花园；果园；菜园", "园艺（do some gardening 做园艺）", "in the garden 在花园里；a vegetable garden 菜园；a beautiful garden 美丽的花园", "Grandma grows tomatoes in her garden. 奶奶在菜园里种番茄。"], [2, "tomato", "番茄;西红柿", "/təˈmɑːtəʊ/", "n.", "番茄；西红柿", "—", "a tomato plant 番茄苗；tomato soup 番茄汤", "I put a tomato in the salad. 我在沙拉里放了一个番茄。"], [2, "water vapour", "水蒸气", "/ˈwɔːtə ˈveɪpə/", "n.", "水蒸气", "vapour 也可拼作 vapor", "turn into water vapour 变成水蒸气；water vapour in the air 空气中的水蒸气", "When water boils, it makes water vapour. 水烧开时会产生水蒸气。"], [2, "become", "变成", "/bɪˈkʌm/", "v.", "变成；成为", "适宜（Red becomes you. 红色很衬你。）", "become a teacher 成为老师；become happy 变得开心", "The caterpillar becomes a butterfly. 毛毛虫变成了蝴蝶。"], [2, "water drop", "水滴", "/ˈwɔːtə drɒp/", "n.", "水滴", "—", "a water drop on the leaf 叶子上的水滴", "A water drop fell from the leaf. 一滴水从叶子上落下来。"], [2, "chore", "日常事务", "/tʃɔː/", "n.", "日常事务；杂务", "令人厌烦的事（a chore 苦差事）", "do household chores 做家务；a daily chore 日常琐事", "Washing dishes is a daily chore. 洗碗是每天的家务。"], [2, "give your seat", "让座", "/ɡɪv jɔː siːt/", "phr.", "让座", "—", "give your seat to the old 给老人让座", "Please give your seat to the old man. 请把座位让给那位老人。"], [3, "Excuse me.", "劳驾", "/ɪkˈskjuːz miː/", "phr.", "劳驾；打扰一下", "请原谅（Excuse me for being late. 原谅我迟到了。）", "Excuse me, where is the toilet? 劳驾，厕所在哪？", "Excuse me, can you help me? 打扰一下，你能帮我吗？"], [3, "scared", "害怕的;恐惧的", "/skeəd/", "adj.", "害怕的；恐惧的", "v. scare 使害怕； scarecrow 稻草人", "be scared of 害怕……；feel scared 感到害怕", "The little boy was scared of the dark. 小男孩怕黑。"], [3, "driver", "驾驶员;司机", "/ˈdraɪvə/", "n.", "驾驶员；司机", "驱动程序（a printer driver 打印机驱动）", "a bus driver 公交车司机；a taxi driver 出租车司机", "The driver stopped the bus. 司机停下了公交车。"], [3, "police officer", "警察;警员", "/pəˈliːs ˈɒfɪsə/", "n.", "警察；警员", "—", "a police officer on duty 值班警察", "The police officer helped the lost child. 警察帮助了迷路的孩子。"], [3, "engineer", "工程师;设计师", "/ˌendʒɪˈnɪə/", "n.", "工程师；设计师", "火车司机（a train engineer）", "a software engineer 软件工程师；a train engineer 火车司机", "My father is an engineer. 我爸爸是一名工程师。"], [3, "chef", "厨师", "/ʃef/", "n.", "厨师", "主厨（head chef）", "a head chef 主厨；become a chef 成为厨师", "The chef cooked a delicious meal. 厨师做了一顿美味的饭。"], [3, "astronaut", "宇航员;航天员", "/ˈæstrənɔːt/", "n.", "宇航员；航天员", "—", "a Chinese astronaut 中国宇航员", "The astronaut flew to space. 宇航员飞上了太空。"], [3, "spaceship", "(航天)飞船", "/ˈspeɪsʃɪp/", "n.", "（航天）飞船", "—", "travel by spaceship 乘飞船旅行", "The spaceship flew to the moon. 宇宙飞船飞向月球。"], [3, "difficult", "困难的;难做的", "/ˈdɪfɪkʌlt/", "adj.", "困难的；难做的", "不易相处的（a difficult child 难管的孩子）", "a difficult question 难题；find it difficult 觉得困难", "Math can be difficult, but we can try. 数学可能很难，但我们可以试试。"], [3, "find the way", "找到路", "/faɪnd ðə weɪ/", "phr.", "找到路", "—", "find the way home 找到回家的路", "The dog helped the boy find the way. 狗帮男孩找到了路。"], [4, "walk along", "沿着......走", "/wɔːk əˈlɒŋ/", "phr.", "沿着……走", "—", "walk along the river 沿着河边走", "We walked along the street. 我们沿着街道走。"], [4, "museum", "博物馆", "/mjuːˈziːəm/", "n.", "博物馆", "—", "a science museum 科学博物馆；visit a museum 参观博物馆", "We saw old ships in the museum. 我们在博物馆看到了旧船。"], [4, "phone", "n.电话", "/fəʊn/", "n.", "电话", "v. 打电话（phone a friend 给朋友打电话）", "answer the phone 接电话；on the phone 在打电话；phone a friend 给朋友打电话", "The phone is ringing. 电话在响。"], [4, "lost", "迷路", "/lɒst/", "adj.", "迷路的；丢失的", "v. lose 的过去式（丢失）", "get lost 迷路；a lost dog 走丢的狗", "The child was lost in the city. 孩子在城市里迷路了。"], [4, "call", "v.打电话叫", "/kɔːl/", "v.", "打电话；叫", "n. 电话；呼唤（give a call 打个电话）", "call a taxi 叫出租车；call for help 呼救；give a call 打个电话", "Please call the doctor. 请打电话给医生。"], [4, "special", "特别的", "/ˈspeʃl/", "adj.", "特别的；特殊的", "n. 特价品（today's special 今日特价）", "a special day 特别的一天；something special 特别的东西", "Today is a special day for me. 今天对我来说是特别的一天。"], [4, "the Double Ninth Festival", "重阳节", "/ðə ˌdʌbl ˈnaɪnθ ˈfestəvl/", "n.", "重阳节", "农历九月初九，敬老的节日", "celebrate the Double Ninth Festival 庆祝重阳节", "We climb hills on the Double Ninth Festival. 重阳节我们登高。"], [4, "the Lantern Festival", "元宵节", "/ðə ˈlæntən ˈfestəvl/", "n.", "元宵节", "农历正月十五，赏花灯、吃汤圆", "eat yuanxiao on the Lantern Festival 元宵节吃元宵", "We eat sweet dumplings on the Lantern Festival. 元宵节我们吃汤圆。"], [4, "celebrate", "庆祝;庆贺", "/ˈselɪbreɪt/", "v.", "庆祝；庆贺", "赞扬（celebrate a hero 颂扬英雄）", "celebrate a birthday 庆祝生日；celebrate Spring Festival 过春节", "We celebrate New Year with fireworks. 我们用烟花庆祝新年。"], [4, "holiday", "假期", "/ˈhɒlədeɪ/", "n.", "假期；假日", "（英）度假（on holiday 在度假）", "summer holiday 暑假；a public holiday 公共假日；on holiday 在度假", "We went to the beach for the holiday. 假期我们去了海滩。"], [5, "dragon dance", "舞龙表演", "/ˈdræɡən dɑːns/", "n.", "舞龙表演", "—", "perform a dragon dance 表演舞龙", "They did a dragon dance at the festival. 节庆时他们表演了舞龙。"], [5, "famous", "著名的;出名的", "/ˈfeɪməs/", "adj.", "著名的；出名的", "v. 使出名（He famoused it. 较少用）", "a famous writer 著名作家；be famous for 因……而闻名", "Hangzhou is famous for the West Lake. 杭州以西湖闻名。"], [5, "sandwich", "三明治", "/ˈsæmwɪdʒ/", "n.", "三明治", "—", "make a sandwich 做三明治；a chicken sandwich 鸡肉三明治", "I ate a sandwich for lunch. 我午餐吃了一个三明治。"], [5, "different", "不同的;有区别的", "/ˈdɪfrənt/", "adj.", "不同的；有区别的", "各种的（many different 许多不同的）", "be different from 与……不同；many different 许多不同的", "These two books are different. 这两本书不一样。"], [5, "fish and chips", "炸鱼薯条", "/fɪʃ ənd tʃɪps/", "n.", "炸鱼薯条", "英国传统快餐", "buy fish and chips 买炸鱼薯条", "Fish and chips is a traditional British food. 炸鱼薯条是英国传统食物。"], [5, "beef", "牛肉", "/biːf/", "n.", "牛肉", "—", "beef noodles 牛肉面；roast beef 烤牛肉", "I like beef better than pork. 我更喜欢牛肉而不是猪肉。"], [5, "flour", "面粉", "/ˈflaʊə/", "n.", "面粉", "—", "a bag of flour 一袋面粉；mix flour and water 把面粉和水混合", "We need flour to make bread. 我们需要面粉来做面包。"], [5, "far", "adv.远", "/fɑː/", "adv./adj.", "远（的）", "—", "far away 遥远；how far 多远；not far from 离……不远", "My school is not far from home. 学校离家不远。"], [5, "play volleyball", "打排球", "/pleɪ ˈvɒlibɔːl/", "phr.", "打排球", "—", "like to play volleyball 喜欢打排球", "We play volleyball after school. 放学后我们打排球。"], [5, "healthy", "健康的;健壮的", "/ˈhelθi/", "adj.", "健康的；健壮的", "有益健康的（healthy food 健康食品）", "keep healthy 保持健康；healthy food 健康食品", "Apples are healthy food. 苹果是健康食品。"], [6, "both", "两者都", "/bəʊθ/", "pron./adj.", "两者都", "—", "both of us 我们俩都；both...and... 既……又……", "Both girls like reading. 两个女孩都喜欢阅读。"], [6, "win", "获胜", "/wɪn/", "v.", "获胜；赢", "n. 胜利（a big win 大胜）", "win a game 赢一场比赛；win a prize 获奖", "Our team won the match. 我们队赢了比赛。"], [6, "bookshelf", "书架", "/ˈbʊkʃelf/", "n.", "书架", "—", "a wooden bookshelf 木书架；on the bookshelf 在书架上", "The books are on the bookshelf. 书在书架上。"], [6, "storybook", "儿童故事书", "/ˈstɔːribʊk/", "n.", "儿童故事书", "—", "a picture storybook 图画故事书", "She reads a storybook every night. 她每晚读一本故事书。"], [6, "buzz", "发出嗡嗡声", "/bʌz/", "v.", "发出嗡嗡声", "n. 嗡嗡声", "bees buzz 蜜蜂嗡嗡叫", "The bees buzz around the flowers. 蜜蜂在花丛中嗡嗡飞。"], [6, "peach stone", "桃核", "/piːtʃ stəʊn/", "n.", "桃核", "—", "a peach stone 一个桃核", "Don't swallow the peach stone. 别吞下桃核。"], [6, "soil", "土壤", "/sɔɪl/", "n.", "土壤；泥土", "v. 弄脏（soil one's clothes 弄脏衣服）", "rich soil 肥沃的土壤；in the soil 在土壤里", "Plants grow in the soil. 植物在土壤里生长。"], [6, "seedling", "秧苗;幼苗", "/ˈsiːdlɪŋ/", "n.", "秧苗；幼苗", "—", "plant a seedling 种下一株幼苗", "The seedling grew into a big tree. 幼苗长成了大树。"], [6, "dead", "枯萎的", "/ded/", "adj.", "枯萎的；死的", "adv. 完全地（dead tired 累坏了）", "a dead flower 枯萎的花；dead leaves 枯叶", "The plant is dead. 这株植物枯死了。"], [6, "hobby", "业余爱好", "/ˈhɒbi/", "n.", "业余爱好", "—", "my hobby is... 我的爱好是……；collect stamps as a hobby 以集邮为爱好", "Her hobby is painting. 她的爱好是画画。"], [7, "free", "空闲的", "/friː/", "adj.", "空闲的；自由的", "免费的（a free ticket 免费票）", "free time 空闲时间；feel free 随意；free of charge 免费", "Are you free this weekend? 你这个周末有空吗？"], [7, "popular", "大众喜爱的;广受欢迎的", "/ˈpɒpjələ/", "adj.", "大众喜爱的；广受欢迎的", "流行的（popular music 流行音乐）", "a popular song 流行歌曲；be popular with 受……欢迎", "Ping-pong is popular in China. 乒乓球在中国很受欢迎。"], [7, "wonderful", "精彩的;令人高兴的", "/ˈwʌndəfl/", "adj.", "精彩的；令人高兴的", "奇妙的（a wonderful idea 绝妙的主意）", "a wonderful day 美好的一天；wonderful news 好消息", "We had a wonderful time at the party. 我们在聚会上玩得很开心。"], [7, "team", "(一起工作的)组", "/tiːm/", "n.", "（一起工作的）组；队", "—", "a football team 足球队；team work 团队合作", "He is a member of the school team. 他是校队的一员。"], [7, "sweep the floor", "扫地", "/swiːp ðə flɔːr/", "phr.", "扫地", "—", "help sweep the floor 帮忙扫地", "I sweep the floor every day. 我每天扫地。"], [7, "voice", "声音", "/vɔɪs/", "n.", "声音", "v. 表达（voice one's idea 说出想法）", "in a loud voice 大声地；a sweet voice 甜美的嗓音", "She has a beautiful singing voice. 她有一副美妙的歌喉。"], [7, "helper", "帮手", "/ˈhelpə/", "n.", "帮手；助手", "—", "a little helper 小帮手", "The child is a good helper at home. 这孩子在家是个好帮手。"], [7, "heart", "心", "/hɑːt/", "n.", "心；心脏", "中心；核心（the heart of the city 市中心）", "heart disease 心脏病；by heart 凭记忆；warm heart 热心", "The heart pumps blood. 心脏泵送血液。"], [7, "nothing", "没有什么;没有一件东西", "/ˈnʌθɪŋ/", "pron.", "没有什么；没有一件东西", "无关紧要的事（It's nothing. 没什么。）", "nothing else 没有别的；have nothing to do 无事可做", "There is nothing in the box. 盒子里什么也没有。"], [7, "fresh", "清新的", "/freʃ/", "adj.", "清新的；新鲜的", "精神饱满的（feel fresh 感到神清气爽）", "fresh air 清新的空气；fresh fruit 新鲜水果；fresh water 淡水", "We breathe fresh air in the park. 我们在公园呼吸清新的空气。"], [8, "travel", "旅行", "/ˈtrævl/", "v./n.", "旅行", "—", "travel by train 乘火车旅行；space travel 太空旅行", "We love to travel in summer. 我们喜欢夏天去旅行。"], [8, "plane", "飞机", "/pleɪn/", "n.", "飞机", "adj. 平坦的（a plane surface 平面）", "by plane 乘飞机；take a plane 坐飞机；a plane ticket 机票", "We flew to Beijing by plane. 我们乘飞机去了北京。"], [8, "West Lake", "西湖", "/west leɪk/", "n.", "西湖（杭州）", "—", "visit the West Lake 游览西湖", "The West Lake is beautiful. 西湖很美。"], [8, "capital", "首都", "/ˈkæpɪtl/", "n.", "首都；省会", "大写字母（capital letter）；资金", "the capital city 首都；capital letter 大写字母", "Beijing is the capital of China. 北京是中国的首都。"], [8, "the Palace Museum", "故宫博物院", "/ðə ˈpælɪs mjuˈziːəm/", "n.", "故宫博物院", "—", "visit the Palace Museum 参观故宫", "The Palace Museum is in Beijing. 故宫博物院在北京。"], [8, "city", "都市;城市", "/ˈsɪti/", "n.", "都市；城市", "—", "a big city 大城市；city life 城市生活", "Shanghai is a big city. 上海是一座大城市。"], [8, "London", "伦敦", "/ˈlʌndən/", "n.", "伦敦（英国首都）", "—", "in London 在伦敦", "London is the capital of the UK. 伦敦是英国的首都。"], [8, "the Eiffel Tower", "埃菲尔铁塔", "/ðiː ˈaɪfl ˈtaʊə/", "n.", "埃菲尔铁塔（巴黎）", "—", "the top of the Eiffel Tower 埃菲尔铁塔顶端", "The Eiffel Tower is in Paris. 埃菲尔铁塔在巴黎。"], [8, "Paris", "巴黎", "/ˈpærɪs/", "n.", "巴黎（法国首都）", "—", "in Paris 在巴黎", "Paris is famous for art. 巴黎以艺术闻名。"], [8, "Postcard", "明信片", "/ˈpəʊstkɑːd/", "n.", "明信片", "—", "send a postcard 寄明信片；a beautiful postcard 漂亮的明信片", "I sent you a postcard from London. 我从伦敦给你寄了一张明信片。"], [9, "show thanks", "表示感谢", "/ʃəʊ θæŋks/", "phr.", "表示感谢", "—", "show thanks to sb. 向某人表示感谢", "We show thanks to our teachers. 我们向老师表示感谢。"], [9, "take part in", "参加", "/teɪk pɑːt ɪn/", "phr.", "参加", "—", "take part in a race 参加比赛；take part in activities 参加活动", "She took part in the school play. 她参加了学校的戏剧表演。"], [9, "stair", "楼梯", "/steə/", "n.", "楼梯；台阶", "v. 凝视（stare 拼写不同）", "go up the stairs 上楼梯；a flight of stairs 一段楼梯", "Be careful on the stairs. 在楼梯上要小心。"], [9, "hurt", "v.(使)疼痛,受伤", "/hɜːt/", "v.", "（使）疼痛；受伤", "adj. 受伤的（hurt leg 受伤的腿）", "get hurt 受伤；hurt one's leg 伤到腿", "He hurt his knee when he fell. 他摔倒时伤到了膝盖。"], [9, "firefighter", "消防队员", "/ˈfaɪəfaɪtə/", "n.", "消防队员", "—", "a brave firefighter 勇敢的消防员", "The firefighter put out the fire. 消防员扑灭了火。"], [9, "put out the fire", "灭火", "/pʊt aʊt ðə ˈfaɪər/", "phr.", "灭火", "—", "help put out the fire 帮忙灭火", "They put out the fire quickly. 他们很快把火扑灭了。"], [9, "swimming pool", "游泳池", "/ˈswɪmɪŋ puːl/", "n.", "游泳池", "—", "in the swimming pool 在游泳池里；an indoor swimming pool 室内游泳池", "We swim in the swimming pool. 我们在游泳池里游泳。"], [9, "adult", "成年人", "/ˈædʌlt/", "n.", "成年人", "adj. 成年的（adult ticket 成人票）", "an adult ticket 成人票；for adults 供成人", "Adults must go with children. 成年人必须陪着孩子。"], [9, "must", "必须", "/mʌst/", "modal v.", "必须；一定", "—", "must do 必须做；must not 不准", "You must wear a helmet. 你必须戴头盔。"], [9, "safe", "处境(或情况)安全的", "/seɪf/", "adj.", "处境（或情况）安全的", "n. 保险箱", "keep safe 保持安全；safe and sound 平安无事", "The children are safe at home. 孩子们在家里很安全。"], [9, "near", "在......附近;靠近", "/nɪə/", "prep./adv.", "在……附近；靠近", "adj. 近的（the near bank 近岸）", "near the school 在学校附近；come near 靠近", "There is a park near my house. 我家附近有一个公园。"], [9, "save", "挽救;救助", "/seɪv/", "v.", "挽救；救助", "节省；保存（save money 省钱；save water 节水）", "save a life 救一条命；save money 省钱；save water 节约用水", "The doctor saved the boy's life. 医生救了男孩的命。"], [10, "sports field", "运动场", "/spɔːts fiːld/", "n.", "运动场", "—", "on the sports field 在运动场上", "We play football on the sports field. 我们在运动场上踢足球。"], [10, "project", "学校的课题", "/ˈprɒdʒekt/", "n.", "学校的课题；项目", "v. 投射（project a picture 投影）", "a school project 学校课题；work on a project 做一个项目", "We made a poster for our project. 我们为课题做了一张海报。"], [10, "bamboo", "竹子", "/bæmˈbuː/", "n.", "竹子", "—", "a bamboo forest 竹林；bamboo shoots 竹笋", "Pandas eat bamboo. 熊猫吃竹子。"], [10, "art", "美术;艺术", "/ɑːt/", "n.", "美术；艺术", "技艺（the art of cooking 烹饪技艺）", "an art class 美术课；a work of art 艺术品", "She is good at art. 她擅长美术。"], [10, "hometown", "家乡", "/ˈhəʊmtaʊn/", "n.", "家乡", "—", "return to one's hometown 回到家乡", "My hometown is a small village. 我的家乡是一个小村庄。"], [10, "India", "印度", "/ˈɪndiə/", "n.", "印度", "—", "in India 在印度", "India is a big country. 印度是一个大国。"], [10, "Africa", "非洲", "/ˈæfrɪkə/", "n.", "非洲", "—", "in Africa 在非洲", "Many animals live in Africa. 许多动物生活在非洲。"], [10, "polar bear", "北极熊", "/ˈpəʊlə beə/", "n.", "北极熊", "—", "a polar bear in the snow 雪地里的北极熊", "The polar bear lives in the Arctic. 北极熊生活在北极。"], [10, "the North Pole", "北极", "/ðə nɔːθ pəʊl/", "n.", "北极", "—", "near the North Pole 靠近北极", "Santa lives at the North Pole. 圣诞老人住在北极。"], [10, "invitation", "(口头或书面的)邀请", "/ˌɪnvɪˈteɪʃn/", "n.", "（口头或书面的）邀请", "—", "an invitation letter 邀请函；accept an invitation 接受邀请", "I got an invitation to her party. 我收到了她派对的邀请。"], [10, "tradition", "传统", "/trəˈdɪʃn/", "n.", "传统", "—", "a Chinese tradition 中国传统；family tradition 家庭传统", "Eating dumplings is a tradition. 吃饺子是一种传统。"], [10, "bridge", "桥", "/brɪdʒ/", "n.", "桥", "v. 架桥；消除（bridge the gap 消除隔阂）", "cross a bridge 过桥；a stone bridge 石桥", "The bridge goes over the river. 桥横跨在河上。"], [11, "amazing", "令人大为惊奇的", "/əˈmeɪzɪŋ/", "adj.", "令人大为惊奇的", "v. amaze 使惊奇", "an amazing story 惊人的故事；amazing news 惊人的消息", "The view from the mountain is amazing. 山上的风景令人惊叹。"], [11, "out of power", "没电", "/aʊt ɒv ˈpaʊər/", "phr.", "没电；断电", "—", "the phone is out of power 手机没电了", "My tablet is out of power. 我的平板没电了。"], [11, "fly south", "往南飞", "/flaɪ saʊθ/", "phr.", "往南飞", "—", "birds fly south for winter 鸟儿南飞过冬", "The geese fly south in autumn. 大雁秋天往南飞。"], [11, "golden", "金色的", "/ˈɡəʊldən/", "adj.", "金色的；金制的", "珍贵的（golden time 黄金时光）", "golden hair 金发；a golden rule 黄金法则", "The leaves turn golden in autumn. 秋天叶子变成金色。"], [11, "worker", "工作者", "/ˈwɜːkə/", "n.", "工作者；工人", "—", "a factory worker 工厂工人；a social worker 社工", "My uncle is a construction worker. 我叔叔是一名建筑工人。"], [11, "menu", "菜单", "/ˈmenjuː/", "n.", "菜单", "—", "look at the menu 看菜单；order from the menu 按菜单点餐", "The menu has many dishes. 菜单上有很多菜。"], [11, "soya milk", "豆浆", "/ˈsɔɪə mɪlk/", "n.", "豆浆", "soy milk 另一种写法", "a cup of soya milk 一杯豆浆", "I drink soya milk for breakfast. 我早餐喝豆浆。"], [11, "energy", "能量", "/ˈenədʒi/", "n.", "能量；精力", "—", "save energy 节约能源；full of energy 精力充沛", "Food gives us energy. 食物给我们能量。"], [11, "protein", "蛋白质", "/ˈprəʊtiːn/", "n.", "蛋白质", "—", "high in protein 高蛋白", "Eggs have a lot of protein. 鸡蛋含很多蛋白质。"], [11, "vitamin", "维生素", "/ˈvɪtəmɪn/", "n.", "维生素", "—", "vitamin C 维生素C；take vitamins 服用维生素", "Oranges are full of vitamin C. 橙子富含维生素C。"], [11, "honest", "诚实的;正直的", "/ˈɒnɪst/", "adj.", "诚实的；正直的", "坦诚的（to be honest 老实说）", "an honest boy 诚实的男孩；to be honest 老实说", "He is an honest student. 他是个诚实的学生。"], [11, "tell the truth", "说真话", "/tel ðə truːθ/", "phr.", "说真话", "—", "always tell the truth 总是说真话", "Please tell the truth. 请说真话。"], [12, "break", "打碎;打破", "/breɪk/", "v.", "打碎；打破", "n. 休息（have a break 休息一下）", "break a cup 打碎杯子；break the rule 违反规则；have a break 休息一下", "He broke his glasses. 他打碎了眼镜。"], [12, "empty", "空的", "/ˈempti/", "adj.", "空的", "v. 倒空（empty the bottle 倒空瓶子）", "an empty box 空盒子；empty the bottle 倒空瓶子", "The glass is empty. 杯子是空的。"], [12, "pot", "罐;壶;锅", "/pɒt/", "n.", "罐；壶；锅", "花盆（a flower pot）", "a flower pot 花盆；a cooking pot 煮锅", "She cooked soup in the pot. 她用锅煮了汤。"], [12, "minute", "分钟", "/ˈmɪnɪt/", "n.", "分钟", "adj. 微小的（a minute difference 细微差别）", "in a minute 马上；wait a minute 等一下", "The class lasts 40 minutes. 一节课持续40分钟。"], [12, "weather report", "气象报告", "/ˈweðə rɪˈpɔːt/", "n.", "气象报告", "—", "watch the weather report 看气象报告", "The weather report says it will rain. 气象报告说会下雨。"], [12, "degree", "度(温度单位)", "/dɪˈɡriː/", "n.", "度（温度单位）；度数", "学位（a college degree 大学学位）", "30 degrees 30度；a low degree 低温", "It is 25 degrees today. 今天25度。"], [12, "weather reporter", "天气预报员", "/ˈweðə rɪˈpɔːtə/", "n.", "天气预报员", "—", "a weather reporter on TV 电视上的天气预报员", "The weather reporter tells us the forecast. 天气预报员告诉我们预报。"], [12, "lamb", "小羊", "/læm/", "n.", "小羊；羔羊", "羔羊肉", "a little lamb 小羊羔", "The lamb follows its mother. 小羊跟着妈妈。"], [12, "hurry", "赶快;急忙(做某事)", "/ˈhʌri/", "v.", "赶快；急忙（做某事）", "n. 匆忙（in a hurry 匆忙地）", "hurry up 快点；in a hurry 匆忙地", "Hurry up, or we'll be late! 快点，不然我们要迟到了！"], [12, "flag raising", "升旗", "/flæɡ ˈreɪzɪŋ/", "n.", "升旗", "—", "the flag-raising ceremony 升旗仪式", "We watch the flag raising every Monday. 我们每周一看升旗。"], [12, "PE(Physical Education)", "体育(课)", "/ˌpiː ˈiː/", "n.", "体育（课）", "Physical Education 的缩写", "a PE class 一节体育课；PE teacher 体育老师", "We have PE on Friday. 我们周五有体育课。"], [12, "Science", "科学;自然科学", "/ˈsaɪəns/", "n.", "科学；自然科学", "—", "a science lesson 科学课；science museum 科学博物馆", "He likes Science best. 他最喜欢科学。"], [13, "subject", "科目", "/ˈsʌbdʒɪkt/", "n.", "科目；学科", "主题；题目（the subject of the story 故事主题）", "my favourite subject 我最喜欢的科目；a school subject 学校科目", "Math is my favourite subject. 数学是我最喜欢的科目。"], [13, "mother tongue", "母语", "/ˈmʌðə tʌŋ/", "n.", "母语", "—", "speak one's mother tongue 说母语", "Chinese is my mother tongue. 汉语是我的母语。"], [13, "typhoon", "台风", "/taɪˈfuːn/", "n.", "台风", "—", "a strong typhoon 强台风", "The typhoon brought heavy rain. 台风带来了大雨。"], [13, "first-aid-kit", "急救箱", "/ˈfɜːst eɪd kɪt/", "n.", "急救箱", "—", "a first-aid kit at home 家里的急救箱", "Keep a first-aid kit at home. 在家里备一个急救箱。"], [13, "go-bag", "应急撤离包", "/ɡəʊ bæɡ/", "n.", "应急撤离包", "—", "pack a go-bag 收拾应急包", "We keep a go-bag ready for emergencies. 我们备好应急包以防万一。"], [13, "flood", "洪水;水灾", "/flʌd/", "n.", "洪水；水灾", "v. 淹没（The river flooded the fields. 河水淹没了田地。）", "a big flood 大洪水；the flood water 洪水", "The flood destroyed the bridge. 洪水冲毁了桥。"], [13, "carry away", "带走", "/ˈkæri əˈweɪ/", "phr.", "带走；冲走", "—", "be carried away by the wind 被风带走", "The wind carried the leaves away. 风把叶子吹走了。"], [13, "hero", "英雄", "/ˈhɪərəʊ/", "n.", "英雄", "（故事）男主角", "a national hero 民族英雄；my hero 我心目中的英雄", "The firefighter is a hero. 那位消防员是个英雄。"], [13, "country", "国家", "/ˈkʌntri/", "n.", "国家；乡村", "—", "my country 我的国家；in the country 在乡村", "China is a big country. 中国是一个大国。"], [13, "tip", "指点;实用的提示", "/tɪp/", "n.", "指点；实用的提示", "小费；尖端（the tip of a pen 笔尖）", "a helpful tip 有用的提示；travel tips 旅行小贴士", "Here is a tip for learning words. 这是一条记单词的小贴士。"], [13, "palm", "手掌", "/pɑːm/", "n.", "手掌", "棕榈树", "the palm of the hand 手掌心", "He held the coin in his palm. 他把硬币握在手掌里。"], [13, "thumb", "拇指", "/θʌm/", "n.", "拇指", "—", "thumb up 点赞；竖起大拇指", "He gave me a thumb up. 他给我竖起了大拇指。"], [14, "fingertip", "指尖", "/ˈfɪŋɡətɪp/", "n.", "指尖", "—", "touch with a fingertip 用指尖触摸", "She painted with her fingertips. 她用指尖画画。"], [14, "wrist", "手腕", "/rɪst/", "n.", "手腕", "—", "wear a watch on the wrist 手腕上戴表", "He hurt his wrist. 他伤到了手腕。"], [14, "advice", "建议", "/ədˈvaɪs/", "n.", "建议；劝告", "不可数名词（a piece of advice 一条建议）", "give advice 给建议；a piece of advice 一条建议；take one's advice 接受建议", "She gave me good advice. 她给了我好建议。"], [14, "stomach ache", "胃痛;腹痛", "/ˈstʌmək eɪk/", "n.", "胃痛；腹痛", "—", "have a stomach ache 胃痛", "I have a stomach ache after eating too much. 我吃太多后肚子痛。"], [14, "metro", "地铁", "/ˈmetrəʊ/", "n.", "地铁（尤指巴黎等城市）", "大都会（metro area 大都市区）", "by metro 乘地铁；the metro station 地铁站", "We go to school by metro. 我们乘地铁上学。"], [14, "watch your step", "注意脚下", "/wɒtʃ jɔː step/", "phr.", "注意脚下", "—", "please watch your step 请注意脚下", "Watch your step on the wet floor. 湿地板上请注意脚下。"], [14, "mind your head", "当心碰头", "/maɪnd jɔː hed/", "phr.", "当心碰头", "—", "mind your head when you enter 进门时当心碰头", "Mind your head, the door is low. 当心碰头，门很低。"], [14, "in order/out of order", "有序的/无序的", "/ɪn ˈɔːdər/", "phr.", "有序的／整齐的；出故障的", "out of order 意为「无序的；出故障的」", "keep in order 保持整齐；out of order (机器)坏了", "Put your books in order. 把你的书整理好。"], [14, "potato", "土豆", "/pəˈteɪtəʊ/", "n.", "土豆；马铃薯", "—", "mashed potato 土豆泥；sweet potato 红薯", "We planted potatoes in the garden. 我们在菜园里种了土豆。"], [14, "spring roll", "春卷", "/sprɪŋ rəʊl/", "n.", "春卷", "—", "eat a spring roll 吃春卷", "Spring rolls are tasty. 春卷很好吃。"], [14, "serving", "一份食物", "/ˈsɜːvɪŋ/", "n.", "一份（食物）", "v. serve 的现在分词（serving food 上菜）", "a serving of rice 一份米饭", "One serving of vegetables is good for you. 一份蔬菜对你有好处。"], [14, "pocket money", "零花钱", "/ˈpɒkɪt mʌni/", "n.", "零花钱", "—", "get pocket money 得到零花钱；save pocket money 攒零花钱", "I buy books with my pocket money. 我用零花钱买书。"], [15, "vlog", "视频博客", "/vlɒɡ/", "n.", "视频博客", "—", "make a vlog 做视频博客；a travel vlog 旅行视频博客", "She posts a vlog every week. 她每周发一个视频博客。"], [15, "safety", "安全;平安", "/ˈseɪfti/", "n.", "安全；平安", "安全设备（a safety helmet 安全帽）", "road safety 道路安全；for your safety 为了你的安全", "Safety first! 安全第一！"], [15, "exit", "出口", "/ˈeksɪt/", "n.", "出口", "v. 退出（exit the game 退出游戏）", "the emergency exit 紧急出口；find the exit 找到出口", "Where is the exit? 出口在哪里？"], [15, "market", "集市;市场", "/ˈmɑːkɪt/", "n.", "集市；市场", "v. 推销（market a product 推销产品）", "a fish market 鱼市；go to the market 去市场", "We buy fruit at the market. 我们在市场买水果。"], [15, "low", "adv.低;向下", "/ləʊ/", "adv./adj.", "低；向下（的）", "—", "speak low 小声说；a low price 低价", "The plane flew low. 飞机飞得很低。"], [15, "the internet", "互联网", "/ðə ˈɪntənet/", "n.", "互联网", "—", "on the internet 在网上；surf the internet 上网", "We find information on the internet. 我们在互联网上查找信息。"], [15, "online", "在线的;联网的", "/ˌɒnˈlaɪn/", "adj./adv.", "在线的；联网的", "—", "online class 网课；shop online 网上购物", "We take online classes. 我们上网课。"], [15, "photographer", "摄影师", "/fəˈtɒɡrəfər/", "n.", "摄影师", "—", "a wedding photographer 婚礼摄影师", "The photographer took our picture. 摄影师给我们拍了照。"], [15, "France", "法国", "/frɑːns/", "n.", "法国", "—", "in France 在法国", "France is in Europe. 法国在欧洲。"], [15, "Kenya", "肯尼亚", "/ˈkenjə/", "n.", "肯尼亚（非洲国家）", "—", "in Kenya 在肯尼亚", "Kenya is famous for its wild animals. 肯尼亚以野生动物闻名。"], [15, "opera", "歌剧", "/ˈɒpərə/", "n.", "歌剧", "—", "Beijing Opera 京剧；go to the opera 去看歌剧", "We watched an opera last night. 我们昨晚看了一场歌剧。"], [15, "Italian", "意大利的", "/ɪˈˈtæljən/", "adj.", "意大利的", "n. 意大利人；意大利语", "Italian food 意大利食物；speak Italian 说意大利语", "Pizza is Italian food. 披萨是意大利食物。"], [15, "boat trip", "乘船旅行", "/bəʊt trɪp/", "n.", "乘船旅行", "—", "go on a boat trip 去乘船游览", "We had a boat trip on the lake. 我们在湖上乘船游览。"], [15, "waterfall", "瀑布", "/ˈwɔːtəfɔːl/", "n.", "瀑布", "—", "a beautiful waterfall 美丽的瀑布", "The waterfall is very tall. 瀑布很高。"]];
 const KEY = "dao_dun_vocab_v3";
 const NEW_COUNT = 10;   // 每次新增单词数（复习错词额外叠加）
@@ -893,6 +1673,129 @@ function sfxWrong(){ beep(196,0.22,"square",0.13); beep(146,0.26,"square",0.11,0
 function sfxWin(){ const m=[[523,0.13],[659,0.13],[784,0.13],[1047,0.32]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"sine",0.20,w); w+=d*0.92; }); }
 function sfxLose(){ const m=[[440,0.16],[392,0.20],[330,0.30]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"triangle",0.16,w); w+=d*0.92; }); }
 function initMute(){ const b=$("muteBtn"); if(!b) return; b.textContent = muted? "🔇":"🔊"; b.onclick=()=>{ muted=!muted; localStorage.setItem("dd_muted", muted?"1":"0"); b.textContent = muted? "🔇":"🔊"; if(!muted) sfxClick(); }; }
+
+/* ===== 背景音乐（在线获取+首次下载到本地缓存）===== */
+const BGM_REMOTE_URL = "https://cdn.pixabay.com/audio/2024/11/24/audio_360fca9773.mp3";
+const BGM_FALLBACK_URL = "https://assets.mixkit.co/music/32/32.mp3";
+const BGM_CACHE_NAME = "dd_bgm_cache_v1";
+
+let bgmOn = (localStorage.getItem("dd_bgm") === "1");
+let bgmIdx = 0;
+let _bgmAudio = null;
+let _bgmObjectUrl = null;
+
+/* 打开/创建缓存DB */
+function openBgmCache(){
+  return new Promise((resolve)=>{
+    if(!window.caches){ resolve(null); return; }
+    caches.open(BGM_CACHE_NAME).then(resolve).catch(()=>resolve(null));
+  });
+}
+
+/* 查询缓存中是否已有该音频（Response形式） */
+async function getCachedBgm(url){
+  const cache = await openBgmCache();
+  if(!cache) return null;
+  try{
+    const resp = await cache.match(url);
+    if(resp) return resp;
+  }catch(e){}
+  return null;
+}
+
+/* 下载并写入缓存 */
+async function downloadAndCacheBgm(url){
+  try{
+    const resp = await fetch(url, {mode:"cors"});
+    if(!resp.ok) return null;
+    const cache = await openBgmCache();
+    if(cache){
+      try{ await cache.put(url, resp.clone()); }catch(e){}
+    }
+    return resp;
+  }catch(e){
+    return null;
+  }
+}
+
+/* 释放旧的对象URL，避免内存泄漏 */
+function revokeBgmObjectUrl(){
+  if(_bgmObjectUrl){
+    try{ URL.revokeObjectURL(_bgmObjectUrl); }catch(e){}
+    _bgmObjectUrl = null;
+  }
+}
+
+/* 拿到当前曲目可播放的资源 URL（blob: 或 远程URL） */
+async function resolveBgmSrc(){
+  const url = bgmIdx === 0 ? BGM_REMOTE_URL : BGM_FALLBACK_URL;
+  // 1) 先查本地缓存
+  const cached = await getCachedBgm(url);
+  if(cached){
+    try{
+      const blob = await cached.blob();
+      if(blob && blob.size > 0){
+        revokeBgmObjectUrl();
+        _bgmObjectUrl = URL.createObjectURL(blob);
+        return _bgmObjectUrl;
+      }
+    }catch(e){}
+  }
+  // 2) 没有缓存 → 直接返回远程URL，并异步下载缓存（不阻塞播放）
+  downloadAndCacheBgm(url).then(async (resp)=>{
+    if(resp){
+      try{
+        const blob = await resp.blob();
+        if(blob && blob.size > 0 && !_bgmObjectUrl){
+          // 当前正在用远程播放，缓存好以后下次用
+        }
+      }catch(e){}
+    }
+  }).catch(()=>{});
+  return url;
+}
+
+function getBgm(){
+  if(!_bgmAudio){
+    _bgmAudio = new Audio();
+    _bgmAudio.loop = true;
+    _bgmAudio.volume = 0.35;
+    _bgmAudio.preload = "none";
+  }
+  return _bgmAudio;
+}
+
+async function playBgm(){
+  const a = getBgm();
+  const src = await resolveBgmSrc();
+  a.src = src;
+  a.play().catch(async ()=>{
+    // 失败：尝试备选
+    const next = (bgmIdx + 1) % 2;
+    if(next !== bgmIdx){
+      bgmIdx = next;
+      const fallbackSrc = await resolveBgmSrc();
+      a.src = fallbackSrc;
+      a.play().catch(()=>{});
+    }
+  });
+}
+
+function stopBgm(){
+  if(_bgmAudio) _bgmAudio.pause();
+}
+
+function initBgm(){
+  const b = $("bgmBtn");
+  if(!b) return;
+  b.textContent = bgmOn ? "🎵" : "🎼";
+  b.onclick = ()=>{
+    bgmOn = !bgmOn;
+    localStorage.setItem("dd_bgm", bgmOn ? "1" : "0");
+    b.textContent = bgmOn ? "🎵" : "🎼";
+    if(bgmOn) playBgm(); else stopBgm();
+  };
+}
 
 let currentWord="";
 function speakWord(word, accent){
@@ -986,40 +1889,42 @@ function renderHistory(){
   if(!card||!body) return;
   if(S.seq===0 && (!S.dayErrors||S.dayErrors.length===0)){ card.style.display="none"; return; }
   card.style.display="block";
+  // V2: 横向滑动小卡片
   let html="";
-  html+='<div class="stat-row"><span>📅 开始日期</span><b>'+todayStr()+'</b></div>';
-  html+='<div class="stat-row"><span>📚 已学单词</span><b>'+Math.min(S.seq, WORDS.length)+' / '+WORDS.length+'</b></div>';
-  if(S.seq>0){
-    html+='<div style="margin-top:10px;font-weight:700;color:#8B7D6B;font-size:14px;">🌱 已开花的单词：</div>';
-    html+='<div class="list">';
-    const learned=new Set();
-    for(let i=0;i<S.seq && i<WORDS.length;i++){ learned.add(normalize(WORDS[i][1])); }
-    const errSet=new Set(S.dayErrors||[]);
-    const mastered=[...learned].filter(en=>!errSet.has(en)).slice(0,20);
-    mastered.forEach(en=>{
-      const w=findWord(en);
-      if(w){ html+='<li><b>'+escapeHtml(w[1])+'</b>　'+escapeHtml(w[4])+'　'+escapeHtml(w[2]||w[5])+'</li>'; }
+  const logs=S.learningLogs||[];
+  const recent=logs.slice(-10).reverse();
+  if(recent.length>0){
+    recent.forEach(log=>{
+      const rate=log.total>0?Math.round(log.correct/log.total*100):0;
+      const rateColor=rate>=80?'var(--green)':rate>=50?'var(--orange)':'var(--red)';
+      html+='<div class="history-mini-card">';
+      html+='<div class="hmc-date">'+log.date+'</div>';
+      html+='<div class="hmc-score" style="color:'+rateColor+'">'+rate+'%</div>';
+      html+='<div class="hmc-words">'+log.correct+'/'+log.total+' 词</div>';
+      html+='</div>';
     });
-    if(mastered.length===0){ html+='<li style="color:#8B7D6B;">暂无完全掌握的单词，继续加油！</li>'; }
-    else if(learned.size-mastered.size>0){ html+='<li style="color:#8B7D6B;font-size:12px;">...还有 '+Math.min(learned.size-mastered.size,10)+' 个在复习中</li>'; }
-    html+='</div>';
-  }
-  if(S.dayErrors && S.dayErrors.length>0){
-    html+='<div style="margin-top:10px;font-weight:700;color:var(--red);font-size:14px;">🪴 需继续浇水的单词：</div>';
-    html+='<div class="list">';
-    S.dayErrors.slice(0,20).forEach(en=>{
-      const w=findWord(en);
-      if(w){ html+='<li><b>'+escapeHtml(w[1])+'</b>　'+escapeHtml(w[4])+'　'+escapeHtml(w[2]||w[5])+'</li>'; }
-    });
-    if(S.dayErrors.length>20){ html+='<li style="color:#8B7D6B;font-size:12px;">...还有 '+Math.min(S.dayErrors.length-20,10)+' 个需继续浇水</li>'; }
-    html+='</div>';
+  } else {
+    html+='<div style="padding:8px;color:#8B7D6B;font-size:13px;white-space:nowrap;">还没有学习记录，开始第一次学习吧～</div>';
   }
   body.innerHTML=html;
 }
 
 /* ===== 欢迎页 ===== */
+function renderStreakBar(){
+  const bar=$("streakBar"); if(!bar) return;
+  const streak=calcStreak(loadLearnedDays());
+  const maxShow=14;
+  let html='';
+  for(let i=0;i<maxShow;i++){
+    if(i<streak) html+='<div class="streak-sun active">☀️</div>';
+    else if(i===streak) html+='<div class="streak-sun">☀️</div>';
+    else html+='<div class="streak-sun future">☀️</div>';
+  }
+  bar.innerHTML=html;
+}
 function initWelcome(){
   if(S.nick) $("nick").value=S.nick;
+  renderStreakBar();
   let tip="";
   if(S.cur && !S.cur.finished){
     tip="🔁 检测到上次进度，点开始继续学习～";
@@ -1032,6 +1937,10 @@ function initWelcome(){
   }
   $("resumeTip").textContent=tip;
   renderHistory();
+  // V2: 新手引导
+  if(!localStorage.getItem("dd_guided")){
+    setTimeout(()=>{$("guideOverlay").classList.add("show");},600);
+  }
 }
 $("startBtn").onclick=()=>{
   const n=$("nick").value.trim();
@@ -1078,15 +1987,22 @@ function renderPreview(){
   html+='</ul>';
   $("previewBody").innerHTML=html;
 }
-$("reviewBtn").onclick=()=>{ sfxClick(); startReview(); };
-$("startSpellBtn").onclick=()=>{ sfxClick(); startRound(); };
+$("reviewBtn").onclick=()=>{ sfxClick(); if(bgmOn) playBgm(); startReview(); };
+$("startSpellBtn").onclick=()=>{ sfxClick(); if(bgmOn) playBgm(); startRound(); };
 
 /* ===== 默写页 ===== */
 function startRound(){
   S.cur.finished=false;
   S.cur.curCorrect=[]; S.cur.curWrong=[]; S.cur.curWrongIdx=[];
   S.cur.qi=0; save(S);
-  show("play"); renderQuestion();
+  show("play");
+  // 初始化花盆进度条
+  const q=S.cur.queue;
+  flowerProgressStatuses = [];
+  for(let i=0;i<q.length && i<10;i++) flowerProgressStatuses.push('seed');
+  initFlowerProgress(q.length);
+  updateFlowerProgress(flowerProgressStatuses, 0);
+  renderQuestion();
 }
 function renderQuestion(){
   const q=S.cur.queue;
@@ -1098,11 +2014,23 @@ function renderQuestion(){
   $("qDef").textContent=item.def;
   $("qPos").textContent=item.pos;
   $("qHint").textContent="请写出它的英文拼写";
-  $("fb").className="feedback"; $("fb").style.display="none";
+  // V2: 顶部横幅通知重置
+  const banner=$("topBanner"); if(banner){banner.className="feedback-banner";banner.style.display="none";}
   $("nextBtn").style.display="none";
   $("submitBtn").style.display="block";
-  const inp=$("ans"); inp.value=""; inp.disabled=false; inp.focus();
-  $("progressFill").style.width = ((S.cur.qi) / q.length * 100) + "%";
+  const inp=$("ans"); inp.value=""; inp.disabled=false; inp.className="input-play"; inp.focus();
+  // V2: 细长进度导轨
+  const stepsEl=$("playSteps");
+  if(stepsEl){
+    let shtml='';
+    for(let i=0;i<q.length;i++){
+      let cls='step-seg';
+      if(i<S.cur.qi) cls+=' done';
+      else if(i===S.cur.qi) cls+=' active';
+      shtml+='<div class="'+cls+'" style="flex:1;"></div>';
+    }
+    stepsEl.innerHTML=shtml;
+  }
 }
 $("playPronounceUK").onclick=()=>{ sfxClick(); speakWord(currentWord, 'uk'); };
 $("playPronounceUS").onclick=()=>{ sfxClick(); speakWord(currentWord, 'us'); };
@@ -1118,24 +2046,40 @@ function submit(){
   submitted=true;
   $("submitBtn").style.display="none";
   $("ans").disabled=true;
-  const fb=$("fb");
+  // V2: 顶部横幅通知
+  const banner=$("topBanner");
   if(isCorrect(item,ans)){
     S.cur.curCorrect.push({en:item.en, pos:item.pos, def:item.def});
-    fb.className="feedback ok"; fb.innerHTML="✅ 正确！答对了，真棒～"; fb.style.display="block";
-    fb.classList.add("shield-flash"); setTimeout(()=>fb.classList.remove("shield-flash"),500);
-    flashOk(); sfxCorrect();
+    if(banner){banner.className="feedback-banner ok";banner.textContent="✅ 正确！答对了，真棒～";banner.style.display="block";setTimeout(()=>{banner.style.display="none";},1500);}
+    $("ans").classList.add("correct-glow");
+    sfxCorrect();
+    if(S.cur.qi < flowerProgressStatuses.length){
+      flowerProgressStatuses[S.cur.qi] = 'bloom';
+    }
   } else {
     const shown = ans.trim()? ans.trim() : "（空）";
     S.cur.curWrong.push({en:item.en, ans:shown, pos:item.pos, def:item.def});
     S.cur.curWrongIdx.push(idx);
-    fb.className="feedback no"; fb.style.display="block";
-    fb.innerHTML='❌ 没关系，再记一次！<br>你写的：<span class="cmp wrong">'+escapeHtml(shown)+'</span>　正确：<span class="cmp right">'+escapeHtml(item.en)+'</span>';
-    const card=document.querySelector("#play .card"); card.classList.add("shake");
-    setTimeout(()=>card.classList.remove("shake"),400); sfxWrong();
+    if(banner){banner.className="feedback-banner no";banner.innerHTML='❌ 你写的：<b>'+escapeHtml(shown)+'</b>　正确：<b>'+escapeHtml(item.en)+'</b>';banner.style.display="block";setTimeout(()=>{banner.style.display="none";},2500);}
+    $("ans").classList.add("wrong-shake");
+    sfxWrong();
+    if(S.cur.qi < flowerProgressStatuses.length){
+      flowerProgressStatuses[S.cur.qi] = 'sprout';
+    }
   }
   save(S);
+  const nextIndex = S.cur.qi + 1;
+  updateFlowerProgress(flowerProgressStatuses, nextIndex < q.length ? nextIndex : -1);
+  // V2: 更新进度导轨
+  const stepsEl=$("playSteps");
+  if(stepsEl){
+    const segs=stepsEl.querySelectorAll('.step-seg');
+    if(segs[S.cur.qi]) segs[S.cur.qi].classList.remove('active');
+    if(segs[S.cur.qi]) segs[S.cur.qi].classList.add(isCorrect(item,ans)?'done':'done');
+    if(nextIndex<q.length && segs[nextIndex]) segs[nextIndex].classList.add('active');
+  }
   const nb=$("nextBtn"); nb.style.display="block";
-  nb.textContent = (S.cur.qi+1 < q.length) ? "➡️ 下一个单词" : "📜 查看本轮记录";
+  nb.textContent = (S.cur.qi+1 < q.length) ? "➡️ 下一个" : "📜 查看记录";
 }
 $("nextBtn").onclick=()=>{
   submitted=false;
@@ -1160,6 +2104,7 @@ $("nextRoundBtn").onclick=()=>{
   const c=S.cur;
   if(c.lastWrongIdx.length===0){ finishSession(); return; }
   sfxClick();
+  if(bgmOn) playBgm();
   c.queue = c.lastWrongIdx.slice();
   startRound();
 };
@@ -1286,12 +2231,32 @@ function renderReview(){
   $("rvPrompt").textContent = q.type==='en'
     ? ("🇬🇧 选出「"+q.prompt+"」的中文意思")
     : ("🇨🇳 选出「"+q.prompt+"」的英文拼写");
-  const box=$("rvOpts"); box.innerHTML=""; box.style.display="block";
-  q.opts.forEach(o=>{
-    const b=document.createElement("div"); b.className="btn opt"; b.textContent=o;
+  // V2: 花瓣2x2网格（需要4个选项，补充到4个）
+  const box=$("rvOpts"); box.innerHTML=""; box.style.display="grid";
+  // 确保有4个选项
+  while(q.opts.length<4){
+    const r=WORDS[Math.floor(Math.random()*WORDS.length)];
+    const v=q.type==='en'?(r[2]||r[5]):r[1];
+    if(!q.opts.some(o=>normalize(o)===normalize(v))) q.opts.push(v);
+  }
+  const petalColors=['p0','p1','p2','p3'];
+  q.opts.slice(0,4).forEach((o,i)=>{
+    const b=document.createElement("div"); b.className="petal-btn "+petalColors[i]; b.textContent=o;
     b.onclick=()=>answerReview(o);
     box.appendChild(b);
   });
+  // V2: 进度导轨
+  const stepsEl=$("rvSteps");
+  if(stepsEl){
+    let shtml='';
+    for(let i=0;i<rvQuestions.length;i++){
+      let cls='step-seg';
+      if(i<rvIdx) cls+=' done';
+      else if(i===rvIdx) cls+=' active';
+      shtml+='<div class="'+cls+'" style="flex:1;"></div>';
+    }
+    stepsEl.innerHTML=shtml;
+  }
   $("rvFb").style.display="none";
   $("rvNext").style.display="none";
   $("rvStart").style.display="none";
@@ -1305,10 +2270,11 @@ function answerReview(choice){
   const ok = normalize(choice)===normalize(q.correct);
   const fb=$("rvFb"); fb.style.display="block";
   if(ok){ fb.className="feedback ok"; fb.innerHTML="✅ 正确！"; sfxCorrect(); }
-  else { sfxWrong(); fb.className="feedback no"; fb.innerHTML="❌ 错误！正确答案：<span class=\"cmp right\">"+escapeHtml(q.correct)+"</span>"; }
+  else { sfxWrong(); fb.className="feedback no"; fb.innerHTML="❌ 你选的：<span class=\"cmp wrong\">"+escapeHtml(choice)+"</span>　正确：<span class=\"cmp right\">"+escapeHtml(q.correct)+"</span>"; }
   [...$("rvOpts").children].forEach(b=>{
     b.style.pointerEvents="none";
     if(normalize(b.textContent)===normalize(q.correct)) b.classList.add("rv-hit");
+    else if(normalize(b.textContent)===normalize(choice)) b.classList.add("rv-miss");
     else b.classList.add("rv-miss");
   });
   if(rvIdx+1<rvQuestions.length){ $("rvNext").style.display="block"; $("rvNext").textContent="➡️ 下一题"; }
@@ -1319,7 +2285,7 @@ $("rvNext").onclick=()=>{
   sfxClick(); rvIdx++; renderReview();
 };
 $("rvEnd").onclick=()=>{ sfxClick(); S.cur=null; save(S); initWelcome(); show("welcome"); };
-$("rvStart").onclick=()=>{ sfxClick(); const c=S.cur; if(c && !c.finished && c.qi < (c.queue?c.queue.length:0)){ show("play"); renderQuestion(); } else { startRound(); } };
+$("rvStart").onclick=()=>{ sfxClick(); if(bgmOn) playBgm(); const c=S.cur; if(c && !c.finished && c.qi < (c.queue?c.queue.length:0)){ show("play"); renderQuestion(); } else { startRound(); } };
 
 /* ===== 结算卡片 canvas ===== */
 function drawCard(f){
@@ -1327,14 +2293,16 @@ function drawCard(f){
   const HEAD_BOTTOM=400;   // 头部内容结束，正文起点
   const FOOT_RESERVE=110;  // 底部结语+签名预留高度
   const MAXW=W-160;
+  const WRONG_FONT="18px PingFang SC, sans-serif";
+  const LINE_HEIGHT=28;
   // ---- 第一遍：测算所需高度（动态高度，超长也一张画全不截断） ----
   const m0=document.createElement("canvas").getContext("2d");
   let contentH=0;
   f.rounds.forEach(r=>{
     contentH += 34;                                                            // 轮次标题
     if(r.wrong && r.wrong.length){
-      m0.font="18px PingFang SC, sans-serif";
-      r.wrong.forEach(w=>{ contentH += textLines(m0, "✗ "+w.ans+" → ✓ "+w.en, MAXW)*24 + 8; });
+      m0.font=WRONG_FONT;
+      r.wrong.forEach(w=>{ contentH += textLines(m0, "✗ "+w.ans+" → ✓ "+w.en, MAXW)*LINE_HEIGHT; });
     }
     contentH += 12;
   });
@@ -1346,7 +2314,7 @@ function drawCard(f){
   x.fillStyle=g; x.fillRect(0,0,W,H);
   x.strokeStyle="#D4C8B8"; x.lineWidth=10; x.strokeRect(14,14,W-28,H-28);
   drawTree(x, W/2, 110, 70);
-  x.fillStyle="#fff"; x.font="bold 30px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign="center"; x.fillText("单词花园·成长记录", W/2, 120);
+  x.fillStyle="#4E9A60"; x.font="bold 30px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign="center"; x.fillText("单词花园·成长记录", W/2, 120);
   x.fillStyle="#4E9A60"; x.font="bold 34px PingFang SC, sans-serif"; x.fillText((f.nick||"小园丁")+" 的成长记录", W/2, 215);
   x.fillStyle="#8B7D6B"; x.font="18px PingFang SC, sans-serif"; x.fillText("📅 "+f.date, W/2, 250);
   const sec=Math.round(f.elapsed/1000); const mm=Math.floor(sec/60), ss=sec%60;
@@ -1358,8 +2326,8 @@ function drawCard(f){
     x.fillStyle="#4E9A60"; x.font="bold 24px PingFang SC, sans-serif";
     x.fillText(r.group+" · 第"+(i+1)+"轮　对"+r.correct.length+" 错"+r.wrong.length, 70, y); y+=34;
     if(r.wrong && r.wrong.length){
-      x.fillStyle="#E8726A"; x.font="18px PingFang SC, sans-serif";
-      r.wrong.forEach(w=>{ y = wrapText(x, "✗ "+w.ans+" → ✓ "+w.en, 90, y, MAXW, 24)+8; });
+      x.fillStyle="#E8726A"; x.font=WRONG_FONT;
+      r.wrong.forEach(w=>{ y = wrapText(x, "✗ "+w.ans+" → ✓ "+w.en, 90, y, MAXW, LINE_HEIGHT); });
     }
     y+=12;
   });
@@ -1392,7 +2360,7 @@ function wrapText(x,text,x0,y,maxW,lh){
     else line+=ch;
   }
   if(line) x.fillText(line,x0,yy);
-  return yy;
+  return yy + lh;
 }
 function textLines(x,text,maxW){
   let line="", n=1;
@@ -1409,6 +2377,7 @@ function goReview(){ sfxClick(); if(S.cur && S.cur.pool && S.cur.pool.length>0){
 
 /* ===== 启动 ===== */
 initMute();
+initBgm();
 initWelcome();
 show("welcome");
 
@@ -1417,6 +2386,7 @@ function showRecords(){
   sfxClick();
   show("records");
   setTimeout(()=>{
+    renderStreakVine();
     renderCalendar();
     renderBadges();
     renderChart();
@@ -1432,7 +2402,7 @@ function goRecord(){
 
 function showRecordTab(tab){
   sfxClick();
-  document.querySelectorAll(".record-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab-pill").forEach(t=>t.classList.remove("active"));
   document.getElementById("tab"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("active");
   document.querySelectorAll(".record-card").forEach(card=>{
     card.classList.remove("record-card-show");
@@ -1556,9 +2526,10 @@ function renderBadges(){
   let html="";
   BADGES.forEach(badge=>{
     const unlocked=badge.check();
-    html+='<div class="badge-item '+ (unlocked?"unlocked":"locked") +'" onclick="showBadgeDetail(\''+badge.id+'\')">';
-    html+='<div class="badge-icon">'+badge.icon+'</div>';
-    html+='<div class="badge-name">'+badge.name+'</div>';
+    html+='<div class="badge-card '+(unlocked?"unlocked":"locked")+'" onclick="showBadgeDetail(\''+badge.id+'\')">';
+    if(!unlocked) html+='<div class="bc-silhouette">'+badge.icon+'</div>';
+    html+='<div class="bc-icon">'+badge.icon+'</div>';
+    html+='<div class="bc-name">'+badge.name+'</div>';
     html+='</div>';
   });
   $("badgeGrid").innerHTML=html;
@@ -1578,6 +2549,19 @@ function closeBadgeModal(){
 }
 
 /* ===== 成长曲线图 ===== */
+function renderRingGauges(total, correct, streak){
+  const rg=$("ringGauges"); if(!rg) return;
+  const rate=total>0?Math.round(correct/total*100):0;
+  const wordsLearned=Math.min(S.seq,WORDS.length);
+  const C=2*Math.PI*36; // circumference r=36
+  function ring(color,pct,emoji,label,num){
+    const offset=C*(1-pct/100);
+    return '<div class="ring-gauge"><svg viewBox="0 0 90 90"><circle class="rg-bg" cx="45" cy="45" r="36"/><circle class="rg-fill" cx="45" cy="45" r="36" stroke="'+color+'" stroke-dasharray="'+C+'" stroke-dashoffset="'+offset+'"/></svg><div class="rg-value"><div class="rg-emoji">'+emoji+'</div><div class="rg-num">'+num+'</div><div class="rg-label">'+label+'</div></div></div>';
+  }
+  rg.innerHTML=ring('#6BAF7A',Math.min(wordsLearned/WORDS.length*100,100),'📚','总词汇',wordsLearned)
+    +ring('#F2A6B3',rate,'🎯','正确率',rate+'%')
+    +ring('#F5C842',Math.min(streak/30*100,100),'🔥','连续'+streak+'天',streak);
+}
 function renderChart(){
   const logs=S.learningLogs||[];
   const last7Days=[];
@@ -1628,6 +2612,9 @@ function renderChart(){
   $("chartTotal").textContent=total;
   $("chartCorrect").textContent=correct;
   $("chartRate").textContent=rate+"%";
+  // V2: 环形仪表盘
+  const currentStreak=calcStreak(loadLearnedDays());
+  renderRingGauges(total, correct, currentStreak);
 }
 
 /* ===== 错词诊断报告 ===== */
@@ -1654,10 +2641,13 @@ function renderDiagnostic(){
   if(!posHtml) posHtml='<div style="text-align:center;color:#8B7D6B;font-size:13px;">暂无错词记录，继续保持！</div>';
   $("diagnosticPos").innerHTML=posHtml;
   
-  const errHtml=S.dayErrors.slice(0,10).map(en=>{
+  const errHtml=S.dayErrors.slice(0,10).map((en,i)=>{
     const word=findWord(en);
     if(!word) return "";
-    return '<div class="diagnostic-item"><span class="name"><b>'+word[1]+'</b> '+word[4]+'</span><span class="value">'+(word[2]||word[5])+'</span></div>';
+    // V2: 需要浇水的花朵卡片
+    const health=i<3?'#E8726A':i<6?'#F0A868':'#5CB870';
+    const healthW=Math.max(10,100-i*10);
+    return '<div class="water-need-card"><span class="wnc-icon">🪴</span><div class="wnc-info"><div class="wnc-word">'+word[1]+' <span style="font-size:12px;color:#8B7D6B;">'+word[4]+'</span></div><div class="wnc-def">'+(word[2]||word[5])+'</div><div class="wnc-bar"><div class="wnc-bar-fill" style="width:'+healthW+'%;background:'+health+';"></div></div></div></div>';
   }).join("");
   
   if(!errHtml) $("diagnosticErrors").innerHTML='<div style="text-align:center;color:#8B7D6B;font-size:13px;">暂无错词，太棒了！</div>';
@@ -1711,16 +2701,35 @@ function startChallenge(type){
   challengeQuestions=shuffle(qs).slice(0,30);
   
   show("challenge");
+  // V2: 闪电模式日落背景
+  if(type==='speed') $("challenge").classList.add("challenge-sunset");
+  else $("challenge").classList.remove("challenge-sunset");
   renderChallenge();
 }
 
 function renderChallenge(){
   let header="";
   if(challengeType==="speed"){
-    header='<div class="challenge-timer">⏱️ '+challengeTime+'秒</div>';
+    // V2: 太阳落山圆形计时器
+    const pct=challengeTime/60;
+    const C=2*Math.PI*34;
+    header='<div class="sun-timer"><svg viewBox="0 0 80 80"><circle class="st-bg" cx="40" cy="40" r="34"/><circle class="st-fill" cx="40" cy="40" r="34" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'"/></svg><span class="st-face">'+(pct>0.5?'🌞':'🌙')+'</span><span class="st-time">'+challengeTime+'</span></div>';
     header+='<div class="challenge-score">得分: '+challengeScore+'</div>';
+    // V2: 得分花瓣
+    const petals=Math.floor(challengeScore/10);
+    let flower='<div class="score-flower">';
+    for(let i=0;i<Math.min(petals,12);i++) flower+='<div class="sf-petal grown"></div>';
+    flower+='</div>';
+    header+=flower;
   } else if(challengeType==="streak"){
     header='<div class="challenge-score">第'+challengeLevel+'关 · 连续: '+challengeStreak+'/5</div>';
+    // V2: 火焰链条
+    if(challengeStreak>1){
+      let fire='<div class="streak-fire">';
+      for(let i=0;i<Math.min(challengeStreak,10);i++) fire+='<span class="fire-chain">🔥</span>';
+      fire+='</div>';
+      header+=fire;
+    }
   } else {
     header='<div class="challenge-score">得分: '+challengeScore+'</div>';
   }
@@ -1763,7 +2772,9 @@ function renderChallenge(){
         challengeTimer=null;
         renderChallenge();
       } else {
-        $("challengeHeader").innerHTML='<div class="challenge-timer">⏱️ '+challengeTime+'秒</div><div class="challenge-score">得分: '+challengeScore+'</div>';
+        const pct=challengeTime/60;const C=2*Math.PI*34;const petals=Math.floor(challengeScore/10);
+        let fhtml='<div class="sun-timer"><svg viewBox="0 0 80 80"><circle class="st-bg" cx="40" cy="40" r="34"/><circle class="st-fill" cx="40" cy="40" r="34" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'"/></svg><span class="st-face">'+(pct>0.5?'🌞':'🌙')+'</span><span class="st-time">'+challengeTime+'</span></div><div class="challenge-score">得分: '+challengeScore+'</div><div class="score-flower">';for(let i=0;i<Math.min(petals,12);i++) fhtml+='<div class="sf-petal grown"></div>';fhtml+='</div>';
+        $("challengeHeader").innerHTML=fhtml;
       }
     },1000);
   }
@@ -1832,6 +2843,8 @@ function renderChallengeResult(){
     clearInterval(challengeTimer);
     challengeTimer=null;
   }
+  // V2: 移除日落背景
+  $("challenge").classList.remove("challenge-sunset");
   
   let icon="🏆";
   let title="挑战完成！";
@@ -1900,19 +2913,141 @@ function roundEnd(){
   let html="";
   html+='<div class="stat-row"><span>本轮正确</span><b>'+c.rounds[c.rounds.length-1].correct.length+' / '+total+'</b></div>';
   if(wrongN>0){
-    html+='<div style="margin-top:10px;color:#8B7D6B;font-size:14px;font-weight:700;">🪴 还需要浇水的单词（'+wrongN+' 个）：</div>';
-    html+='<ul class="list">';
-    wrongList.forEach(idx=>{ const it=c.pool[idx]; html+='<li><b>'+escapeHtml(it.en)+'</b>　'+escapeHtml(it.pos)+'　'+escapeHtml(it.def)+'</li>'; });
-    html+='</ul>';
-    $("nextRoundBtn").textContent="🪴 需要浇水的单词，再来一次！";
+    // V2: 枯萎花朵2列网格
+    html+='<div class="wilted-grid">';
+    wrongList.forEach(idx=>{
+      const it=c.pool[idx];
+      const wRound=c.rounds[c.rounds.length-1];
+      const wItem=wRound.wrong.find(w=>normalize(w.en)===normalize(it.en));
+      html+='<div class="wilted-card">';
+      html+='<span class="wc-icon">🥀</span>';
+      html+='<div class="wc-wrong">'+escapeHtml(wItem?wItem.ans:'?')+'</div>';
+      html+='<div class="wc-right">'+escapeHtml(it.en)+'</div>';
+      html+='<div class="wc-def">'+escapeHtml(it.pos)+' '+escapeHtml(it.def)+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+    $("nextRoundBtn").textContent="🪣 需要浇水，再来一次！";
   } else {
-    html+='<div style="margin-top:12px;color:var(--green);font-weight:800;font-size:17px;text-align:center;">🎉 本轮全部开花，学习成功！</div>';
+    // V2: 全部正确庆祝场景
+    html+='<div class="celebrate-scene">';
+    html+='<div class="cs-bunny">🐰</div>';
+    html+='<div class="cs-banner">🎉 全部开花！</div>';
+    html+='</div>';
     $("nextRoundBtn").textContent="🏆 全部开花了！查看成长记录";
   }
   $("sumBody").innerHTML=html;
   if(wrongN>0) sfxLose(); else sfxWin();
   show("summary");
 }
+
+/* ===== V2: 连续学习藤蔓 ===== */
+function renderStreakVine(){
+  const vine=$("streakVine"); if(!vine) return;
+  const learnedDays=loadLearnedDays();
+  const today=new Date();
+  let html='';
+  for(let i=13;i>=0;i--){
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    const ds=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+    if(i>0) html+='<div class="vine-stem"></div>';
+    if(learnedDays[ds]){
+      const count=learnedDays[ds];
+      const emoji=count>=10?'🌸':count>=5?'🌺':'🌱';
+      html+='<div class="vine-leaf grown" title="'+ds+': '+count+'词">'+emoji+'</div>';
+    } else if(i===0){
+      html+='<div class="vine-leaf today" title="今天">☀️</div>';
+    } else {
+      html+='<div class="vine-leaf empty" title="'+ds+'">·</div>';
+    }
+  }
+  vine.innerHTML=html;
+}
+
+/* ===== V2: 导航高亮 ===== */
+function updateNavActive(screenId){
+  document.querySelectorAll('.nav-island').forEach(n=>n.classList.remove('active'));
+  if(screenId==='welcome') $("navHome")?.classList.add('active');
+  else if(screenId==='review'||screenId==='play') $("navReview")?.classList.add('active');
+  else if(screenId==='records'||screenId==='challenge') $("navRecord")?.classList.add('active');
+}
+// 覆盖 show 函数以支持导航高亮和页面过渡
+const _origShow = show;
+show = function(id){
+  _origShow(id);
+  updateNavActive(id);
+};
+
+/* ===== V2: 新手引导 ===== */
+let guideStep=0;
+const guideSteps=[
+  {icon:'🦊',text:'输入你的昵称，开始你的花园之旅～'},
+  {icon:'🪣',text:'看花盆了解进度，每答对一题花开一朵！'},
+  {icon:'📊',text:'在记录页查看成长轨迹和成就徽章～'}
+];
+function nextGuideStep(){
+  guideStep++;
+  if(guideStep>=guideSteps.length){
+    $("guideOverlay").classList.remove("show");
+    localStorage.setItem("dd_guided","1");
+    guideStep=0;
+    return;
+  }
+  const s=guideSteps[guideStep];
+  $("guideIcon").textContent=s.icon;
+  $("guideText").textContent=s.text;
+  document.querySelectorAll('.gb-dot').forEach((d,i)=>{
+    d.classList.toggle('active',i<=guideStep);
+  });
+}
+
+/* ===== V3 新增：键盘弹出时输入框自动滚入可视区域 ===== */
+(function(){
+  var ansInput = document.getElementById('ans');
+  var challengeInput = null;
+  function ensureInputVisible(input, delay){
+    if(!input) return;
+    setTimeout(function(){
+      input.scrollIntoView({behavior:'smooth', block:'center'});
+    }, delay || 300);
+  }
+  if(ansInput){
+    ansInput.addEventListener('focus', function(){ ensureInputVisible(ansInput, 350); });
+  }
+  /* 挑战模式盲听输入框 */
+  document.addEventListener('DOMNodeInserted', function(e){
+    if(e.target.id === 'challengeInput'){
+      challengeInput = e.target;
+      challengeInput.addEventListener('focus', function(){ ensureInputVisible(challengeInput, 350); });
+    }
+  });
+})();
+
+/* ===== V3 新增：复习页左右滑动手势支持 ===== */
+(function(){
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var reviewEl = document.getElementById('review');
+  if(reviewEl){
+    reviewEl.addEventListener('touchstart', function(e){
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, {passive:true});
+    reviewEl.addEventListener('touchend', function(e){
+      var diffX = e.changedTouches[0].clientX - touchStartX;
+      var diffY = e.changedTouches[0].clientY - touchStartY;
+      if(Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY)){
+        if(diffX < 0){
+          /* 左滑 → 下一题 */
+          var nextBtn = document.getElementById('rvNext');
+          if(nextBtn && nextBtn.style.display !== 'none'){
+            nextBtn.click();
+          }
+        }
+      }
+    }, {passive:true});
+  }
+})();
 </script>
 </body>
 </html>
