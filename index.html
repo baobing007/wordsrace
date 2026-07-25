@@ -33,7 +33,7 @@
   .btn{display:block; width:100%; margin-top:14px; padding:15px; border:none; border-radius:18px;
     font-size:18px; font-weight:800; color:#fff; cursor:pointer; font-family:inherit;
     background:linear-gradient(180deg,var(--leaf),var(--leaf-d));
-    box-shadow:0 5px 0 #3D7A4A; transition:transform .08s;}
+    box-shadow:0 5px 0 #3D7A4A; transition:transform .08s; white-space:nowrap;}
   .btn:active{transform:translateY(3px); box-shadow:0 2px 0 #3D7A4A;}
   .btn.orange{background:linear-gradient(180deg,var(--peach),#E8A060); box-shadow:0 5px 0 #C4884A;}
   .btn.orange:active{box-shadow:0 2px 0 #C4884A;}
@@ -747,8 +747,23 @@
     <div class="card">
       <label>小园丁的昵称</label>
       <input id="nick" type="text" class="fence-border" placeholder="例如：可可 / 小熊猫" maxlength="12">
+      <div style="margin-top:10px;">
+        <label>本次学习数量</label>
+        <input id="learnCount" type="number" class="fence-border" value="10" min="1" max="100" style="width:100%;">
+      </div>
       <div class="sunflower-btn" id="startBtn"><span class="btn-icon">🌻</span>开始学习</div>
       <div class="mini" id="resumeTip"></div>
+    </div>
+
+    <!-- SRS 定时复习卡片 -->
+    <div class="card" style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:18px;font-weight:700;color:#4E9A60;">📚 定时复习</span>
+        <span id="srsProgressLabel" style="font-size:14px;color:#8B7D6B;">🌿 已掌握 0 / 0</span>
+      </div>
+      <div id="srsDueDisplay" style="font-size:42px;font-weight:800;color:#4E9A60;text-align:center;margin:12px 0 4px;">0</div>
+      <div id="srsDueLabel" style="text-align:center;color:#8B7D6B;font-size:15px;margin-bottom:8px;">个词今日待复习</div>
+      <button id="srsStartBtn" class="btn orange" style="margin-top:8px;">📖 开始今日复习</button>
     </div>
 
     <!-- 欢迎页：花园入口插画 —— 小兔子浇水场景 -->
@@ -1650,6 +1665,13 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 
 /* ===== 音效（Web Audio 实时合成，无需外部文件） ===== */
 let _ac=null, muted=(localStorage.getItem("dd_muted")==="1");
+
+/* ===== SRS 智能间隔复习 ===== */
+const SRS_INTERVALS = [0, 1, 3, 7, 15, 30, 999999];
+let srsData = {};
+let _srsMode = false;
+let _srsQueue = [];
+let _srsIdx = 0;
 function _audio(){
   if(!_ac){ try{ const AC=window.AudioContext||window.webkitAudioContext; _ac=new AC(); }catch(e){ _ac=null; } }
   if(_ac && _ac.state==="suspended"){ _ac.resume().catch(()=>{}); }
@@ -1673,6 +1695,105 @@ function sfxWrong(){ beep(196,0.22,"square",0.13); beep(146,0.26,"square",0.11,0
 function sfxWin(){ const m=[[523,0.13],[659,0.13],[784,0.13],[1047,0.32]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"sine",0.20,w); w+=d*0.92; }); }
 function sfxLose(){ const m=[[440,0.16],[392,0.20],[330,0.30]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"triangle",0.16,w); w+=d*0.92; }); }
 function initMute(){ const b=$("muteBtn"); if(!b) return; b.textContent = muted? "🔇":"🔊"; b.onclick=()=>{ muted=!muted; localStorage.setItem("dd_muted", muted?"1":"0"); b.textContent = muted? "🔇":"🔊"; if(!muted) sfxClick(); }; }
+
+/* ===== SRS 核心函数 ===== */
+function loadSrs(){
+  try {
+    const raw = localStorage.getItem("dd_srs");
+    srsData = raw ? JSON.parse(raw) : {};
+  } catch(e) { srsData = {}; }
+  WORDS.forEach(w => {
+    const en = w[1];
+    if(!srsData[en]) srsData[en] = { level:0, nextReview:null, wrongCount:0, lastReview:null };
+  });
+  saveSrs();
+}
+function saveSrs(){ localStorage.setItem("dd_srs", JSON.stringify(srsData)); }
+
+function calcNextReview(level){
+  if(level >= 6) return null;
+  if(level === 0) return todayStr();
+  const days = SRS_INTERVALS[level];
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function updateSrs(wordEn, isCorrect){
+  const rec = srsData[wordEn];
+  if(!rec) return;
+  rec.lastReview = todayStr();
+  if(isCorrect){
+    rec.level = Math.min(6, rec.level + 1);
+  } else {
+    rec.wrongCount = (rec.wrongCount || 0) + 1;
+    rec.level = Math.max(0, rec.level - 2);
+  }
+  rec.nextReview = calcNextReview(rec.level);
+  saveSrs();
+}
+
+function getDueWords(){
+  const today = todayStr();
+  const due = [];
+  for(const en in srsData){
+    const rec = srsData[en];
+    if(rec.nextReview && rec.nextReview <= today && rec.level < 6){
+      const word = WORDS.find(w => w[1] === en);
+      if(word) due.push({ item: word, rec });
+    }
+  }
+  due.sort(function(a,b){
+    const cmp = a.rec.nextReview.localeCompare(b.rec.nextReview);
+    return cmp !== 0 ? cmp : a.rec.level - b.rec.level;
+  });
+  return due;
+}
+
+function countMastered(){
+  let n = 0;
+  for(const en in srsData){
+    if(srsData[en].level >= 6) n++;
+  }
+  return n;
+}
+
+function startSrsReview(){
+  _srsQueue = getDueWords();
+  if(_srsQueue.length === 0){
+    alert("🌿 今日复习已完成！已掌握 " + countMastered() + " 个词。");
+    return;
+  }
+  _srsMode = true;
+  _srsIdx = 0;
+  show("play");
+  renderSrsQuestion();
+}
+
+function renderSrsQuestion(){
+  if(_srsIdx >= _srsQueue.length){
+    _srsMode = false;
+    show("welcome");
+    initWelcome();
+    return;
+  }
+  const item = _srsQueue[_srsIdx].item;
+  const rec  = _srsQueue[_srsIdx].rec;
+  const en   = item[1] || item.en;
+  currentWord = en;
+  document.getElementById("counter").textContent = "📚 定时复习  " + (_srsIdx+1) + " / " + _srsQueue.length;
+  document.getElementById("qDef").textContent = item[2] || item.def;
+  document.getElementById("qPos").textContent = item[4] || item.pos || "";
+  document.getElementById("qHint").textContent = "请写出英文拼写（Lv."+rec.level+"）";
+  const banner = document.getElementById("topBanner");
+  if(banner){ banner.className="feedback-banner"; banner.style.display="none"; }
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("submitBtn").style.display = "block";
+  const inp = document.getElementById("ans");
+  inp.value = ""; inp.disabled = false; inp.className = "input-play";
+  submitted = false;
+  window._srsCurrentEn = en;
+}
 
 /* ===== 背景音乐（在线获取+首次下载到本地缓存）===== */
 const BGM_REMOTE_URL = "https://cdn.pixabay.com/audio/2024/11/24/audio_360fca9773.mp3";
@@ -1746,12 +1867,19 @@ async function resolveBgmSrc(){
     if(resp){
       try{
         const blob = await resp.blob();
-        if(blob && blob.size > 0 && !_bgmObjectUrl){
-          // 当前正在用远程播放，缓存好以后下次用
+        if(blob && blob.size > 0){
+          revokeBgmObjectUrl();
+          _bgmObjectUrl = URL.createObjectURL(blob);
         }
       }catch(e){}
     }
-  }).catch(()=>{});
+  }).catch(()=>{
+    // Cache API 或 fetch 失败时，确保音频仍在播放远程链接
+    if(_bgmAudio && _bgmAudio.src !== url){
+      _bgmAudio.src = url;
+      _bgmAudio.play().catch(()=>{});
+    }
+  });
   return url;
 }
 
@@ -1839,7 +1967,7 @@ function speakWord(word, accent){
 /* ===== 存储 / 时间 ===== */
 function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};} }
 function save(s){ localStorage.setItem(KEY, JSON.stringify(s)); }
-function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function fmtTime(ts){ const d=new Date(ts); const p=n=>("0"+n).slice(-2); return p(d.getHours())+":"+p(d.getMinutes()); }
 
 let S = load();
@@ -1870,11 +1998,12 @@ function takeSequential(n, reviewSet){
 }
 
 /* 组成本次池：复习错词（前次错误）+ 本次新增 10 词 */
-function buildPool(){
+function buildPool(count){
+  const learnCount = count || NEW_COUNT;
   ensureDay();
   const review = (S.dayErrors||[]).map(en=>findWord(en)).filter(Boolean);
   const reviewSet = new Set(review.map(w=>normalize(w[1])));
-  const news = takeSequential(NEW_COUNT, reviewSet);
+  const news = takeSequential(learnCount, reviewSet);
   const items = review.concat(news);
   return { pool: items.map(toItem), reviewCount: review.length };
 }
@@ -1922,6 +2051,34 @@ function renderStreakBar(){
   }
   bar.innerHTML=html;
 }
+function refreshSrsCard(){
+  const srsBtn = document.getElementById("srsStartBtn");
+  if(srsBtn) srsBtn.onclick = function(){ sfxClick(); if(bgmOn) playBgm(); startSrsReview(); };
+  const due = getDueWords();
+  const el = document.getElementById("srsDueDisplay");
+  const label = document.getElementById("srsDueLabel");
+  const progLabel = document.getElementById("srsProgressLabel");
+  if(el && label){
+    const today = todayStr();
+    const overdue = due.filter(function(d){ return d.rec.nextReview < today; });
+    if(due.length === 0){
+      el.textContent = "✅";
+      el.style.color = "#6BAF7A";
+      el.style.fontSize = "36px";
+      label.innerHTML = "今日复习已完成！<br><span style='font-size:12px;color:#8B7D6B;'>已掌握 " + countMastered() + " / " + WORDS.length + " 个词</span>";
+      if(srsBtn) srsBtn.style.display = "none";
+    } else {
+      el.textContent = due.length;
+      el.style.color = overdue.length > 0 ? "#E8726A" : "#4E9A60";
+      el.style.fontSize = "42px";
+      label.textContent = overdue.length > 0 ? "个词待复习（逾期 "+overdue.length+" 个）" : "个词今日待复习";
+      if(srsBtn) srsBtn.style.display = "block";
+    }
+  }
+  if(progLabel){
+    progLabel.textContent = "🌿 已掌握 " + countMastered() + " / " + WORDS.length;
+  }
+}
 function initWelcome(){
   if(S.nick) $("nick").value=S.nick;
   renderStreakBar();
@@ -1941,18 +2098,20 @@ function initWelcome(){
   if(!localStorage.getItem("dd_guided")){
     setTimeout(()=>{$("guideOverlay").classList.add("show");},600);
   }
+  refreshSrsCard();
 }
 $("startBtn").onclick=()=>{
   const n=$("nick").value.trim();
   if(!n){ $("nick").focus(); $("nick").style.borderColor="var(--red)"; return; }
+  const countInput = document.getElementById("learnCount");
+  const count = countInput ? Math.max(1, Math.min(100, parseInt(countInput.value) || NEW_COUNT)) : NEW_COUNT;
   S.nick=n; save(S); sfxClick();
-  if(S.cur && !S.cur.finished){ show("play"); renderQuestion(); return; }
-  newSession();
+  newSession(count);
 };
 
 /* ===== 新一次学习 ===== */
-function newSession(){
-  const b=buildPool();
+function newSession(count){
+  const b=buildPool(count);
   S.cur={
     pool:b.pool,
     reviewCount:b.reviewCount,
@@ -1982,7 +2141,13 @@ function renderPreview(){
   html+='<ul class="list">';
   c.pool.forEach((it,i)=>{
     const tag = (i<c.reviewCount)?'<span class="tag">复习</span>':'<span class="tag new">新学</span>';
-    html+='<li>'+tag+'<b>'+escapeHtml(it.en)+'</b>　'+escapeHtml(it.pos)+'　'+escapeHtml(it.def)+'</li>';
+    html+='<li><div style="display:flex;justify-content:space-between;align-items:flex-start;">';
+    html+='<span>'+tag+'<b>'+escapeHtml(it.en)+'</b>　'+escapeHtml(it.pos)+'　'+escapeHtml(it.def)+'</span>';
+    html+='<span style="white-space:nowrap;margin-left:8px;">';
+    html+='<a href="javascript:speakWord(\''+escapeHtml(it.en)+'\',\'uk\')" style="color:#6BAF7A;font-size:13px;font-weight:bold;margin-right:8px;">英音</a>';
+    html+='<a href="javascript:speakWord(\''+escapeHtml(it.en)+'\',\'us\')" style="color:#F0A868;font-size:13px;font-weight:bold;">美音</a>';
+    html+='</span>';
+    html+='</div></li>';
   });
   html+='</ul>';
   $("previewBody").innerHTML=html;
@@ -2038,6 +2203,33 @@ $("submitBtn").onclick=submit;
 $("ans").addEventListener("keydown",e=>{ if(e.key==="Enter") submit(); });
 function submit(){
   if(submitted) return;
+
+  if(_srsMode && window._srsCurrentEn){
+    const correct = normalize(window._srsCurrentEn) === normalize(document.getElementById("ans").value);
+    const banner = document.getElementById("topBanner");
+    if(correct){
+      if(banner){ banner.className="feedback-banner ok"; banner.textContent="✅ 正确！"; banner.style.display="block"; setTimeout(()=>{banner.style.display="none";},1500); }
+      sfxCorrect();
+    } else {
+      const shown = document.getElementById("ans").value.trim() || "（空）";
+      if(banner){ 
+        banner.className="feedback-banner no"; 
+        banner.innerHTML='❌ 你写的：<b>'+escapeHtml(shown)+'</b>　正确：<b>'+escapeHtml(window._srsCurrentEn)+'</b>'; 
+        banner.style.display="block"; 
+        banner.onclick = function(){ this.style.display="none"; };
+      }
+      sfxWrong();
+      document.getElementById("ans").classList.add("wrong-shake");
+    }
+    updateSrs(window._srsCurrentEn, correct);
+    document.getElementById("ans").disabled = true;
+    document.getElementById("submitBtn").style.display = "none";
+    const nb = document.getElementById("nextBtn");
+    nb.style.display = "block";
+    nb.textContent = (_srsIdx+1 < _srsQueue.length) ? "➡️ 下一个" : "🎉 复习完成";
+    return;
+  }
+
   const q=S.cur.queue;
   if(S.cur.qi>=q.length) return;
   const idx=q[S.cur.qi];
@@ -2048,7 +2240,8 @@ function submit(){
   $("ans").disabled=true;
   // V2: 顶部横幅通知
   const banner=$("topBanner");
-  if(isCorrect(item,ans)){
+  const isCorrectResult = isCorrect(item,ans);
+  if(isCorrectResult){
     S.cur.curCorrect.push({en:item.en, pos:item.pos, def:item.def});
     if(banner){banner.className="feedback-banner ok";banner.textContent="✅ 正确！答对了，真棒～";banner.style.display="block";setTimeout(()=>{banner.style.display="none";},1500);}
     $("ans").classList.add("correct-glow");
@@ -2067,6 +2260,7 @@ function submit(){
       flowerProgressStatuses[S.cur.qi] = 'sprout';
     }
   }
+  updateSrs(item.en, isCorrectResult);
   save(S);
   const nextIndex = S.cur.qi + 1;
   updateFlowerProgress(flowerProgressStatuses, nextIndex < q.length ? nextIndex : -1);
@@ -2075,13 +2269,18 @@ function submit(){
   if(stepsEl){
     const segs=stepsEl.querySelectorAll('.step-seg');
     if(segs[S.cur.qi]) segs[S.cur.qi].classList.remove('active');
-    if(segs[S.cur.qi]) segs[S.cur.qi].classList.add(isCorrect(item,ans)?'done':'done');
+    if(segs[S.cur.qi]) segs[S.cur.qi].classList.add(isCorrectResult?'done':'done');
     if(nextIndex<q.length && segs[nextIndex]) segs[nextIndex].classList.add('active');
   }
   const nb=$("nextBtn"); nb.style.display="block";
   nb.textContent = (S.cur.qi+1 < q.length) ? "➡️ 下一个" : "📜 查看记录";
 }
 $("nextBtn").onclick=()=>{
+  if(_srsMode){
+    _srsIdx++;
+    renderSrsQuestion();
+    return;
+  }
   submitted=false;
   $("nextBtn").style.display="none";
   $("submitBtn").style.display="block";
@@ -2378,6 +2577,7 @@ function goReview(){ sfxClick(); if(S.cur && S.cur.pool && S.cur.pool.length>0){
 /* ===== 启动 ===== */
 initMute();
 initBgm();
+loadSrs();
 initWelcome();
 show("welcome");
 
@@ -2440,7 +2640,7 @@ function renderCalendar(){
   
   const learnedDays=loadLearnedDays();
   for(let d=1;d<=daysInMonth;d++){
-    const dateStr=year+"-"+(month+1)+"-"+d;
+    const dateStr=year+"-"+String(month+1).padStart(2,'0')+"-"+String(d).padStart(2,'0');
     const learned=learnedDays[dateStr]||0;
     let cls="calendar-day";
     if(d===today) cls+=" today";
@@ -2449,7 +2649,7 @@ function renderCalendar(){
       if(learned>=10) cls+=" most";
       else if(learned>=5) cls+=" more";
     }
-    html+='<div class="'+cls+'" title="学习'+learned+'词">'+d+'</div>';
+    html+='<div class="'+cls+'" title="学习'+learned+'词" onclick="showDayDetail(\''+dateStr+'\')">'+d+'</div>';
   }
   html+='</div>';
   
@@ -2463,7 +2663,70 @@ function renderCalendar(){
   html+='<div class="calendar-stat"><div class="num">'+totalWords+'</div><div class="label">累计单词</div></div>';
   html+='</div>';
   
+  html+='<div id="dayDetail"></div>';
+  
   $("calendarContent").innerHTML=html;
+}
+
+function showDayDetail(dateStr){
+  const logs=(S.learningLogs||[]).filter(l=>l.date===dateStr);
+  const el=$("dayDetail");
+  if(!el) return;
+  if(logs.length===0){
+    el.innerHTML='<div style="margin-top:16px;padding:16px;background:#FFF0D6;border-radius:12px;text-align:center;color:#8B7D6B;">📅 '+dateStr+' 没有学习记录</div>';
+    return;
+  }
+  let html='<div style="margin-top:16px;padding:16px;background:#FFF8E8;border-radius:12px;border:2px solid #E8D5C0;">';
+  html+='<div style="font-weight:800;color:#4E9A60;font-size:16px;margin-bottom:12px;">📅 '+dateStr+' 学习详情</div>';
+  
+  let allMastered=[];
+  let allWrong=[];
+  let totalWords=0, totalCorrect=0;
+  
+  logs.forEach((log, i)=>{
+    totalWords+=log.total||0;
+    totalCorrect+=log.correct||0;
+    if(log.mastered && log.mastered.length) allMastered=allMastered.concat(log.mastered);
+    if(log.wrong && log.wrong.length) allWrong=allWrong.concat(log.wrong);
+  });
+  
+  html+='<div class="stat-row"><span>📊 学习次数</span><b>'+logs.length+' 次</b></div>';
+  html+='<div class="stat-row"><span>📚 累计单词</span><b>'+totalWords+' 个</b></div>';
+  html+='<div class="stat-row"><span>✅ 答对</span><b>'+totalCorrect+' 个</b></div>';
+  html+='<div class="stat-row"><span>❌ 答错</span><b>'+(totalWords-totalCorrect)+' 个</b></div>';
+  
+  if(allMastered.length>0){
+    html+='<div style="margin-top:14px;font-weight:800;color:#4E9A60;font-size:14px;">✨ 掌握单词（'+allMastered.length+'个）</div>';
+    html+='<ul class="list">';
+    allMastered.forEach(w=>{
+      html+='<li><div style="display:flex;justify-content:space-between;align-items:flex-start;">';
+      html+='<span><span class="tag new">掌握</span><b>'+escapeHtml(w.en)+'</b>　'+escapeHtml(w.pos||'')+'　'+escapeHtml(w.def||'')+'</span>';
+      html+='<span style="white-space:nowrap;margin-left:8px;">';
+      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'uk\')" style="color:#6BAF7A;font-size:13px;font-weight:bold;margin-right:8px;">英音</a>';
+      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'us\')" style="color:#F0A868;font-size:13px;font-weight:bold;">美音</a>';
+      html+='</span></div></li>';
+    });
+    html+='</ul>';
+  }
+  
+  if(allWrong.length>0){
+    html+='<div style="margin-top:14px;font-weight:800;color:#E8726A;font-size:14px;">🥀 出现错误的单词（'+allWrong.length+'个）</div>';
+    html+='<ul class="list">';
+    allWrong.forEach(w=>{
+      html+='<li><div style="display:flex;justify-content:space-between;align-items:flex-start;">';
+      html+='<span><span class="tag">错词</span><b>'+escapeHtml(w.en)+'</b>　';
+      if(w.ans) html+='你拼：<span class="cmp wrong">'+escapeHtml(w.ans)+'</span>　';
+      html+=escapeHtml(w.pos||'')+'　'+escapeHtml(w.def||'')+'</span>';
+      html+='<span style="white-space:nowrap;margin-left:8px;">';
+      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'uk\')" style="color:#6BAF7A;font-size:13px;font-weight:bold;margin-right:8px;">英音</a>';
+      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'us\')" style="color:#F0A868;font-size:13px;font-weight:bold;">美音</a>';
+      html+='</span></div></li>';
+    });
+    html+='</ul>';
+  }
+  
+  html+='</div>';
+  el.innerHTML=html;
 }
 
 function loadLearnedDays(){
@@ -2482,20 +2745,22 @@ function calcStreak(days){
   for(let i=0;i<=365;i++){
     const d=new Date(today);
     d.setDate(d.getDate()-i);
-    const dateStr=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+    const dateStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
     if(days[dateStr]) streak++;
     else if(i>0) break;
   }
   return streak;
 }
 
-function recordLearningLog(total, correct){
+function recordLearningLog(total, correct, masteredWords, wrongWords){
   const logs=S.learningLogs||[];
   logs.push({
     date:todayStr(),
     total,
     correct,
-    time:Date.now()
+    time:Date.now(),
+    mastered: masteredWords || [],
+    wrong: wrongWords || []
   });
   if(logs.length>100) logs.shift();
   S.learningLogs=logs;
@@ -2904,7 +3169,9 @@ function roundEnd(){
   
   const total=c.queue.length;
   const correct=c.rounds[c.rounds.length-1].correct.length;
-  recordLearningLog(total, correct);
+  const masteredWords = c.rounds[c.rounds.length-1].correct.map(w=>({en:w.en, pos:w.pos, def:w.def}));
+  const wrongWords = c.rounds[c.rounds.length-1].wrong.map(w=>({en:w.en, ans:w.ans, pos:w.pos, def:w.def}));
+  recordLearningLog(total, correct, masteredWords, wrongWords);
   
   if(S.maxStreak===undefined) S.maxStreak=0;
   if(correct===total) S.maxStreak=Math.max(S.maxStreak, c.rounds.length);
