@@ -1705,6 +1705,10 @@ const NEW_COUNT = 10;   // 每次新增单词数（复习错词额外叠加）
 let CURRENT_LIB = null;
 const DEFAULT_LIB_ID = "lib_nj34";
 const BATCH_SIZE = 10;
+// SRS 全局状态变量
+let _srsMode = false;
+let _srsQueue = [];
+let _srsIdx = 0;
 
 function getAppConfig(){
   var c = {};
@@ -2655,6 +2659,12 @@ function submit(){
     return;
   }
 
+  // 防御性检查：非 SRS 模式下必须有 S.cur 与 queue
+  if(!S.cur || !S.cur.queue || S.cur.queue.length===0){
+    console.warn("submit: S.cur 或 queue 为空，已忽略", { hasCur: !!S.cur, srsMode: _srsMode });
+    return;
+  }
+
   const q=S.cur.queue;
   if(S.cur.qi>=q.length) return;
   const idx=q[S.cur.qi];
@@ -2714,7 +2724,7 @@ $("nextBtn").onclick=()=>{
 };
 /* 拼写页：进入复习 / 返回花园（错词实时入复习库） */
 $("playReviewBtn").onclick=()=>{ sfxClick(); flushCurWrong(); startReview(); };
-$("playHomeBtn").onclick=()=>{ sfxClick(); flushCurWrong(); initWelcome(); show("welcome"); };
+$("playHomeBtn").onclick=()=>{ sfxClick(); flushCurWrong(); resetStudyState(); initWelcome(); show("welcome"); };
 function flashOk(){
   const inp=$("ans");
   inp.style.boxShadow="0 0 0 5px #A5D6A7, 0 0 16px #5CB870";
@@ -2910,7 +2920,7 @@ $("rvNext").onclick=()=>{
   if(rvIdx+1>=rvQuestions.length){ sfxClick(); startRound(); return; }
   sfxClick(); rvIdx++; renderReview();
 };
-$("rvEnd").onclick=()=>{ sfxClick(); S.cur=null; save(S); initWelcome(); show("welcome"); };
+$("rvEnd").onclick=()=>{ sfxClick(); resetStudyState(); S.cur=null; save(S); initWelcome(); show("welcome"); };
 $("rvStart").onclick=()=>{ sfxClick(); if(bgmOn) playBgm(); const c=S.cur; if(c && !c.finished && c.qi < (c.queue?c.queue.length:0)){ show("play"); renderQuestion(); } else { startRound(); } };
 
 /* ===== 结算卡片 canvas ===== */
@@ -2998,7 +3008,9 @@ function textLines(x,text,maxW){
 }
 
 /* ===== 底部导航功能 ===== */
-function goHome(){ sfxClick(); if(S.cur && !S.cur.finished){ flushCurWrong(); } S.cur=null; save(S); initWelcome(); show("welcome"); }
+// 统一清理学习/复习状态，防止残留导致下次进入异常
+function resetStudyState(){ _srsMode = false; _srsQueue = []; _srsIdx = 0; submitted = false; window._srsCurrentEn = null; }
+function goHome(){ sfxClick(); if(S.cur && !S.cur.finished){ flushCurWrong(); } resetStudyState(); S.cur=null; save(S); initWelcome(); show("welcome"); }
 function goReview(){ sfxClick(); if(S.cur && S.cur.pool && S.cur.pool.length>0){ flushCurWrong(); startReview(); } else { alert("还没有学习记录哦，先开始学习吧～"); } }
 
 /* ===== 启动 ===== */
