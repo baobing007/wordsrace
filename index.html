@@ -1197,6 +1197,9 @@
     <div class="card">
       <div id="finalBody"></div>
       <img id="cardImg" alt="成长卡片">
+      <div id="cardTip" style="text-align:center;color:var(--orange);font-size:15px;font-weight:700;margin-top:8px;">
+        👆 长按图片可以保存或转发
+      </div>
       <!-- V2: 2x2 网格按钮 -->
       <div class="final-grid">
         <div class="fg-btn fg-orange" id="redoBtn"><span class="fg-icon">🪣</span>再浇一次水</div>
@@ -2806,10 +2809,35 @@ $("copyBtn").onclick=()=>{
     setTimeout(()=>$("copyBtn").textContent="📋 复制成长记录",1800);
   }).catch(()=>{ alert(roundText(f)); });
 };
-$("saveBtn").onclick=()=>{
-  const img=$("cardImg"); if(!img.src) return;
+$("saveBtn").onclick=async function(){
+  const img=$("cardImg");
+  if(!img.src || !img.src.startsWith("data:")) return;
   sfxClick();
-  const a=document.createElement("a"); a.href=img.src; a.download="单词花园成长记录_"+todayStr()+".png"; a.click();
+
+  // 方案A：调用系统分享（iOS Safari 弹出"存储图像 / 微信 / 隔空投送"菜单）
+  try {
+    const res = await fetch(img.src);
+    const blob = await res.blob();
+    const file = new File([blob], "单词花园_"+todayStr()+".png", {type:"image/png"});
+
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        files: [file],
+        title: "单词花园成长记录"
+      });
+      return;
+    }
+  } catch(e){ /* 用户取消分享，降级到方案B */ }
+
+  // 方案B：降级 → 引导长按保存（微信内置浏览器兼容）
+  const tip = $("cardTip");
+  if(tip){
+    tip.textContent = "👆 长按上方图片 → 保存到相册 或 转发给朋友";
+    tip.style.color = "#E8726A";
+    tip.style.fontWeight = "700";
+  } else {
+    alert("👆 请长按上方图片，选择「存储图像」保存到相册");
+  }
 };
 /* 重来一次：同一组词重新默写，轮次结果合并累计显示 */
 $("redoBtn").onclick=()=>{
