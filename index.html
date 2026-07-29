@@ -313,6 +313,10 @@
   .challenge-result-title{font-size:20px; font-weight:800; color:#4E9A60; margin-bottom:8px;}
   .challenge-result-score{font-size:32px; font-weight:800; color:#E8726A; margin-bottom:16px;}
 
+  /* 记忆翻牌 */
+  .memory-card{user-select:none; -webkit-tap-highlight-color:transparent;}
+  .memory-card:active{transform:scale(.95);}
+
   /* ===== 花盆进度条 ===== */
   .flower-progress-container {
     display: flex;
@@ -1307,37 +1311,59 @@
     <!-- 挑战入口 -->
     <div class="card" style="margin-top:16px;">
       <div class="diagnostic-title">🎮 趣味挑战</div>
+      <!-- 新顺序：5 张卡片 -->
+      <div class="challenge-card" onclick="startChallenge('scramble')">
+        <div class="challenge-header">
+          <span class="challenge-icon">🔀</span>
+          <span class="challenge-name">字母大乱斗</span>
+        </div>
+        <div class="challenge-desc">字母被打乱了，快来还原正确拼写！</div>
+        <div class="challenge-stats">
+          <span>🏆 最高记录：<span id="scrambleHigh">0</span></span>
+        </div>
+      </div>
+
+      <div class="challenge-card" onclick="startChallenge('memory')">
+        <div class="challenge-header">
+          <span class="challenge-icon">🃏</span>
+          <span class="challenge-name">记忆翻牌</span>
+        </div>
+        <div class="challenge-desc">翻牌配对，记住每张卡的位置！</div>
+        <div class="challenge-stats">
+          <span>⏱️ 最快记录：<span id="memoryHigh">—</span></span>
+        </div>
+      </div>
+
       <div class="challenge-card" onclick="startChallenge('speed')">
         <div class="challenge-header">
-          <span class="challenge-icon">⚡</span>
-          <span class="challenge-name">闪电模式</span>
+          <span class="challenge-icon">⏱️</span>
+          <span class="challenge-name">60秒闪电战</span>
         </div>
-        <div class="challenge-desc">60秒内尽可能答对更多题目，考验你的反应速度！</div>
+        <div class="challenge-desc">60秒内尽可能答对更多题目，连击有额外加分！</div>
         <div class="challenge-stats">
-          <span>⏱️ 60秒</span>
-          <span>🏆 最高分: <span id="speedHigh">0</span></span>
+          <span>🏆 最高纪录：<span id="speedHigh">0</span>分</span>
         </div>
       </div>
+
       <div class="challenge-card" onclick="startChallenge('streak')">
         <div class="challenge-header">
-          <span class="challenge-icon">🔥</span>
-          <span class="challenge-name">闯关模式</span>
+          <span class="challenge-icon">🎯</span>
+          <span class="challenge-name">连击王</span>
         </div>
-        <div class="challenge-desc">连续答对5题解锁下一关，答错从头开始！</div>
+        <div class="challenge-desc">连续答对，挑战自己的最高连击纪录！</div>
         <div class="challenge-stats">
-          <span>🎯 5题/关</span>
-          <span>🏆 最高关: <span id="streakHigh">0</span></span>
+          <span>🔥 最高连击：<span id="streakHigh">0</span></span>
         </div>
       </div>
+
       <div class="challenge-card" onclick="startChallenge('blind')">
         <div class="challenge-header">
-          <span class="challenge-icon">👂</span>
-          <span class="challenge-name">盲听模式</span>
+          <span class="challenge-icon">📞</span>
+          <span class="challenge-name">电话密语</span>
         </div>
-        <div class="challenge-desc">只听发音，写出单词拼写，锻炼听力！</div>
+        <div class="challenge-desc">只听发音写出拼写，一次机会不能重听！</div>
         <div class="challenge-stats">
-          <span>🔊 听发音</span>
-          <span>🏆 最高分: <span id="blindHigh">0</span></span>
+          <span>🏆 最高纪录：<span id="blindHigh">0</span>分</span>
         </div>
       </div>
     </div>
@@ -4078,222 +4104,443 @@ function randomEncourage(){
 }
 
 /* ===== 挑战模式 ===== */
-let challengeType="";
-let challengeScore=0;
-let challengeTime=60;
-let challengeTimer=null;
-let challengeQuestions=[];
-let challengeIdx=0;
-let challengeStreak=0;
-let challengeLevel=1;
+var challengeType = "";
+var challengeScore = 0;
+var challengeTime = 60;
+var challengeTimer = null;
+var challengeLevel = 1;
+var challengeStreak = 0;
+var challengeIdx = 0;
+var challengeQuestions = [];
 
-function updateChallengeHighScores(){
-  $("speedHigh").textContent=S.challengeHighScores?.speed||0;
-  $("streakHigh").textContent=S.challengeHighScores?.streak||0;
-  $("blindHigh").textContent=S.challengeHighScores?.blind||0;
+// 翻牌专用
+var memoryCards = [];
+var memoryFlipCount = 0;
+var memoryTimer = null;
+var memorySeconds = 0;
+var memoryLocked = false;
+var memoryMatched = 0;
+var memoryFirst = null;
+
+// 初始化最高分
+if(!S.challengeHighScores) S.challengeHighScores = {};
+if(!S.challengeHighScores.speed) S.challengeHighScores.speed = 0;
+if(!S.challengeHighScores.streak) S.challengeHighScores.streak = 0;
+if(!S.challengeHighScores.blind) S.challengeHighScores.blind = 0;
+if(!S.challengeHighScores.scramble) S.challengeHighScores.scramble = 0;
+if(!S.challengeHighScores.memory) S.challengeHighScores.memory = 0;
+
+function updateChallengeStats(){
+  $("speedHigh").textContent = S.challengeHighScores.speed || 0;
+  $("streakHigh").textContent = S.challengeHighScores.streak || 0;
+  $("blindHigh").textContent = S.challengeHighScores.blind || 0;
+  $("scrambleHigh").textContent = S.challengeHighScores.scramble || 0;
+  $("memoryHigh").textContent = S.challengeHighScores.memory ? S.challengeHighScores.memory + '秒' : '—';
 }
+
+// 兼容旧函数名
+function updateChallengeHighScores(){ updateChallengeStats(); }
+
+function getDef(w){ return w[2] || w[5] || w[1]; }
 
 function startChallenge(type){
   sfxClick();
-  challengeType=type;
-  challengeScore=0;
-  challengeTime=60;
-  challengeLevel=1;
-  challengeStreak=0;
-  challengeIdx=0;
-  
-  const qs=[];
-  var currentWords = getCurrentWords();
-  const pool=S.cur?.pool||currentWords.slice(0,50).map(toItem);
-  pool.forEach(it=>{
-    qs.push(makeQ(it,'en'));
-    qs.push(makeQ(it,'cn'));
-  });
-  challengeQuestions=shuffle(qs).slice(0,30);
-  
-  show("challenge");
-  // V2: 闪电模式日落背景
-  if(type==='speed') $("challenge").classList.add("challenge-sunset");
-  else $("challenge").classList.remove("challenge-sunset");
-  renderChallenge();
+  challengeType = type;
+  challengeScore = 0;
+  challengeStreak = 0;
+  challengeIdx = 0;
+  challengeTime = 60;
+
+  // 清除旧计时器
+  if(challengeTimer){ clearInterval(challengeTimer); challengeTimer = null; }
+  if(memoryTimer){ clearInterval(memoryTimer); memoryTimer = null; }
+
+  $("challenge").classList.remove("challenge-sunset");
+
+  // 准备题目
+  var words = getCurrentWords();
+  var pool = [];
+  for(var i = 0; i < words.length; i++){
+    if(!words[i][1].includes(' ')) pool.push(words[i]);
+  }
+  if(pool.length < 6) pool = words;
+  var shuffled = shuffle(pool);
+
+  if(type === 'scramble'){
+    // 字母大乱斗：用填空题，无需额外准备，每轮随机一个
+    challengeQuestions = shuffled.slice(0, 50);
+    show("challenge");
+    renderScramble();
+  } else if(type === 'memory'){
+    // 记忆翻牌：初始化 6 对卡片
+    memoryCards = [];
+    memoryMatched = 0;
+    memorySeconds = 0;
+    memoryFlipCount = 0;
+    memoryLocked = false;
+    memoryFirst = null;
+    var cards = shuffled.slice(0, 6);
+    for(var i = 0; i < cards.length; i++){
+      var w = cards[i];
+      memoryCards.push({en: w[1], def: getDef(w), type: 'en', matched: false, flipped: false});
+      memoryCards.push({en: w[1], def: getDef(w), type: 'def', matched: false, flipped: false});
+    }
+    memoryCards = shuffle(memoryCards);
+    show("challenge");
+    renderMemory();
+    // 启动计时器
+    memoryTimer = setInterval(function(){ memorySeconds++; $("memoryTimer").textContent = memorySeconds + '秒'; }, 1000);
+  } else if(type === 'speed'){
+    // 60秒闪电战
+    challengeQuestions = shuffle(shuffled).slice(0, 80);
+    show("challenge");
+    $("challenge").classList.add("challenge-sunset");
+    renderSpeed();
+    startSpeedTimer();
+  } else if(type === 'streak'){
+    // 连击王
+    challengeQuestions = shuffle(shuffled).slice(0, 80);
+    show("challenge");
+    renderStreak();
+  } else if(type === 'blind'){
+    // 电话密语
+    challengeQuestions = shuffled.slice(0, 30);
+    show("challenge");
+    renderBlind();
+    // 语音播放第一题
+    setTimeout(function(){ speakWord(challengeQuestions[0][1], 'uk'); }, 300);
+  }
 }
 
-function renderChallenge(){
-  let header="";
-  if(challengeType==="speed"){
-    // V2: 太阳落山圆形计时器
-    const pct=challengeTime/60;
-    const C=2*Math.PI*34;
-    header='<div class="sun-timer"><svg viewBox="0 0 80 80"><circle class="st-bg" cx="40" cy="40" r="34"/><circle class="st-fill" cx="40" cy="40" r="34" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'"/></svg><span class="st-face">'+(pct>0.5?'🌞':'🌙')+'</span><span class="st-time">'+challengeTime+'</span></div>';
-    header+='<div class="challenge-score">得分: '+challengeScore+'</div>';
-    // V2: 得分花瓣
-    const petals=Math.floor(challengeScore/10);
-    let flower='<div class="score-flower">';
-    for(let i=0;i<Math.min(petals,12);i++) flower+='<div class="sf-petal grown"></div>';
-    flower+='</div>';
-    header+=flower;
-  } else if(challengeType==="streak"){
-    header='<div class="challenge-score">第'+challengeLevel+'关 · 连续: '+challengeStreak+'/5</div>';
-    // V2: 火焰链条
-    if(challengeStreak>1){
-      let fire='<div class="streak-fire">';
-      for(let i=0;i<Math.min(challengeStreak,10);i++) fire+='<span class="fire-chain">🔥</span>';
-      fire+='</div>';
-      header+=fire;
-    }
-  } else {
-    header='<div class="challenge-score">得分: '+challengeScore+'</div>';
-  }
-  $("challengeHeader").innerHTML=header;
-  
-  if(challengeIdx>=challengeQuestions.length || (challengeType==="speed" && challengeTime<=0)){
-    renderChallengeResult();
+/* 模式①：字母大乱斗 */
+function renderScramble(){
+  if(challengeIdx >= challengeQuestions.length){
+    showChallengeResult('🔀', '字母大乱斗', challengeScore, 'scramble');
     return;
   }
-  
-  const q=challengeQuestions[challengeIdx];
-  let body="";
-  
-  if(challengeType==="blind"){
-    currentWord=q.type==='en' ? q.prompt : q.correct;
-    body+='<div class="challenge-question">👂 请听发音，写出单词</div>';
-    body+='<div class="pronounce-row">';
-    body+='<button class="pronounce-btn uk" onclick="speakWord(currentWord,\'uk\')">英式<br>发音</button>';
-    body+='<button class="pronounce-btn us" onclick="speakWord(currentWord,\'us\')">美式<br>发音</button>';
-    body+='</div>';
-    body+='<input type="text" id="challengeInput" placeholder="写出单词" style="width:100%;font-size:24px;padding:12px;text-align:center;border:2px solid var(--sage);border-radius:12px;margin-bottom:12px;" onkeydown="if(event.key===\'Enter\') checkBlindAnswer()">';
-    body+='<div class="btn" onclick="checkBlindAnswer()">提交答案</div>';
+  var w = challengeQuestions[challengeIdx];
+  var en = w[1];
+  var scrambled = shuffle(en.split('')).join('');
+  var def = getDef(w);
+  var header = '<div class="challenge-score">🔀 第 ' + (challengeIdx+1) + ' 题 · 得分 ' + challengeScore + '</div>';
+  $("challengeHeader").innerHTML = header;
+  var body = '<div style="text-align:center;font-size:32px;font-weight:800;color:#3D3A36;letter-spacing:6px;padding:16px;">' + scrambled.split('').join(' ') + '</div>';
+  body += '<div style="text-align:center;font-size:14px;color:#8B7D6B;margin-bottom:12px;">' + escapeHtml(def) + '</div>';
+  body += '<input type="text" id="challengeInput" placeholder="输入正确拼写" style="width:100%;font-size:22px;padding:12px;text-align:center;border:2px solid var(--sage);border-radius:12px;margin-bottom:12px;" onkeydown="if(event.key===\'Enter\') checkScramble()">';
+  body += '<button class="btn" onclick="checkScramble()" style="margin-top:4px;">提交答案</button>';
+  $("challengeBody").innerHTML = body;
+  setTimeout(function(){ var inp = $("challengeInput"); if(inp) inp.focus(); }, 100);
+}
+
+function checkScramble(){
+  var inp = $("challengeInput");
+  if(!inp || !inp.value.trim()) return;
+  var w = challengeQuestions[challengeIdx];
+  var en = w[1];
+  var correct = normalize(inp.value) === normalize(en);
+  var banner = document.getElementById("topBanner");
+  if(correct){
+    challengeScore += 10;
+    if(banner){ banner.className="feedback-banner ok"; banner.textContent="✅ 正确！"; banner.style.display="block"; }
+    sfxCorrect();
   } else {
-    currentWord=q.type==='en' ? q.prompt : q.correct;
-    body+='<div class="challenge-question">'+q.prompt+'</div>';
-    body+='<div class="challenge-options">';
-    q.opts.forEach(opt=>{
-      body+='<div class="challenge-option" onclick="checkChallengeAnswer(\''+escapeHtml(opt)+'\',\''+escapeHtml(q.correct)+'\')">'+escapeHtml(opt)+'</div>';
-    });
-    body+='</div>';
+    if(banner){ banner.className="feedback-banner no"; banner.innerHTML='❌ 正确拼写：<b>'+escapeHtml(en)+'</b>'; banner.style.display="block"; }
+    sfxWrong();
   }
-  
-  $("challengeBody").innerHTML=body;
-  
-  if(challengeType==="speed" && !challengeTimer){
-    challengeTimer=setInterval(()=>{
-      challengeTime--;
-      if(challengeTime<=0){
-        clearInterval(challengeTimer);
-        challengeTimer=null;
-        renderChallenge();
-      } else {
-        const pct=challengeTime/60;const C=2*Math.PI*34;const petals=Math.floor(challengeScore/10);
-        let fhtml='<div class="sun-timer"><svg viewBox="0 0 80 80"><circle class="st-bg" cx="40" cy="40" r="34"/><circle class="st-fill" cx="40" cy="40" r="34" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'"/></svg><span class="st-face">'+(pct>0.5?'🌞':'🌙')+'</span><span class="st-time">'+challengeTime+'</span></div><div class="challenge-score">得分: '+challengeScore+'</div><div class="score-flower">';for(let i=0;i<Math.min(petals,12);i++) fhtml+='<div class="sf-petal grown"></div>';fhtml+='</div>';
-        $("challengeHeader").innerHTML=fhtml;
+  inp.disabled = true;
+  challengeIdx++;
+  setTimeout(function(){
+    if(banner) banner.style.display = "none";
+    renderScramble();
+  }, 800);
+}
+
+/* 模式②：记忆翻牌 */
+function renderMemory(){
+  var header = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">';
+  header += '<span style="font-size:18px;font-weight:800;color:#4E9A60;">🃏 记忆翻牌</span>';
+  header += '<span style="font-size:14px;color:#8B7D6B;">⏱️ <span id="memoryTimer">' + memorySeconds + '秒</span> · 配对 ' + memoryMatched + '/6</span>';
+  header += '</div>';
+  header += '<div style="text-align:center;font-size:12px;color:#8B7D6B;margin-bottom:6px;">翻两张牌，配对的消除</div>';
+  $("challengeHeader").innerHTML = header;
+
+  var body = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:360px;margin:0 auto;">';
+  for(var i = 0; i < memoryCards.length; i++){
+    var card = memoryCards[i];
+    var isFlipped = card.flipped || card.matched;
+    body += '<div id="mcard_' + i + '" class="memory-card" onclick="flipCard(' + i + ')" style="aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:' + (isFlipped && card.type==='en'?'14px':'20px') + ';font-weight:700;cursor:pointer;transition:all .3s;background:' + (card.matched ? '#E8F5E9' : isFlipped ? '#FFFDF8' : '#A8D5BA') + ';border:2px solid ' + (card.matched ? '#A5D6A7' : isFlipped ? '#E8DFD0' : '#8DC49E') + ';color:' + (isFlipped ? '#3D3A36' : 'transparent') + ';' + (card.matched ? 'opacity:0.6;' : '') + '">';
+    if(isFlipped) body += card.type === 'en' ? escapeHtml(card.en) : escapeHtml(card.def);
+    else body += '?';
+    body += '</div>';
+  }
+  body += '</div>';
+  body += '<div style="text-align:center;margin-top:12px;"><button class="btn orange" onclick="exitChallenge()" style="width:auto;padding:8px 20px;font-size:13px;">退出</button></div>';
+  $("challengeBody").innerHTML = body;
+}
+
+function flipCard(idx){
+  if(memoryLocked) return;
+  var card = memoryCards[idx];
+  if(card.matched || card.flipped) return;
+
+  card.flipped = true;
+  memoryFlipCount++;
+  renderMemory();
+
+  if(memoryFirst === null){
+    memoryFirst = idx;
+  } else {
+    var first = memoryCards[memoryFirst];
+    var second = card;
+    // 检查是否配对（同一单词的 en 和 def）
+    if(first.en === second.en && first.type !== second.type){
+      // 配对成功
+      first.matched = true;
+      second.matched = true;
+      memoryMatched++;
+      sfxCorrect();
+      if(memoryMatched === 6){
+        // 全部完成
+        clearInterval(memoryTimer);
+        challengeScore = memoryFlipCount;
+        var elapsed = memorySeconds;
+        if(!S.challengeHighScores.memory || elapsed < S.challengeHighScores.memory){
+          S.challengeHighScores.memory = elapsed;
+          save(S);
+        }
+        showChallengeResult('🃏', '记忆翻牌', memoryFlipCount + '步', 'memory');
+        return;
       }
-    },1000);
+      memoryFirst = null;
+      renderMemory();
+    } else {
+      // 不配对
+      memoryLocked = true;
+      sfxWrong();
+      setTimeout(function(){
+        first.flipped = false;
+        second.flipped = false;
+        memoryFirst = null;
+        memoryLocked = false;
+        renderMemory();
+      }, 800);
+    }
   }
 }
 
-function checkChallengeAnswer(choice, correct){
-  const ok=normalize(choice)===normalize(correct);
-  const options=$("challengeBody").querySelectorAll(".challenge-option");
-  
-  options.forEach(opt=>{
-    if(normalize(opt.textContent)===normalize(correct)) opt.classList.add("correct");
-    else if(normalize(opt.textContent)===normalize(choice)) opt.classList.add("wrong");
-    opt.style.pointerEvents="none";
-  });
-  
-  if(ok){
-    sfxCorrect();
-    challengeScore+=10;
-    if(challengeType==="streak"){
-      challengeStreak++;
-      if(challengeStreak>=5){
-        challengeLevel++;
-        challengeStreak=0;
-        sfxWin();
+/* 模式③：60秒闪电战 */
+function renderSpeed(){
+  if(challengeIdx >= challengeQuestions.length || challengeTime <= 0){
+    showChallengeResult('⏱️', '60秒闪电战', challengeScore, 'speed');
+    return;
+  }
+  var w = challengeQuestions[challengeIdx];
+  var en = w[1];
+  // 生成 4 个选项
+  var opts = [en];
+  var words = getCurrentWords();
+  var others = [];
+  for(var i = 0; i < words.length && others.length < 3; i++){
+    if(words[i][1] !== en) others.push(words[i]);
+  }
+  for(var i = 0; i < others.length; i++) opts.push(others[i][1]);
+  opts = shuffle(opts);
+
+  // 连击奖励提示
+  var comboStr = '';
+  if(challengeStreak >= 5) comboStr = '🔥🔥🔥 5连击！额外 +10！';
+  else if(challengeStreak >= 3) comboStr = '🔥🔥 3连击！额外 +5！';
+  else if(challengeStreak >= 2) comboStr = '🔥 2连击！额外 +2！';
+
+  var header = '<div class="challenge-score">⏱️ 第'+(challengeIdx+1)+'题 · 得分 ' + challengeScore + '</div>';
+  if(comboStr) header += '<div style="text-align:center;color:#E8726A;font-weight:700;font-size:13px;">' + comboStr + '</div>';
+  // 倒计时
+  header += '<div style="text-align:center;font-size:32px;font-weight:800;color:#E8726A;">' + challengeTime + '</div>';
+  $("challengeHeader").innerHTML = header;
+
+  var body = '<div class="challenge-question">' + escapeHtml(getDef(w)) + '</div>';
+  body += '<div class="challenge-options">';
+  for(var i = 0; i < opts.length; i++){
+    body += '<div class="challenge-option" onclick="checkSpeedAnswer(\'' + escapeHtml(opts[i]) + '\',\'' + escapeHtml(en) + '\')">' + escapeHtml(opts[i]) + '</div>';
+  }
+  body += '</div>';
+  $("challengeBody").innerHTML = body;
+}
+
+function startSpeedTimer(){
+  if(challengeTimer) clearInterval(challengeTimer);
+  challengeTimer = setInterval(function(){
+    challengeTime--;
+    if(challengeTime <= 0){
+      clearInterval(challengeTimer);
+      challengeTimer = null;
+      renderSpeed(); // 触发结束
+    } else {
+      // 更新倒计时显示
+      var headerEl = $("challengeHeader");
+      if(headerEl){
+        var timeDiv = headerEl.querySelector('div[style*="font-size:32px"]');
+        if(timeDiv) timeDiv.textContent = challengeTime;
       }
     }
+  }, 1000);
+}
+
+function checkSpeedAnswer(selected, correct){
+  if(challengeTime <= 0) return;
+  var banner = document.getElementById("topBanner");
+  if(selected === correct){
+    var bonus = 0;
+    if(challengeStreak >= 5) bonus = 10;
+    else if(challengeStreak >= 3) bonus = 5;
+    else if(challengeStreak >= 2) bonus = 2;
+    challengeScore += 10 + bonus;
+    challengeStreak++;
+    if(banner){ banner.className="feedback-banner ok"; banner.textContent=bonus>0?'✅ +'+(10+bonus)+'！连击奖励！':'✅ +10！'; banner.style.display="block"; }
+    sfxCorrect();
   } else {
+    challengeStreak = 0;
+    if(banner){ banner.className="feedback-banner no"; banner.innerHTML='❌ 正确：<b>'+escapeHtml(correct)+'</b>'; banner.style.display="block"; }
     sfxWrong();
-    if(challengeType==="streak"){
-      challengeLevel=1;
-      challengeStreak=0;
+  }
+  challengeIdx++;
+  setTimeout(function(){
+    if(banner) banner.style.display = "none";
+    renderSpeed();
+  }, 500);
+}
+
+/* 模式④：连击王 */
+function renderStreak(){
+  if(challengeIdx >= challengeQuestions.length){
+    showChallengeResult('🎯', '连击王', challengeStreak, 'streak');
+    return;
+  }
+  var w = challengeQuestions[challengeIdx];
+  var en = w[1];
+  var opts = [en];
+  var words = getCurrentWords();
+  var others = [];
+  for(var i = 0; i < words.length && others.length < 3; i++){
+    if(words[i][1] !== en) others.push(words[i]);
+  }
+  for(var i = 0; i < others.length; i++) opts.push(others[i][1]);
+  opts = shuffle(opts);
+
+  var header = '<div class="challenge-score">🎯 连击王 · 当前连击 <span style="font-size:28px;color:#E8726A;">' + challengeStreak + '</span></div>';
+  header += '<div style="text-align:center;font-size:12px;color:#8B7D6B;">答对连击不断，答错清零重来！</div>';
+  $("challengeHeader").innerHTML = header;
+
+  var body = '<div class="challenge-question">' + escapeHtml(getDef(w)) + '</div>';
+  body += '<div class="challenge-options">';
+  for(var i = 0; i < opts.length; i++){
+    body += '<div class="challenge-option" onclick="checkStreakAnswer(\'' + escapeHtml(opts[i]) + '\',\'' + escapeHtml(en) + '\')">' + escapeHtml(opts[i]) + '</div>';
+  }
+  body += '</div>';
+  $("challengeBody").innerHTML = body;
+}
+
+function checkStreakAnswer(selected, correct){
+  var banner = document.getElementById("topBanner");
+  challengeIdx++;
+  if(selected === correct){
+    challengeStreak++;
+    if(banner){ banner.className="feedback-banner ok"; banner.textContent="✅ 连续 " + challengeStreak + " 题！"; banner.style.display="block"; }
+    sfxCorrect();
+    setTimeout(function(){
+      if(banner) banner.style.display = "none";
+      renderStreak();
+    }, 400);
+  } else {
+    // 结束
+    if(banner){ banner.className="feedback-banner no"; banner.innerHTML='❌ 答错！正确：<b>'+escapeHtml(correct)+'</b>'; banner.style.display="block"; }
+    sfxWrong();
+    setTimeout(function(){
+      if(banner) banner.style.display = "none";
+      showChallengeResult('🎯', '连击王', challengeStreak, 'streak');
+    }, 800);
+  }
+}
+
+/* 模式⑤：电话密语 */
+function renderBlind(){
+  if(challengeIdx >= challengeQuestions.length){
+    showChallengeResult('📞', '电话密语', challengeScore, 'blind');
+    return;
+  }
+  var w = challengeQuestions[challengeIdx];
+  var en = w[1];
+  // 播放发音（仅一次）
+  speakWord(en, 'uk');
+
+  var header = '<div class="challenge-score">📞 电话密语 · 第 ' + (challengeIdx+1) + ' 题 · 得分 ' + challengeScore + '</div>';
+  $("challengeHeader").innerHTML = header;
+
+  var body = '<div style="text-align:center;font-size:18px;color:#8B7D6B;margin-bottom:12px;">👂 请听发音（已播放一次）</div>';
+  body += '<div style="text-align:center;font-size:13px;color:#C8B6E2;margin-bottom:12px;">📌 提示：这是一个 ' + (w[4]||'') + '</div>';
+  body += '<input type="text" id="challengeInput" placeholder="写出你听到的单词" style="width:100%;font-size:22px;padding:12px;text-align:center;border:2px solid var(--sage);border-radius:12px;margin-bottom:12px;" onkeydown="if(event.key===\'Enter\') checkBlindChallengeAnswer()">';
+  body += '<button class="btn" onclick="checkBlindChallengeAnswer()" style="margin-top:4px;">提交答案</button>';
+  $("challengeBody").innerHTML = body;
+  setTimeout(function(){ var inp = $("challengeInput"); if(inp) inp.focus(); }, 100);
+}
+
+function checkBlindChallengeAnswer(){
+  var inp = $("challengeInput");
+  if(!inp || !inp.value.trim()) return;
+  var w = challengeQuestions[challengeIdx];
+  var en = w[1];
+  var correct = normalize(inp.value) === normalize(en);
+  var banner = document.getElementById("topBanner");
+  if(correct){
+    challengeScore += 10;
+    if(banner){ banner.className="feedback-banner ok"; banner.textContent="✅ 听对了！"; banner.style.display="block"; }
+    sfxCorrect();
+  } else {
+    if(banner){ banner.className="feedback-banner no"; banner.innerHTML='❌ 正确：<b>'+escapeHtml(en)+'</b>'; banner.style.display="block"; }
+    sfxWrong();
+  }
+  inp.disabled = true;
+  challengeIdx++;
+  setTimeout(function(){
+    if(banner) banner.style.display = "none";
+    renderBlind();
+    // 播放下一个
+    if(challengeIdx < challengeQuestions.length){
+      setTimeout(function(){ speakWord(challengeQuestions[challengeIdx][1], 'uk'); }, 500);
+    }
+  }, 1000);
+}
+
+/* 结果展示 + 保存最高分 */
+function showChallengeResult(icon, name, score, typeKey){
+  if(challengeTimer){ clearInterval(challengeTimer); challengeTimer = null; }
+  // 记录最高分
+  if(typeKey !== 'memory'){
+    if(!S.challengeHighScores[typeKey] || score > S.challengeHighScores[typeKey]){
+      S.challengeHighScores[typeKey] = score;
+      save(S);
     }
   }
-  
-  setTimeout(()=>{
-    challengeIdx++;
-    renderChallenge();
-  },800);
-}
+  var highScore = typeKey === 'memory' ? (S.challengeHighScores.memory || '—') : (S.challengeHighScores[typeKey] || 0);
+  var displayScore = typeKey === 'memory' ? (score + '步') : score;
+  var highDisplay = typeKey === 'memory' ? (highScore + '秒') : highScore;
 
-function checkBlindAnswer(){
-  const input=$("challengeInput");
-  const ans=input.value.trim();
-  const q=challengeQuestions[challengeIdx];
-  const correct=q.type==='en' ? q.prompt : q.correct;
-  
-  if(isCorrect({en:correct},ans)){
-    sfxCorrect();
-    challengeScore+=20;
-    input.style.borderColor="#5CB870";
-    input.style.backgroundColor="#E8F5E9";
-  } else {
-    sfxWrong();
-    input.style.borderColor="#E8726A";
-    input.style.backgroundColor="#FFF0EC";
-  }
-  
-  setTimeout(()=>{
-    challengeIdx++;
-    renderChallenge();
-  },1000);
-}
-
-function renderChallengeResult(){
-  if(challengeTimer){
-    clearInterval(challengeTimer);
-    challengeTimer=null;
-  }
-  // V2: 移除日落背景
   $("challenge").classList.remove("challenge-sunset");
-  
-  let icon="🏆";
-  let title="挑战完成！";
-  let scoreText="最终得分: "+challengeScore;
-  
-  if(challengeType==="streak"){
-    scoreText="到达第 "+(challengeLevel-1)+" 关";
-    if(challengeLevel>5) icon="👑";
-    else if(challengeLevel>3) icon="⭐";
-  }
-  
-  const highScores=S.challengeHighScores||{};
-  if(challengeType==="speed" && challengeScore>(highScores.speed||0)){
-    highScores.speed=challengeScore;
-    S.challengeHighScores=highScores;
-    save(S);
-    title+=" 新纪录！";
-  } else if(challengeType==="streak" && (challengeLevel-1)>(highScores.streak||0)){
-    highScores.streak=challengeLevel-1;
-    S.challengeHighScores=highScores;
-    save(S);
-    title+=" 新纪录！";
-  } else if(challengeType==="blind" && challengeScore>(highScores.blind||0)){
-    highScores.blind=challengeScore;
-    S.challengeHighScores=highScores;
-    save(S);
-    title+=" 新纪录！";
-  }
-  
-  let body='<div class="challenge-result">';
-  body+='<div class="challenge-result-icon">'+icon+'</div>';
-  body+='<div class="challenge-result-title">'+title+'</div>';
-  body+='<div class="challenge-result-score">'+scoreText+'</div>';
-  body+='<div class="btn orange" onclick="startChallenge(\''+challengeType+'\')">🔄 再试一次</div>';
-  body+='<div class="btn ghost" onclick="show(\'records\')">🏠 返回记录</div>';
-  body+='</div>';
-  
-  $("challengeBody").innerHTML=body;
+  $("challengeHeader").innerHTML = '<div class="challenge-result-icon">' + icon + '</div>';
+  $("challengeBody").innerHTML =
+    '<div class="challenge-result-title">' + name + '</div>' +
+    '<div class="challenge-result-score">' + displayScore + '</div>' +
+    '<div style="text-align:center;color:#8B7D6B;font-size:13px;">🏆 最高纪录 ' + highDisplay + '</div>' +
+    '<button class="btn" onclick="startChallenge(\'' + challengeType + '\')" style="margin-top:16px;">🔄 再来一次</button>' +
+    '<button class="btn orange" onclick="exitChallenge()" style="margin-top:8px;">🏠 返回挑战</button>';
+}
+
+function exitChallenge(){
+  if(challengeTimer){ clearInterval(challengeTimer); challengeTimer = null; }
+  if(memoryTimer){ clearInterval(memoryTimer); memoryTimer = null; }
+  updateChallengeStats();
+  show("records");
+  showRecordTab('challenge');
 }
 
 /* ===== 记录学习日志 ===== */
