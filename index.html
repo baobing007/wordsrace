@@ -317,6 +317,16 @@
   .memory-card{user-select:none; -webkit-tap-highlight-color:transparent;}
   .memory-card:active{transform:scale(.95);}
 
+  /* 单词连连看卡片 */
+  .match-card{user-select:none; -webkit-tap-highlight-color:transparent;}
+  .match-card:active{transform:scale(.95);}
+  .match-card--empty{pointer-events:none;}
+
+  /* 长单词自动缩小字体 */
+  @media(max-width:400px){
+    .match-card{font-size:12px !important;}
+  }
+
   /* ===== 花盆进度条 ===== */
   .flower-progress-container {
     display: flex;
@@ -1311,7 +1321,18 @@
     <!-- 挑战入口 -->
     <div class="card" style="margin-top:16px;">
       <div class="diagnostic-title">🎮 趣味挑战</div>
-      <!-- 新顺序：5 张卡片 -->
+      <!-- 新顺序：6 张卡片 -->
+      <div class="challenge-card" onclick="startMatchGame()">
+        <div class="challenge-header">
+          <span class="challenge-icon">🃏</span>
+          <span class="challenge-name">单词连连看</span>
+        </div>
+        <div class="challenge-desc">点击卡片配对中英文，比一比谁最快！</div>
+        <div class="challenge-stats">
+          <span>⏱️ 最快：<span id="matchHighLabel">—</span></span>
+        </div>
+      </div>
+
       <div class="challenge-card" onclick="startChallenge('scramble')">
         <div class="challenge-header">
           <span class="challenge-icon">🔀</span>
@@ -2233,6 +2254,12 @@ function sfxClick(){ beep(540,0.06,"triangle",0.10); }
 function sfxCorrect(){ beep(660,0.12,"sine",0.20); beep(880,0.16,"sine",0.20,0.10); }
 function sfxWrong(){ beep(196,0.22,"square",0.13); beep(146,0.26,"square",0.11,0.10); }
 function sfxWin(){ const m=[[523,0.13],[659,0.13],[784,0.13],[1047,0.32]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"sine",0.20,w); w+=d*0.92; }); }
+
+// 连连看专用音效
+function sfxFlip(){ beep(740,0.05,"sine",0.15); }
+function sfxMatch(){ beep(880,0.08,"sine",0.18); beep(1108,0.10,"sine",0.20,0.06); beep(1320,0.18,"sine",0.22,0.14); }
+function sfxMismatch(){ beep(330,0.08,"triangle",0.12); beep(247,0.10,"triangle",0.12,0.06); }
+function sfxSelect(){ beep(660,0.06,"triangle",0.14); }
 function sfxLose(){ const m=[[440,0.16],[392,0.20],[330,0.30]]; let w=0; m.forEach(([f,d])=>{ beep(f,d,"triangle",0.16,w); w+=d*0.92; }); }
 function initMute(){ const b=$("muteBtn"); if(!b) return; b.textContent = muted? "🔇":"🔊"; b.onclick=()=>{ muted=!muted; localStorage.setItem("dd_muted", muted?"1":"0"); b.textContent = muted? "🔇":"🔊"; if(!muted) sfxClick(); }; }
 
@@ -4122,26 +4149,311 @@ var memoryLocked = false;
 var memoryMatched = 0;
 var memoryFirst = null;
 
+// 字母大乱斗状态
+var scrambleLetters = [];
+var scrambleClicked = [];
+var scrambleWrong = false;
+var scrambleCurrentEn = '';
+
+// 连连看专用
+var matchLevel = 0;
+var matchCards = [];
+var matchSelected = null;
+var matchTimer = null;
+var matchSeconds = 0;
+var matchStarted = false;
+var matchPairs = 0;
+var matchMatched = 0;
+
 // 初始化最高分
 if(!S.challengeHighScores) S.challengeHighScores = {};
 if(!S.challengeHighScores.speed) S.challengeHighScores.speed = 0;
 if(!S.challengeHighScores.streak) S.challengeHighScores.streak = 0;
 if(!S.challengeHighScores.blind) S.challengeHighScores.blind = 0;
 if(!S.challengeHighScores.scramble) S.challengeHighScores.scramble = 0;
-if(!S.challengeHighScores.memory) S.challengeHighScores.memory = 0;
+if(!S.challengeHighScores.memoryTime) S.challengeHighScores.memoryTime = 0;
+if(!S.challengeHighScores.memorySteps) S.challengeHighScores.memorySteps = 0;
+if(!S.matchBestTimes) S.matchBestTimes = {};
 
 function updateChallengeStats(){
   $("speedHigh").textContent = S.challengeHighScores.speed || 0;
   $("streakHigh").textContent = S.challengeHighScores.streak || 0;
   $("blindHigh").textContent = S.challengeHighScores.blind || 0;
   $("scrambleHigh").textContent = S.challengeHighScores.scramble || 0;
-  $("memoryHigh").textContent = S.challengeHighScores.memory ? S.challengeHighScores.memory + '秒' : '—';
+  $("memoryHigh").textContent = (S.challengeHighScores.memoryTime ? S.challengeHighScores.memoryTime + '秒' : '—') + ' / ' + (S.challengeHighScores.memorySteps ? S.challengeHighScores.memorySteps + '步' : '—');
+  // 连连看最快记录
+  var best = S.matchBestTimes || {};
+  var bestStr = '';
+  if(best[6]) bestStr += '🐭' + best[6] + '"';
+  if(best[12]) bestStr += (bestStr?' · ':'') + '🐵' + best[12] + '"';
+  if(best[18]) bestStr += (bestStr?' · ':'') + '👧' + best[18] + '"';
+  if(best[24]) bestStr += (bestStr?' · ':'') + '👩' + best[24] + '"';
+  if(best[48]) bestStr += (bestStr?' · ':'') + '👨‍🏫' + best[48] + '"';
+  $("matchHighLabel").textContent = bestStr || '—';
 }
 
 // 兼容旧函数名
 function updateChallengeHighScores(){ updateChallengeStats(); }
 
 function getDef(w){ return w[2] || w[5] || w[1]; }
+
+/* ===== 单词连连看 ===== */
+function startMatchGame(){
+  sfxClick();
+  challengeType = 'match';
+  // 清除旧计时器
+  if(challengeTimer){ clearInterval(challengeTimer); challengeTimer = null; }
+  if(matchTimer){ clearInterval(matchTimer); matchTimer = null; }
+
+  show("challenge");
+  $("challenge").classList.remove("challenge-sunset");
+
+  // 渲染难度选择界面
+  var levels = [
+    {emoji:'🐭', label:'小老鼠', words:6, desc:'12 张卡'},
+    {emoji:'🐵', label:'猴子', words:12, desc:'24 张卡'},
+    {emoji:'👧', label:'小朋友', words:18, desc:'36 张卡'},
+    {emoji:'👩', label:'妈妈', words:24, desc:'48 张卡'},
+    {emoji:'👨‍🏫', label:'老师', words:48, desc:'96 张卡'}
+  ];
+
+  var bestStr = '';
+  var best = S.matchBestTimes || {};
+  if(Object.keys(best).length > 0){
+    var times = [];
+    for(var k in best) times.push(k + '词:' + best[k] + '秒');
+    bestStr = '<div style="text-align:center;font-size:12px;color:#8B7D6B;margin-bottom:10px;">⏱️ 最快记录 ' + times.join(' · ') + '</div>';
+  }
+
+  var html = '<div style="text-align:center;font-size:18px;font-weight:800;color:#4E9A60;margin-bottom:12px;">🃏 单词连连看</div>';
+  html += bestStr;
+  html += '<div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto;">';
+  for(var i = 0; i < levels.length; i++){
+    var lv = levels[i];
+    var b = S.matchBestTimes && S.matchBestTimes[lv.words];
+    var bestLabel = b ? '🏆 ' + b + '秒' : '';
+    html += '<div class="challenge-card" onclick="startMatchLevel(' + lv.words + ')" style="padding:12px 16px;display:flex;align-items:center;gap:12px;">';
+    html += '<span style="font-size:28px;">' + lv.emoji + '</span>';
+    html += '<div style="flex:1;"><div style="font-size:15px;font-weight:700;">' + lv.label + '</div><div style="font-size:12px;color:#8B7D6B;">' + lv.desc + '</div></div>';
+    html += '<span style="font-size:12px;color:#4E9A60;font-weight:700;">' + bestLabel + '</span>';
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<button class="btn orange" onclick="exitChallenge()" style="margin-top:14px;font-size:14px;">🏠 返回</button>';
+
+  $("challengeHeader").innerHTML = '';
+  $("challengeBody").innerHTML = html;
+}
+
+function startMatchLevel(wordCount){
+  sfxClick();
+  matchLevel = wordCount;
+  matchCards = [];
+  matchMatched = 0;
+  matchSeconds = 0;
+  matchStarted = false;
+  matchSelected = null;
+  matchPairs = wordCount;
+
+  if(matchTimer){ clearInterval(matchTimer); matchTimer = null; }
+
+  // 从当前词库随机选词
+  var words = getCurrentWords();
+  var shuffled = shuffle(words);
+  var selected = shuffled.slice(0, wordCount);
+
+  // 生成卡片（每个词生成中文卡 + 英文卡各一张）
+  var pairId = 0;
+  for(var i = 0; i < selected.length; i++){
+    var w = selected[i];
+    var en = w[1];
+    var zh = w[2] || w[5] || en;
+    // 英文卡
+    matchCards.push({id: 'mc_' + (pairId*2), text: en, type: 'en', pairId: pairId, matched: false});
+    // 中文卡
+    matchCards.push({id: 'mc_' + (pairId*2+1), text: zh, type: 'zh', pairId: pairId, matched: false});
+    pairId++;
+  }
+  // 打乱所有卡片
+  matchCards = shuffle(matchCards);
+
+  renderMatchBoard();
+}
+
+function renderMatchBoard(){
+  // 根据卡片数量计算列数（目标：≤5行，超出则允许滚动）
+  var total = matchCards.length;
+  var cols = 4;
+  if(total <= 12) cols = 4;        // 3行
+  else if(total <= 20) cols = 5;   // 4行
+  else if(total <= 30) cols = 6;   // 5行
+  else if(total <= 40) cols = 8;   // 5行
+  else if(total <= 50) cols = 10;  // 5行
+  else cols = 12;                  // 8行（滚动）
+
+  var pairsLeft = matchPairs - matchMatched;
+  var timeStr = matchStarted ? matchSeconds + '秒' : '—';
+
+  // 页头
+  var header = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">';
+  header += '<span style="font-size:16px;font-weight:800;color:#4E9A60;">🃏 单词连连看</span>';
+  header += '<span style="font-size:13px;color:#8B7D6B;">⏱️ ' + timeStr + ' · 剩余 ' + pairsLeft + '/' + matchPairs + ' 对</span>';
+  header += '</div>';
+  header += '<div style="text-align:center;font-size:11px;color:#C8B6E2;margin-bottom:4px;">💡 点击两张卡片配对（中文+英文）</div>';
+  $("challengeHeader").innerHTML = header;
+
+  // 卡片区域
+  var gap = '6px';
+  var cardFontEn = '18px';
+  var cardFontZh = '15px';
+  var maxWidth = '100%';
+  if(total <= 12){ gap = '8px'; }
+  else if(total <= 24){ gap = '6px'; }
+  else if(total <= 36){ gap = '5px'; cardFontEn = '15px'; cardFontZh = '13px'; }
+  else if(total <= 48){ gap = '4px'; cardFontEn = '13px'; cardFontZh = '11px'; }
+  else { gap = '3px'; cardFontEn = '11px'; cardFontZh = '10px'; }
+
+  var body = '<div class="match-grid" style="display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:' + gap + ';max-width:100%;margin:0 auto;overflow-y:auto;max-height:calc(100vh - 280px);padding-bottom:4px;">';
+  for(var i = 0; i < matchCards.length; i++){
+    var c = matchCards[i];
+    if(c.matched){
+      body += '<div class="match-card match-card--empty" style="aspect-ratio:1;border-radius:10px;background:transparent;border:1px dashed #E6CDB4;opacity:0.2;"></div>';
+    } else {
+      var isEn = c.type === 'en';
+      var isLong = c.text.length > 8;
+      var isSelected = matchSelected && matchSelected === c.id;
+      body += '<div id="' + c.id + '" class="match-card" onclick="clickMatchCard(\'' + c.id + '\')" style="aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:2px;background:' + (isSelected ? '#E8F5E9' : (isEn ? '#FFF8EC' : '#FFF0F5')) + ';border:2px solid ' + (isSelected ? '#4E9A60' : (isEn ? '#FBD5A8' : '#C8B6E2')) + ';cursor:pointer;transition:all .15s;font-size:' + (isEn ? (isLong ? '11px' : cardFontEn) : (isLong ? '10px' : cardFontZh)) + ';font-weight:' + (isEn ? '800' : '700') + ';color:' + (isEn ? '#3D3A36' : '#7A5742') + ';text-align:center;word-break:break-word;line-height:1.1;' + (isSelected ? 'transform:scale(1.05);box-shadow:0 4px 12px rgba(78,154,96,.3);' : '') + '">';
+      body += escapeHtml(c.text);
+      body += '</div>';
+    }
+  }
+  body += '</div>';
+
+  // 底部按钮
+  body += '<div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">';
+  body += '<button class="btn orange" onclick="exitMatch()" style="width:auto;padding:8px 16px;font-size:13px;">🚪 退出</button>';
+  body += '</div>';
+
+  $("challengeBody").innerHTML = body;
+}
+
+function clickMatchCard(cardId){
+  // 找到卡片数据
+  var card = null;
+  for(var i = 0; i < matchCards.length; i++){
+    if(matchCards[i].id === cardId){ card = matchCards[i]; break; }
+  }
+  if(!card || card.matched) return;
+
+  // 第一次点击 → 启动计时
+  if(!matchStarted){
+    matchStarted = true;
+    matchTimer = setInterval(function(){
+      matchSeconds++;
+      // 更新计时显示
+      var header = $("challengeHeader");
+      if(header){
+        var timeSpan = header.querySelector('span:last-child');
+        if(timeSpan) timeSpan.textContent = '⏱️ ' + matchSeconds + '秒 · 剩余 ' + (matchPairs - matchMatched) + '/' + matchPairs + ' 对';
+      }
+    }, 1000);
+  }
+
+  // 翻牌音效
+  sfxFlip();
+
+  // 如果已有选中的卡片
+  if(matchSelected){
+    if(matchSelected === cardId){
+      // 点击同一张 → 取消选中
+      sfxSelect();
+      matchSelected = null;
+      renderMatchBoard();
+      return;
+    }
+    // 找到之前选中的卡片
+    var prevCard = null;
+    for(var i = 0; i < matchCards.length; i++){
+      if(matchCards[i].id === matchSelected){ prevCard = matchCards[i]; break; }
+    }
+    if(!prevCard || prevCard.matched){
+      matchSelected = null;
+      renderMatchBoard();
+      return;
+    }
+
+    // 检查是否配对（同一 pairId 且不同类型）
+    if(prevCard.pairId === card.pairId && prevCard.type !== card.type){
+      // 配对成功
+      prevCard.matched = true;
+      card.matched = true;
+      matchMatched++;
+      sfxMatch();
+
+      // 取消选中
+      matchSelected = null;
+
+      // 判断是否完成
+      if(matchMatched >= matchPairs){
+        // 游戏结束
+        clearInterval(matchTimer);
+        matchTimer = null;
+        var finalTime = matchSeconds;
+        // 保存记录
+        if(!S.matchBestTimes) S.matchBestTimes = {};
+        if(!S.matchBestTimes[matchLevel] || finalTime < S.matchBestTimes[matchLevel]){
+          S.matchBestTimes[matchLevel] = finalTime;
+          save(S);
+        }
+        renderMatchBoard();
+        // 显示胜利结果
+        showMatchResult(finalTime);
+        return;
+      }
+      renderMatchBoard();
+    } else {
+      // 配对失败
+      sfxMismatch();
+      matchSelected = null;
+      renderMatchBoard();
+    }
+  } else {
+    // 没有已选中的，选中当前卡片
+    matchSelected = cardId;
+    renderMatchBoard();
+  }
+}
+
+function showMatchResult(seconds){
+  var emoji = '';
+  if(matchLevel <= 6) emoji = '🐭';
+  else if(matchLevel <= 12) emoji = '🐵';
+  else if(matchLevel <= 18) emoji = '👧';
+  else if(matchLevel <= 24) emoji = '👩';
+  else emoji = '👨‍🏫';
+
+  var best = S.matchBestTimes[matchLevel];
+  var isNewRecord = seconds === best;
+
+  // 胜利音效
+  if(isNewRecord) sfxWin(); else sfxMatch();
+
+  var header = '<div class="challenge-result-icon">🎉</div>';
+  $("challengeHeader").innerHTML = header;
+
+  var body = '<div class="challenge-result-title">' + emoji + ' ' + matchLevel + '词 完成！</div>';
+  body += '<div class="challenge-result-score">' + seconds + '秒</div>';
+  if(isNewRecord) body += '<div style="text-align:center;color:#E8726A;font-size:16px;font-weight:800;margin-bottom:8px;">🏆 新纪录！</div>';
+  body += '<div style="text-align:center;color:#8B7D6B;font-size:13px;margin-bottom:16px;">⏱️ 历史最快 ' + best + '秒</div>';
+  body += '<button class="btn" onclick="startMatchLevel(' + matchLevel + ')" style="margin-top:4px;">🔄 再来一次</button>';
+  body += '<button class="btn orange" onclick="startMatchGame()" style="margin-top:8px;">⬅️ 选择难度</button>';
+  $("challengeBody").innerHTML = body;
+}
+
+function exitMatch(){
+  if(matchTimer){ clearInterval(matchTimer); matchTimer = null; }
+  startMatchGame();
+}
 
 function startChallenge(type){
   sfxClick();
@@ -4167,8 +4479,12 @@ function startChallenge(type){
   var shuffled = shuffle(pool);
 
   if(type === 'scramble'){
-    // 字母大乱斗：用填空题，无需额外准备，每轮随机一个
+    // 字母大乱斗：点击字母还原拼写
     challengeQuestions = shuffled.slice(0, 50);
+    scrambleLetters = [];
+    scrambleClicked = [];
+    scrambleWrong = false;
+    scrambleCurrentEn = '';
     show("challenge");
     renderScramble();
   } else if(type === 'memory'){
@@ -4214,45 +4530,75 @@ function startChallenge(type){
 
 /* 模式①：字母大乱斗 */
 function renderScramble(){
-  if(challengeIdx >= challengeQuestions.length){
+  if(challengeIdx >= challengeQuestions.length || scrambleWrong){
     showChallengeResult('🔀', '字母大乱斗', challengeScore, 'scramble');
     return;
   }
   var w = challengeQuestions[challengeIdx];
   var en = w[1];
-  var scrambled = shuffle(en.split('')).join('');
   var def = getDef(w);
-  var header = '<div class="challenge-score">🔀 第 ' + (challengeIdx+1) + ' 题 · 得分 ' + challengeScore + '</div>';
+
+  // 新单词时打乱字母
+  if(scrambleLetters.length === 0 || scrambleCurrentEn !== en){
+    scrambleCurrentEn = en;
+    scrambleLetters = shuffle(en.split(''));
+    scrambleClicked = [];
+  }
+
+  var header = '<div class="challenge-score">🔀 第 ' + (challengeIdx+1) + ' 题 · 连续正确 ' + challengeScore + '</div>';
   $("challengeHeader").innerHTML = header;
-  var body = '<div style="text-align:center;font-size:32px;font-weight:800;color:#3D3A36;letter-spacing:6px;padding:16px;">' + scrambled.split('').join(' ') + '</div>';
-  body += '<div style="text-align:center;font-size:14px;color:#8B7D6B;margin-bottom:12px;">' + escapeHtml(def) + '</div>';
-  body += '<input type="text" id="challengeInput" placeholder="输入正确拼写" style="width:100%;font-size:22px;padding:12px;text-align:center;border:2px solid var(--sage);border-radius:12px;margin-bottom:12px;" onkeydown="if(event.key===\'Enter\') checkScramble()">';
-  body += '<button class="btn" onclick="checkScramble()" style="margin-top:4px;">提交答案</button>';
+
+  var body = '<div style="text-align:center;font-size:14px;color:#8B7D6B;margin-bottom:12px;">' + escapeHtml(def) + '</div>';
+  body += '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:16px;">';
+  for(var i = 0; i < scrambleLetters.length; i++){
+    var isClicked = false;
+    for(var j = 0; j < scrambleClicked.length; j++){
+      if(scrambleClicked[j] === i){ isClicked = true; break; }
+    }
+    body += '<button id="slet_' + i + '" onclick="clickScramble(' + i + ')" style="width:44px;height:44px;font-size:20px;font-weight:800;border-radius:10px;border:2px solid ' + (isClicked ? '#5CB870' : '#A8D5BA') + ';background:' + (isClicked ? '#E8F5E9' : '#FFFDF8') + ';color:#3D3A36;cursor:pointer;transition:all .2s;' + (isClicked ? 'opacity:0.4;pointer-events:none;' : '') + '">' + escapeHtml(scrambleLetters[i]) + '</button>';
+  }
+  body += '</div>';
+
+  // 已拼出的进度
+  var progress = '';
+  for(var i = 0; i < scrambleClicked.length; i++){
+    progress += scrambleLetters[scrambleClicked[i]];
+  }
+  body += '<div style="text-align:center;font-size:18px;color:#4E9A60;font-weight:700;letter-spacing:4px;min-height:28px;">' + progress + '</div>';
+
   $("challengeBody").innerHTML = body;
-  setTimeout(function(){ var inp = $("challengeInput"); if(inp) inp.focus(); }, 100);
 }
 
-function checkScramble(){
-  var inp = $("challengeInput");
-  if(!inp || !inp.value.trim()) return;
+function clickScramble(idx){
+  if(scrambleWrong) return;
   var w = challengeQuestions[challengeIdx];
   var en = w[1];
-  var correct = normalize(inp.value) === normalize(en);
-  var banner = document.getElementById("topBanner");
-  if(correct){
-    challengeScore += 10;
-    if(banner){ banner.className="feedback-banner ok"; banner.textContent="✅ 正确！"; banner.style.display="block"; }
+  var clickedLetter = scrambleLetters[idx];
+  var nextPos = scrambleClicked.length;
+
+  if(clickedLetter === en[nextPos]){
+    scrambleClicked.push(idx);
     sfxCorrect();
+    if(scrambleClicked.length === en.length){
+      challengeScore++;
+      challengeIdx++;
+      scrambleLetters = [];
+      scrambleCurrentEn = '';
+      sfxMatch();
+      setTimeout(function(){ renderScramble(); }, 400);
+    } else {
+      renderScramble();
+    }
   } else {
-    if(banner){ banner.className="feedback-banner no"; banner.innerHTML='❌ 正确拼写：<b>'+escapeHtml(en)+'</b>'; banner.style.display="block"; }
+    scrambleWrong = true;
     sfxWrong();
+    var banner = document.getElementById("topBanner");
+    if(banner){ banner.className="feedback-banner no"; banner.innerHTML='❌ 正确拼写：<b>'+escapeHtml(en)+'</b>'; banner.style.display="block"; }
+    setTimeout(function(){
+      if(banner) banner.style.display = "none";
+      showChallengeResult('🔀', '字母大乱斗', challengeScore, 'scramble');
+    }, 1200);
   }
-  inp.disabled = true;
-  challengeIdx++;
-  setTimeout(function(){
-    if(banner) banner.style.display = "none";
-    renderScramble();
-  }, 800);
 }
 
 /* 模式②：记忆翻牌 */
@@ -4285,6 +4631,7 @@ function flipCard(idx){
 
   card.flipped = true;
   memoryFlipCount++;
+  sfxFlip();
   renderMemory();
 
   if(memoryFirst === null){
@@ -4298,17 +4645,20 @@ function flipCard(idx){
       first.matched = true;
       second.matched = true;
       memoryMatched++;
-      sfxCorrect();
+      sfxMatch();
       if(memoryMatched === 6){
         // 全部完成
         clearInterval(memoryTimer);
-        challengeScore = memoryFlipCount;
         var elapsed = memorySeconds;
-        if(!S.challengeHighScores.memory || elapsed < S.challengeHighScores.memory){
-          S.challengeHighScores.memory = elapsed;
-          save(S);
+        if(!S.challengeHighScores.memoryTime || elapsed < S.challengeHighScores.memoryTime){
+          S.challengeHighScores.memoryTime = elapsed;
         }
-        showChallengeResult('🃏', '记忆翻牌', memoryFlipCount + '步', 'memory');
+        if(!S.challengeHighScores.memorySteps || memoryFlipCount < S.challengeHighScores.memorySteps){
+          S.challengeHighScores.memorySteps = memoryFlipCount;
+        }
+        save(S);
+        sfxWin();
+        showChallengeResult('🃏', '记忆翻牌', memoryFlipCount, 'memory');
         return;
       }
       memoryFirst = null;
@@ -4316,7 +4666,7 @@ function flipCard(idx){
     } else {
       // 不配对
       memoryLocked = true;
-      sfxWrong();
+      sfxMismatch();
       setTimeout(function(){
         first.flipped = false;
         second.flipped = false;
@@ -4521,9 +4871,16 @@ function showChallengeResult(icon, name, score, typeKey){
       save(S);
     }
   }
-  var highScore = typeKey === 'memory' ? (S.challengeHighScores.memory || '—') : (S.challengeHighScores[typeKey] || 0);
-  var displayScore = typeKey === 'memory' ? (score + '步') : score;
-  var highDisplay = typeKey === 'memory' ? (highScore + '秒') : highScore;
+  var displayScore, highDisplay;
+  if(typeKey === 'memory'){
+    displayScore = memorySeconds + '秒 / ' + score + '步';
+    var highTime = S.challengeHighScores.memoryTime || '—';
+    var highSteps = S.challengeHighScores.memorySteps || '—';
+    highDisplay = highTime + '秒 / ' + highSteps + '步';
+  } else {
+    displayScore = score;
+    highDisplay = S.challengeHighScores[typeKey] || 0;
+  }
 
   $("challenge").classList.remove("challenge-sunset");
   $("challengeHeader").innerHTML = '<div class="challenge-result-icon">' + icon + '</div>';
