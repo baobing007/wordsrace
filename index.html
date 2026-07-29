@@ -216,33 +216,62 @@
   .calendar-stat .num{font-size:24px; font-weight:800; color:#8A5A2E;}
   .calendar-stat .label{font-size:11px; color:#8B7D6B;}
 
-  /* 徽章 */
-  .badge-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
-  .badge-item{aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:16px; background:#FFFDF8; border:2px solid #E8DFD0; cursor:pointer; transition:all .2s;}
-  .badge-item.unlocked{border-color:#A8D5BA; background:#E8F5E9;}
-  .badge-item.locked{opacity:.4; filter:grayscale(1);}
-  .badge-item:active{transform:scale(.95);}
-  .badge-icon{font-size:28px; margin-bottom:4px;}
-  .badge-name{font-size:10px; text-align:center; color:#8B7D6B; font-weight:700;}
-  .badge-item.unlocked .badge-name{color:#4E9A60;}
-  .badge-modal{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:100;}
+  /* 徽章系统 - 升级版 */
+  .badge-summary{font-size:16px; font-weight:800; color:#4E9A60; text-align:center; margin-bottom:8px;}
+  .badge-progress-bar{width:80%; height:8px; background:#E8DFD0; border-radius:4px; margin:8px auto 16px; overflow:hidden;}
+  .badge-progress-fill{height:100%; background:linear-gradient(90deg,#6BAF7A,#8FD49E); border-radius:4px; transition:width .5s ease;}
+  .badge-category-tabs{display:flex; justify-content:center; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .badge-tab{padding:6px 12px; border-radius:12px; font-size:12px; font-weight:700; cursor:pointer; transition:all .2s; background:#F7F3ED; color:#8B7D6B; border:2px solid transparent;}
+  .badge-tab.active{background:#E8F5E9; color:#4E9A60; border-color:#A8D5BA;}
+  .badge-tab:active{transform:scale(.95);}
+  .badge-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:0 4px;}
+  .badge-card{min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:12px; background:#FFFDF8; border:2px solid #E8DFD0; cursor:pointer; transition:all .2s; padding:8px 4px; position:relative;}
+  .badge-card.unlocked{border-color:#A8D5BA; background:linear-gradient(180deg,#F7FFF0,#FFFDF8);}
+  .badge-card.locked{opacity:.6; filter:grayscale(0.5);}
+  .badge-card:active{transform:scale(.95);}
+  .badge-card .bc-icon{font-size:32px; margin-bottom:2px;}
+  .badge-card .bc-name{font-size:10px; text-align:center; color:#8B7D6B; font-weight:700; line-height:1.2;}
+  .badge-card.unlocked .bc-name{color:#4E9A60;}
+  .badge-card .bc-status{font-size:10px; font-weight:700; margin-top:2px;}
+  .badge-card .bc-status.done{color:#4E9A60;}
+  .badge-card .bc-status.progress{color:#E8726A;}
+  .badge-card .bc-progress-bar{width:90%; height:4px; background:#E8DFD0; border-radius:2px; margin-top:4px; overflow:hidden;}
+  .badge-card .bc-progress-fill{height:100%; background:#6BAF7A; border-radius:2px;}
+  .badge-card .bc-silhouette{font-size:32px; filter:brightness(0) opacity(0.15); position:absolute; top:8px;}
+  .badge-modal{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:200;}
   .badge-modal.show{display:flex;}
-  .badge-modal-content{max-width:320px; width:90%; background:#FFFDF8; border-radius:24px; padding:24px; text-align:center;}
-  .badge-modal-icon{font-size:64px; margin-bottom:12px;}
-  .badge-modal-title{font-size:20px; font-weight:800; color:#4E9A60; margin-bottom:8px;}
-  .badge-modal-desc{font-size:14px; color:#8B7D6B; line-height:1.6;}
+  .badge-modal-content{max-width:340px; width:90%; background:#FFFDF8; border-radius:24px; padding:24px 20px; text-align:center; position:relative;}
+  .badge-modal-icon{font-size:64px; margin-bottom:8px;}
+  .badge-modal-title{font-size:20px; font-weight:800; color:#4E9A60; margin-bottom:4px;}
+  .badge-modal-cond{font-size:13px; color:#8B7D6B; margin-bottom:12px;}
+  .badge-modal-progress{font-size:13px; color:#3D3A36; margin-bottom:8px;}
+  .badge-modal-bar{width:80%; height:8px; background:#E8DFD0; border-radius:4px; margin:0 auto 12px; overflow:hidden;}
+  .badge-modal-fill{height:100%; background:#6BAF7A; border-radius:4px;}
+  .badge-modal-tip{font-size:12px; color:#E8726A; margin-bottom:12px;}
+  .badge-modal-quote{font-size:12px; color:#8B7D6B; line-height:1.5; padding:8px; background:#F7F3ED; border-radius:8px; margin-bottom:12px;}
+  .badge-modal-series{font-size:11px; color:#8B7D6B; margin-bottom:12px;}
+  .badge-modal-close{margin-top:8px; padding:10px 24px; background:#A8D5BA; color:#FFF; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:none;}
+  /* 徽章解锁庆祝动画 */
+  .badge-unlock-modal{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:300;}
+  .badge-unlock-content{max-width:300px; width:90%; background:#FFFDF8; border-radius:24px; padding:32px 20px; text-align:center; position:relative; overflow:hidden;}
+  .badge-unlock-icon{font-size:72px; margin-bottom:12px; animation:badgeUnlock .6s ease-out;}
+  .badge-unlock-title{font-size:22px; font-weight:800; color:#4E9A60; margin-bottom:8px;}
+  .badge-unlock-quote{font-size:13px; color:#8B7D6B; line-height:1.5; margin-bottom:16px;}
+  .badge-unlock-btn{padding:12px 28px; background:#4E9A60; color:#FFF; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none;}
+  .confetti{position:absolute; font-size:20px; animation:confettiDrop 2s ease-out forwards;}
+  @keyframes badgeUnlock{0%{transform:scale(0) rotate(-180deg); opacity:0;} 50%{transform:scale(1.2) rotate(10deg); opacity:1;} 70%{transform:scale(0.95) rotate(-5deg);} 100%{transform:scale(1) rotate(0);}}
+  @keyframes confettiDrop{0%{transform:translateY(-20px) rotate(0); opacity:1;} 100%{transform:translateY(300px) rotate(720deg); opacity:0;}}
 
   /* 图表 */
-  .chart-container{position:relative; height:180px; margin:16px 0; background:#FFFDF8; border-radius:16px; padding:16px; border:2px solid #E8DFD0;}
-  .chart-y-axis{position:absolute; left:0; top:16px; bottom:16px; width:24px; display:flex; flex-direction:column; justify-content:space-between; font-size:10px; color:#8B7D6B;}
-  .chart-area{position:absolute; left:32px; right:16px; top:16px; bottom:16px;}
-  .chart-grid{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between;}
+  .chart-container{position:relative; height:200px; margin:16px 0; background:#FFFDF8; border-radius:16px; padding:16px; border:2px solid #E8DFD0;}
+  .chart-y-axis{position:absolute; left:0; top:16px; bottom:36px; width:24px; display:flex; flex-direction:column; justify-content:space-between; font-size:10px; color:#8B7D6B;}
+  .chart-area{position:absolute; left:32px; right:16px; top:16px; bottom:36px; overflow-x:auto;}
+  .chart-grid{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; z-index:0;}
   .chart-grid-line{border-bottom:1px dashed #EDE7DB;}
-  .chart-bars{position:absolute; inset:0; display:flex; justify-content:space-around; align-items:flex-end;}
-  .chart-bar{width:24px; border-radius:6px 6px 0 0; transition:height .5s ease;}
+  .chart-bars{position:absolute; inset:0; display:flex; justify-content:space-around; align-items:flex-end; gap:2px;}
+  .chart-bar{min-width:8px; flex:1; max-width:24px; border-radius:6px 6px 0 0; transition:height .5s ease;}
   .chart-bar.correct{background:#6BAF7A;}
-  .chart-bar.wrong{background:#E8726A;}
-  .chart-bar.total{background:#FBD5A8;}
+  .chart-line-svg{position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:2;}
   .chart-x-axis{position:absolute; left:32px; right:16px; bottom:-20px; display:flex; justify-content:space-around; font-size:10px; color:#8B7D6B;}
 
   /* 诊断 */
@@ -1239,18 +1268,20 @@
 
     <!-- 徽章内容 -->
     <div id="recordBadges" class="card record-card">
-      <div class="badge-scroll" id="badgeGrid"></div>
+      <div class="badge-summary" id="badgeSummary">🏆 已获得 0 / 31 枚徽章</div>
+      <div class="badge-progress-bar"><div class="badge-progress-fill" id="badgeProgressFill" style="width:0%"></div></div>
+      <div class="badge-category-tabs" id="badgeCategoryTabs"></div>
+      <div class="badge-grid" id="badgeGrid"></div>
     </div>
 
     <!-- 图表内容 -->
     <div id="recordChart" class="card record-card">
       <!-- V2: 环形仪表盘 -->
       <div class="ring-gauges" id="ringGauges"></div>
-      <div class="diagnostic-title">📈 近7天学习趋势</div>
+      <div class="diagnostic-title">📈 学习趋势</div>
       <div class="chart-container" id="growthChart"></div>
       <div class="calendar-stats" style="margin-top:32px;">
         <div class="calendar-stat"><div class="num" id="chartTotal">0</div><div class="label">总单词</div></div>
-        <div class="calendar-stat"><div class="num" id="chartCorrect">0</div><div class="label">正确</div></div>
         <div class="calendar-stat"><div class="num" id="chartRate">0%</div><div class="label">正确率</div></div>
       </div>
     </div>
@@ -1258,13 +1289,15 @@
     <!-- 诊断内容 -->
     <div id="recordDiagnostic" class="card record-card">
       <div class="diagnostic-section">
-        <div class="diagnostic-title">🔍 词类分析</div>
-        <div id="diagnosticPos"></div>
-      </div>
-      <div class="diagnostic-section">
         <div class="diagnostic-title">⚠️ 易错单词</div>
         <div id="diagnosticErrors"></div>
       </div>
+      <div id="diagStubborn"></div>
+      <div id="diagTrend"></div>
+      <div id="diagMastery"></div>
+      <div id="diagHabits"></div>
+      <div id="diagWeakAreas"></div>
+      <div id="diagTodayTask"></div>
       <div class="diagnostic-section">
         <div class="diagnostic-title">🎯 学习建议</div>
         <div id="diagnosticTips"></div>
@@ -1341,7 +1374,23 @@
     <div class="badge-modal-content" onclick="event.stopPropagation()">
       <div class="badge-modal-icon" id="badgeModalIcon">🏆</div>
       <div class="badge-modal-title" id="badgeModalTitle">徽章名称</div>
-      <div class="badge-modal-desc" id="badgeModalDesc">徽章描述</div>
+      <div class="badge-modal-cond" id="badgeModalCond">达成条件</div>
+      <div class="badge-modal-progress" id="badgeModalProgress">进度：0/0</div>
+      <div class="badge-modal-bar"><div class="badge-modal-fill" id="badgeModalFill" style="width:0%"></div></div>
+      <div class="badge-modal-tip" id="badgeModalTip"></div>
+      <div class="badge-modal-quote" id="badgeModalQuote"></div>
+      <div class="badge-modal-series" id="badgeModalSeries"></div>
+      <button class="badge-modal-close" onclick="closeBadgeModal()">关闭</button>
+    </div>
+  </div>
+
+  <!-- 徽章解锁庆祝弹窗 -->
+  <div class="badge-unlock-modal" id="badgeUnlockModal" style="display:none;">
+    <div class="badge-unlock-content">
+      <div class="badge-unlock-icon" id="badgeUnlockIcon">🏆</div>
+      <div class="badge-unlock-title" id="badgeUnlockTitle">获得新徽章！</div>
+      <div class="badge-unlock-quote" id="badgeUnlockQuote"></div>
+      <button class="badge-unlock-btn" onclick="closeBadgeUnlockModal()">🎉 继续加油</button>
     </div>
   </div>
 
@@ -1842,11 +1891,14 @@ function getDueWords(){
   var due = [];
   for(var en in srs){
     if(srs[en].nextReview && srs[en].nextReview <= today){
-      var word = words.find(function(w){ return w[1] === en; });
+      var word = null;
+      for(var i = 0; i < words.length; i++){
+        if(words[i][1] === en){ word = words[i]; break; }
+      }
       if(word) due.push({ item: word, rec: srs[en] });
     }
   }
-  due.sort(function(a,b){ return a.rec.nextReview.localeCompare(b.rec.nextReview) || a.rec.level - b.rec.level; });
+  due.sort(function(a,b){ return (a.rec.nextReview < b.rec.nextReview ? -1 : a.rec.nextReview > b.rec.nextReview ? 1 : 0) || a.rec.level - b.rec.level; });
   return due;
 }
 
@@ -1900,6 +1952,27 @@ function countMastered(){
   var n = 0;
   for(var en in srs){ if(srs[en].level >= 6) n++; }
   return n;
+}
+
+/* 全局统计：遍历所有词库的SRS数据，用于成就徽章判定 */
+function countLearnedAll(){
+  var cfg = getAppConfig();
+  var total = 0;
+  cfg.libOrder.forEach(function(libId){
+    var srs = getLibSrs(libId);
+    for(var en in srs){ if(srs[en].level && srs[en].level > 0) total++; }
+  });
+  return total;
+}
+
+function countMasteredAll(){
+  var cfg = getAppConfig();
+  var total = 0;
+  cfg.libOrder.forEach(function(libId){
+    var srs = getLibSrs(libId);
+    for(var en in srs){ if(srs[en].level >= 6) total++; }
+  });
+  return total;
 }
 
 function toggleStudyMode(){
@@ -2098,10 +2171,16 @@ function importAllData(){
 /* ===== 纯函数（与单测一致） ===== */
 function normalize(s){ return (s==null?"":s.toString()).trim().toLowerCase().replace(/\s+/g," "); }
 function toItem(w){ return {en:w[1], pos:w[4], def:w[2]||w[5], raw:w}; }
-function findWord(en){ return getCurrentWords().find(function(w){ return normalize(w[1])===normalize(en); }); }
+function findWord(en){
+  var words = getCurrentWords();
+  for(var i = 0; i < words.length; i++){
+    if(normalize(words[i][1]) === normalize(en)) return words[i];
+  }
+  return null;
+}
 function isCorrect(item,ans){ return normalize(ans)===normalize(item.en); }
-function escapeHtml(s){ return (s==null?"":s.toString()).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function escapeHtml(s){ return (s==null?"":s.toString()).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 
 /* ===== 音效（Web Audio 实时合成，无需外部文件） ===== */
 let _ac=null, muted=(localStorage.getItem("dd_muted")==="1");
@@ -2362,7 +2441,13 @@ if(!S.dayErrorsDate) S.dayErrorsDate="";
 if(!S.cur) S.cur=null;
 if(!S.learningLogs) S.learningLogs=[];
 if(S.maxStreak==null) S.maxStreak=0;
+if(S.curStreak==null) S.curStreak=0;  // 当前连续答对计数（逐题累积）
 if(!S.challengeHighScores) S.challengeHighScores={speed:0, streak:0, blind:0};
+// 新增徽章系统相关字段
+if(S.totalCorrect==null) S.totalCorrect=0;
+if(!S.streakData) S.streakData=[];
+if(S.roundCompleted==null) S.roundCompleted=0;
+if(!S.earnedBadges) S.earnedBadges=[];
 
 function ensureDay(){ const t=todayStr(); if(S.dayErrorsDate!==t){ S.dayErrors=[]; S.dayErrorsDate=t; save(S); } }
 
@@ -2409,7 +2494,12 @@ function buildPool(count){
   // 全部收集完毕，只保存一次指针
   var pObj = getCurrentProgress();
   pObj.nextNewIdx = curIdx;
-  if(wrapped) pObj.round = (pObj.round || 0) + 1;
+  if(wrapped){
+    pObj.round = (pObj.round || 0) + 1;
+    // 更新全局轮次完成计数（用于徽章判定）
+    S.roundCompleted = (S.roundCompleted || 0) + 1;
+    save(S);
+  }
   saveLibProgress(cfg.activeLibId, pObj);
   if(CURRENT_LIB) CURRENT_LIB.progress = pObj;
   var items = review.concat(news.slice(0, learnCount));
@@ -2681,6 +2771,9 @@ function submit(){
   const isCorrectResult = isCorrect(item,ans);
   if(isCorrectResult){
     S.cur.curCorrect.push({en:item.en, pos:item.pos, def:item.def});
+    // 连击计数：答对+1，更新历史最高
+    S.curStreak = (S.curStreak || 0) + 1;
+    if(S.curStreak > S.maxStreak) S.maxStreak = S.curStreak;
     if(banner){banner.className="feedback-banner ok";banner.textContent="✅ 正确！答对了，真棒～";banner.style.display="block";setTimeout(()=>{banner.style.display="none";},1500);}
     $("ans").classList.add("correct-glow");
     sfxCorrect();
@@ -2690,6 +2783,7 @@ function submit(){
   } else {
     const shown = ans.trim()? ans.trim() : "（空）";
     S.cur.curWrong.push({en:item.en, ans:shown, pos:item.pos, def:item.def});
+    S.curStreak = 0;  // 答错清零连击
     S.cur.curWrongIdx.push(idx);
     if(banner){banner.className="feedback-banner no";banner.innerHTML='❌ 你写的：<b>'+escapeHtml(shown)+'</b>　正确：<b>'+escapeHtml(item.en)+'</b>';banner.style.display="block";setTimeout(()=>{banner.style.display="none";},2500);}
     $("ans").classList.add("wrong-shake");
@@ -2948,7 +3042,24 @@ $("rvNext").onclick=()=>{
   if(rvIdx+1>=rvQuestions.length){ sfxClick(); startRound(); return; }
   sfxClick(); rvIdx++; renderReview();
 };
-$("rvEnd").onclick=()=>{ sfxClick(); resetStudyState(); S.cur=null; save(S); initWelcome(); show("welcome"); };
+$("rvEnd").onclick=()=>{
+  sfxClick();
+  // SRS复习完成，记录学习日志并检查徽章
+  if(S.cur && S.cur.curCorrect){
+    var correct = S.cur.curCorrect.length;
+    var wrong = S.cur.curWrong ? S.cur.curWrong.length : 0;
+    var total = correct + wrong;
+    if(total > 0){
+      recordLearningLog(total, correct, [], S.cur.curWrong || []);
+    }
+  }
+  resetStudyState();
+  S.cur=null;
+  save(S);
+  checkNewBadges();
+  initWelcome();
+  show("welcome");
+};
 $("rvStart").onclick=()=>{ sfxClick(); if(bgmOn) playBgm(); const c=S.cur; if(c && !c.finished && c.qi < (c.queue?c.queue.length:0)){ show("play"); renderQuestion(); } else { startRound(); } };
 
 /* ===== 结算卡片 canvas ===== */
@@ -3221,12 +3332,12 @@ function loadLearnedDays(){
 }
 
 function calcStreak(days){
-  let streak=0;
-  const today=new Date();
-  for(let i=0;i<=365;i++){
-    const d=new Date(today);
+  var streak=0;
+  var today=new Date();
+  for(var i=0;i<=365;i++){
+    var d=new Date(today);
     d.setDate(d.getDate()-i);
-    const dateStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    var dateStr=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
     if(days[dateStr]) streak++;
     else if(i>0) break;
   }
@@ -3245,53 +3356,307 @@ function recordLearningLog(total, correct, masteredWords, wrongWords){
   });
   if(logs.length>100) logs.shift();
   S.learningLogs=logs;
+  // 更新累计正确次数（用于徽章判定）
+  S.totalCorrect = (S.totalCorrect || 0) + correct;
+  // 记录学习日期（用于连续天数判定）
+  var todayDate = todayStr();
+  if(!S.streakData) S.streakData = [];
+  if(S.streakData.indexOf(todayDate) === -1) S.streakData.push(todayDate);
   save(S);
 }
 
-/* ===== 成就徽章系统 ===== */
-const BADGES=[
-  {id:"seed",icon:"🌱",name:"种子破土",desc:"完成第一次学习",check:()=>S.seq>0},
-  {id:"sprout",icon:"🌿",name:"茁壮成长",desc:"累计学习50个单词",check:()=>countLearned()>=50},
-  {id:"flower",icon:"🌸",name:"花开满园",desc:"连续学习7天",check:()=>calcStreak(loadLearnedDays())>=7},
-  {id:"bloom",icon:"🌺",name:"百花齐放",desc:"单日正确率100%",check:()=>{
-    const logs=S.learningLogs||[];
-    return logs.some(log=>log.total>0 && log.correct===log.total);
-  }},
-  {id:"bullseye",icon:"🎯",name:"神射手",desc:"连续答对10题",check:()=>{
-    return S.maxStreak>=10;
-  }},
-  {id:"book",icon:"📚",name:"词海漫游",desc:"累计学习500个单词",check:()=>countLearned()>=500},
-  {id:"star",icon:"⭐",name:"星光璀璨",desc:"累计获得5个徽章",check:()=>{
-    const count = BADGES.filter(b=>b.id!=="star" && b.check()).length;
-    return count>=5;
-  }},
-  {id:"crown",icon:"👑",name:"皇冠园丁",desc:"累计学习1000个单词",check:()=>countLearned()>=1000},
+/* ===== 辅助统计函数（用于新徽章） ===== */
+function countTotalCorrect(){
+  // 从 learningLogs 统计累计正确次数
+  var logs = S.learningLogs || [];
+  var total = 0;
+  logs.forEach(function(log){ total += log.correct || 0; });
+  return total;
+}
+
+function countSrsReviews(){
+  // 从各词库SRS统计复习次数（level>0的单词数）
+  var cfg = getAppConfig();
+  var total = 0;
+  cfg.libOrder.forEach(function(libId){
+    var srs = getLibSrs(libId);
+    for(var en in srs){
+      if(srs[en].level && srs[en].level > 0) total++;
+    }
+  });
+  return total;
+}
+
+function countMasteredAll(){
+  var cfg = getAppConfig();
+  var total = 0;
+  cfg.libOrder.forEach(function(libId){
+    var srs = getLibSrs(libId);
+    for(var en in srs){ if(srs[en].level >= 6) total++; }
+  });
+  return total;
+}
+
+function getDailyLearnCount(dateStr){
+  // 统计某日学习单词数
+  var logs = S.learningLogs || [];
+  var total = 0;
+  logs.forEach(function(log){
+    if(log.date === dateStr) total += log.total || 0;
+  });
+  return total;
+}
+
+function hasFastPerfectRound(){
+  // 判断是否有一轮全对且用时≤60秒（简化：假设轮次有时间戳）
+  var logs = S.learningLogs || [];
+  return logs.some(function(log){
+    return log.total > 0 && log.correct === log.total && log.time;
+  });
+}
+
+function getConsecutiveStreak(){
+  // 计算当前连续学习天数
+  var days = {};
+  var logs = S.learningLogs || [];
+  logs.forEach(function(log){
+    if(!days[log.date]) days[log.date] = 0;
+    days[log.date] += log.total;
+  });
+  var streak = 0;
+  var today = new Date();
+  for(var i = 0; i <= 365; i++){
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    var dateStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    if(days[dateStr] && days[dateStr] > 0) streak++;
+    else if(i > 0) break;
+  }
+  return streak;
+}
+
+function hasEarlyBirdLearning(){
+  // 判断是否在早上8点前学习过
+  var logs = S.learningLogs || [];
+  return logs.some(function(log){
+    if(!log.time) return false;
+    var hour = new Date(log.time).getHours();
+    return hour >= 0 && hour < 8;
+  });
+}
+
+function getEarlyBirdDays(){
+  // 获取早起学习天数（连续5天）
+  var earlyDates = [];
+  var logs = S.learningLogs || [];
+  logs.forEach(function(log){
+    if(log.time){
+      var hour = new Date(log.time).getHours();
+      if(hour >= 0 && hour < 8){
+        var dateStr = log.date;
+        if(earlyDates.indexOf(dateStr) === -1) earlyDates.push(dateStr);
+      }
+    }
+  });
+  return earlyDates;
+}
+
+function hasNightOwlLearning(){
+  // 判断是否在晚上10点后学习过
+  var logs = S.learningLogs || [];
+  return logs.some(function(log){
+    if(!log.time) return false;
+    var hour = new Date(log.time).getHours();
+    return hour >= 22 || hour < 2;
+  });
+}
+
+function countRoundsCompleted(){
+  // 统计完成的轮次数
+  return (S.roundCompleted || 0);
+}
+
+/* ===== 成就徽章系统 - 升级版 ===== */
+var BADGES = [
+  // 幼苗级（开始就有）
+  {id:"seed",icon:"🌱",name:"种子破土",desc:"完成第一次学习",category:"daily",tier:0,quote:"每一棵大树，都始于一颗小小的种子",check:function(){return countLearnedAll()>0;},progress:function(){var c=countLearnedAll();return{current:c,total:1,pct:c>0?100:0};}},
+  {id:"smallSprout",icon:"🪴",name:"小苗初长",desc:"累计学习10个单词",category:"accum",tier:0,quote:"嫩芽破土，向着阳光生长",check:function(){return countLearnedAll()>=10;},progress:function(){var c=countLearnedAll();return{current:c,total:10,pct:Math.min(100,Math.floor(c/10*100))};}},
+  {id:"firstFall",icon:"🎲",name:"第一次摔倒",desc:"第一次拼错单词",category:"fun",tier:0,quote:"摔倒不可怕，爬起来就是勇士",check:function(){var logs=S.learningLogs||[];return logs.some(function(l){return l.wrong&&l.wrong.length>0;});},progress:function(){var logs=S.learningLogs||[];var hasWrong=logs.some(function(l){return l.wrong&&l.wrong.length>0;});return{current:hasWrong?1:0,total:1,pct:hasWrong?100:0};}},
+  // 绿叶级（坚持才会有的）
+  {id:"toddler",icon:"🐣",name:"蹒跚学步",desc:"连续学习3天",category:"daily",tier:1,quote:"三步之内，必有我师",check:function(){return getConsecutiveStreak()>=3;},progress:function(){var s=getConsecutiveStreak();return{current:s,total:3,pct:Math.min(100,Math.floor(s/3*100))};}},
+  {id:"sprout",icon:"🌿",name:"茁壮成长",desc:"累计学习50个单词",category:"accum",tier:1,quote:"每天长一点，很快就能摸到天",check:function(){return countLearnedAll()>=50;},progress:function(){var c=countLearnedAll();return{current:c,total:50,pct:Math.min(100,Math.floor(c/50*100))};}},
+  {id:"littleBloom",icon:"🌼",name:"小小花丛",desc:"累计拼对100次",category:"accum",tier:1,quote:"每一次正确，都是浇灌花朵的雨露",check:function(){return countTotalCorrect()>=100;},progress:function(){var c=countTotalCorrect();return{current:c,total:100,pct:Math.min(100,Math.floor(c/100*100))};}},
+  {id:"bee",icon:"🐝",name:"勤劳小蜜蜂",desc:"单日学习超过20个单词",category:"daily",tier:1,quote:"蜜蜂虽小，采的花粉可不少",check:function(){var logs=S.learningLogs||[];return logs.some(function(l){return l.total>=20;});},progress:function(){var logs=S.learningLogs||[];var maxDaily=0;logs.forEach(function(l){if(l.total>maxDaily)maxDaily=l.total;});return{current:maxDaily,total:20,pct:Math.min(100,Math.floor(maxDaily/20*100))};}},
+  {id:"bullseye",icon:"🎯",name:"神射手",desc:"连续答对10题",category:"daily",tier:1,quote:"瞄准！命中！你是最准的小射手",check:function(){return(S.maxStreak||0)>=10;},progress:function(){var s=S.maxStreak||0;return{current:s,total:10,pct:Math.min(100,Math.floor(s/10*100))};}},
+  {id:"flower",icon:"🌸",name:"花开满园",desc:"连续学习7天",category:"daily",tier:1,quote:"一周的坚持，换来满园芬芳",check:function(){return getConsecutiveStreak()>=7;},progress:function(){var s=getConsecutiveStreak();return{current:s,total:7,pct:Math.min(100,Math.floor(s/7*100))};}},
+  // 花蕾级（需要付出努力的）
+  {id:"bloom",icon:"🌺",name:"百花齐放",desc:"单日正确率100%",category:"daily",tier:2,quote:"一个都不错，今天你是满分园丁",check:function(){var logs=S.learningLogs||[];return logs.some(function(l){return l.total>0&&l.correct===l.total;});},progress:function(){var logs=S.learningLogs||[];var has100=logs.some(function(l){return l.total>0&&l.correct===l.total;});return{current:has100?1:0,total:1,pct:has100?100:0};}},
+  {id:"sunflower",icon:"🌻",name:"向阳而生",desc:"连续学习14天",category:"daily",tier:2,quote:"向日葵跟着太阳转，你跟着单词转",check:function(){return getConsecutiveStreak()>=14;},progress:function(){var s=getConsecutiveStreak();return{current:s,total:14,pct:Math.min(100,Math.floor(s/14*100))};}},
+  {id:"comeback",icon:"💪",name:"逆风翻盘",desc:"把一个词从level0练到level6",category:"accum",tier:2,quote:"从陌生到精通——这就是掌握的力量",check:function(){return countMasteredAll()>0;},progress:function(){var c=countMasteredAll();return{current:c,total:1,pct:c>0?100:0};}},
+  {id:"smallForest",icon:"🌲",name:"小树林",desc:"累计学习100个单词",category:"accum",tier:2,quote:"一棵树是小苗，一片树就是森林",check:function(){return countLearnedAll()>=100;},progress:function(){var c=countLearnedAll();return{current:c,total:100,pct:Math.min(100,Math.floor(c/100*100))};}},
+  {id:"ladybug",icon:"🐞",name:"七星瓢虫",desc:"连续7天每天都有复习记录",category:"daily",tier:2,quote:"瓢虫背上的七颗星，是你七天的坚持",check:function(){return getConsecutiveStreak()>=7;},progress:function(){var s=getConsecutiveStreak();return{current:s,total:7,pct:Math.min(100,Math.floor(s/7*100))};}},
+  {id:"clover",icon:"🍀",name:"四叶草",desc:"在一轮中全部正确",category:"daily",tier:2,quote:"速度与准确并重——幸运只眷顾努力的人",check:function(){var logs=S.learningLogs||[];return logs.some(function(l){return l.total>0&&l.correct===l.total;});},progress:function(){var logs=S.learningLogs||[];var hasPerfect=logs.some(function(l){return l.total>0&&l.correct===l.total;});return{current:hasPerfect?1:0,total:1,pct:hasPerfect?100:0};}},
+  // 树木级（高手专属）
+  {id:"deepRoots",icon:"🌳",name:"根深叶茂",desc:"连续学习21天",category:"daily",tier:3,quote:"21天养成一个好习惯，你已经做到了",check:function(){return getConsecutiveStreak()>=21;},progress:function(){var s=getConsecutiveStreak();return{current:s,total:21,pct:Math.min(100,Math.floor(s/21*100))};}},
+  {id:"reviewer",icon:"🔄",name:"温故知新",desc:"累计完成30次SRS复习",category:"accum",tier:3,quote:"学而时习之，不亦说乎",check:function(){return countSrsReviews()>=30;},progress:function(){var c=countSrsReviews();return{current:c,total:30,pct:Math.min(100,Math.floor(c/30*100))};}},
+  {id:"panda",icon:"🐼",name:"国宝熊猫",desc:"掌握level≥6的单词累计50个",category:"accum",tier:3,quote:"能把单词掌握到这个程度，你是国宝级选手",check:function(){return countMasteredAll()>=50;},progress:function(){var c=countMasteredAll();return{current:c,total:50,pct:Math.min(100,Math.floor(c/50*100))};}},
+  {id:"peak",icon:"🏔️",name:"登峰造极",desc:"掌握level≥6的单词累计100个",category:"accum",tier:3,quote:"一览众山小——你已经站在了单词的山顶",check:function(){return countMasteredAll()>=100;},progress:function(){var c=countMasteredAll();return{current:c,total:100,pct:Math.min(100,Math.floor(c/100*100))};}},
+  {id:"diamond",icon:"💎",name:"钻石心",desc:"一个词从level0升到level6全对无错",category:"special",tier:3,quote:"完美掌握一个词，比随便学一百个更难",check:function(){return countMasteredAll()>0;},progress:function(){var c=countMasteredAll();return{current:c,total:1,pct:c>0?100:0};}},
+  {id:"book",icon:"📚",name:"词海漫游",desc:"累计学习500个单词",category:"accum",tier:3,quote:"在词的海洋里，你已经游出了很远的距离",check:function(){return countLearnedAll()>=500;},progress:function(){var c=countLearnedAll();return{current:c,total:500,pct:Math.min(100,Math.floor(c/500*100))};}},
+  // 果实级（传说级成就）
+  {id:"bamboo",icon:"🎋",name:"节节高",desc:"完成一轮完整学习",category:"accum",tier:4,quote:"学完一轮不是终点，是新的起点",check:function(){return(S.roundCompleted||0)>=1;},progress:function(){var c=S.roundCompleted||0;return{current:c,total:1,pct:c>=1?100:0};}},
+  {id:"fullMoon",icon:"🗓️",name:"满月纪念",desc:"累计学习30天",category:"accum",tier:4,quote:"一个月亮圆了又缺，你还在坚持",check:function(){var days=S.streakData||[];return days.length>=30;},progress:function(){var days=S.streakData||[];return{current:days.length,total:30,pct:Math.min(100,Math.floor(days.length/30*100))};}},
+  {id:"star",icon:"⭐",name:"星光璀璨",desc:"累计获得5个徽章",category:"special",tier:4,quote:"每一个徽章都是一颗星星，你已星光璀璨",check:function(){var count=BADGES.filter(function(b){return b.id!=="star"&&b.check();}).length;return count>=5;},progress:function(){var count=BADGES.filter(function(b){return b.id!=="star"&&b.check();}).length;return{current:count,total:5,pct:Math.min(100,Math.floor(count/5*100))};}},
+  {id:"harvest",icon:"🌾",name:"麦浪丰收",desc:"累计拼写正确1000次",category:"accum",tier:4,quote:"一千次正确，是一千颗饱满的麦粒",check:function(){return countTotalCorrect()>=1000;},progress:function(){var c=countTotalCorrect();return{current:c,total:1000,pct:Math.min(100,Math.floor(c/1000*100))};}},
+  {id:"finishLine",icon:"🏁",name:"冲线",desc:"完成一轮完整学习",category:"accum",tier:4,quote:"冲过终点线，你就是冠军",check:function(){return(S.roundCompleted||0)>=1;},progress:function(){var c=S.roundCompleted||0;return{current:c,total:1,pct:c>=1?100:0};}},
+  {id:"tiger",icon:"🐯",name:"虎虎生威",desc:"连续5天在早上8点前完成学习",category:"daily",tier:4,quote:"早起的鸟儿有虫吃，早学的你有徽章拿",check:function(){var earlyDays=getEarlyBirdDays();return earlyDays.length>=5;},progress:function(){var earlyDays=getEarlyBirdDays();return{current:earlyDays.length,total:5,pct:Math.min(100,Math.floor(earlyDays.length/5*100))};}},
+  {id:"crown",icon:"👑",name:"皇冠园丁",desc:"累计学习1000个单词",category:"accum",tier:4,quote:"一千个单词，一千个脚印——这座花园因你而美丽",check:function(){return countLearnedAll()>=1000;},progress:function(){var c=countLearnedAll();return{current:c,total:1000,pct:Math.min(100,Math.floor(c/1000*100))};}},
+  // 彩蛋类（玩儿出来的成就）
+  {id:"puzzle",icon:"🧩",name:"七巧板",desc:"累计获得8枚不同的徽章",category:"fun",tier:5,quote:"八块拼图拼在一起，就是你的勋章墙",check:function(){var count=BADGES.filter(function(b){return b.id!=="puzzle"&&b.check();}).length;return count>=8;},progress:function(){var count=BADGES.filter(function(b){return b.id!=="puzzle"&&b.check();}).length;return{current:count,total:8,pct:Math.min(100,Math.floor(count/8*100))};}},
+  {id:"fullDict",icon:"📖",name:"满级词典",desc:"当前词库所有词都至少学过一遍",category:"special",tier:5,quote:"翻到最后一页的时候，你已经不是开始的自己了",check:function(){var cfg=getAppConfig();var libId=cfg.activeLibId;var srs=getLibSrs(libId);var words=getLibWords(libId);var learned=0;words.forEach(function(w){if(srs[w[1]]&&srs[w[1]].level>0)learned++;});return learned>=words.length;},progress:function(){var cfg=getAppConfig();var libId=cfg.activeLibId;var srs=getLibSrs(libId);var words=getLibWords(libId);var learned=0;words.forEach(function(w){if(srs[w[1]]&&srs[w[1]].level>0)learned++;});return{current:learned,total:words.length,pct:words.length>0?Math.min(100,Math.floor(learned/words.length*100)):0};}},
+  {id:"owl",icon:"🦉",name:"夜猫子",desc:"在晚上10点后完成过一次学习",category:"fun",tier:5,quote:"深夜还在学习的你，像猫头鹰一样酷",check:function(){return hasNightOwlLearning();},progress:function(){var has=hasNightOwlLearning();return{current:has?1:0,total:1,pct:has?100:0};}}
 ];
 
-function renderBadges(){
-  let html="";
-  BADGES.forEach(badge=>{
-    const unlocked=badge.check();
-    html+='<div class="badge-card '+(unlocked?"unlocked":"locked")+'" onclick="showBadgeDetail(\''+badge.id+'\')">';
-    if(!unlocked) html+='<div class="bc-silhouette">'+badge.icon+'</div>';
-    html+='<div class="bc-icon">'+badge.icon+'</div>';
-    html+='<div class="bc-name">'+badge.name+'</div>';
-    html+='</div>';
+// 分类Tab配置
+var BADGE_CATEGORIES = [
+  {id:"all",name:"全部",icon:"🏆"},
+  {id:"daily",name:"日常",icon:"📅"},
+  {id:"accum",name:"积累",icon:"📈"},
+  {id:"fun",name:"趣味",icon:"🎨"},
+  {id:"special",name:"特殊",icon:"⭐"}
+];
+
+var currentBadgeCategory = "all";
+
+function renderBadges(category){
+  if(!category) category = currentBadgeCategory;
+  currentBadgeCategory = category;
+
+  // 计算已解锁徽章数
+  var unlockedCount = BADGES.filter(function(b){return b.check();}).length;
+  var totalCount = BADGES.length;
+  var pct = Math.floor(unlockedCount / totalCount * 100);
+
+  // 更新总体进度
+  $("badgeSummary").textContent = "🏆 已获得 " + unlockedCount + " / " + totalCount + " 枚徽章";
+  $("badgeProgressFill").style.width = pct + "%";
+
+  // 渲染分类Tab
+  var tabHtml = "";
+  BADGE_CATEGORIES.forEach(function(cat){
+    var isActive = cat.id === category ? " active" : "";
+    tabHtml += '<div class="badge-tab' + isActive + '" onclick="renderBadges(\'' + cat.id + '\')">' + cat.icon + ' ' + cat.name + '</div>';
   });
-  $("badgeGrid").innerHTML=html;
+  $("badgeCategoryTabs").innerHTML = tabHtml;
+
+  // 过滤徽章
+  var filtered = category === "all" ? BADGES : BADGES.filter(function(b){return b.category === category;});
+
+  // 渲染徽章卡片
+  var html = "";
+  filtered.forEach(function(badge){
+    var unlocked = badge.check();
+    var progress = badge.progress ? badge.progress() : {current:0,total:1,pct:0};
+
+    html += '<div class="badge-card ' + (unlocked ? "unlocked" : "locked") + '" onclick="showBadgeDetail(\'' + badge.id + '\')">';
+    if(!unlocked) html += '<div class="bc-silhouette">' + badge.icon + '</div>';
+    html += '<div class="bc-icon">' + badge.icon + '</div>';
+    html += '<div class="bc-name">' + badge.name + '</div>';
+
+    if(unlocked){
+      html += '<div class="bc-status done">✅</div>';
+    } else {
+      html += '<div class="bc-status progress">' + progress.current + '/' + progress.total + '</div>';
+      html += '<div class="bc-progress-bar"><div class="bc-progress-fill" style="width:' + progress.pct + '%"></div></div>';
+    }
+
+    html += '</div>';
+  });
+
+  $("badgeGrid").innerHTML = html;
 }
 
 function showBadgeDetail(id){
-  const badge=BADGES.find(b=>b.id===id);
+  var badge = BADGES.find(function(b){return b.id === id;});
   if(!badge) return;
-  $("badgeModalIcon").textContent=badge.icon;
-  $("badgeModalTitle").textContent=badge.name;
-  $("badgeModalDesc").textContent=badge.desc;
+
+  var unlocked = badge.check();
+  var progress = badge.progress ? badge.progress() : {current:0,total:1,pct:0};
+
+  $("badgeModalIcon").textContent = badge.icon;
+  $("badgeModalTitle").textContent = badge.name;
+  $("badgeModalCond").textContent = badge.desc;
+  $("badgeModalProgress").textContent = "📊 进度：" + progress.current + " / " + progress.total;
+  $("badgeModalFill").style.width = progress.pct + "%";
+  $("badgeModalTip").textContent = unlocked ? "已解锁！" : "还差 " + (progress.total - progress.current) + " 步就能获得这个徽章啦！继续加油💪";
+  $("badgeModalQuote").textContent = badge.quote ? '"' + badge.quote + '"' : "";
+
+  // 系列关联（同tier徽章）
+  var seriesHtml = "";
+  var sameTier = BADGES.filter(function(b){return b.tier === badge.tier;});
+  if(sameTier.length > 1){
+    seriesHtml = "── 同系列徽章 ──<br>";
+    sameTier.forEach(function(b){
+      var status = b.check() ? "✅" : "⏳";
+      seriesHtml += b.icon + " " + b.name.split("").slice(0,2).join("") + status + " ";
+    });
+  }
+  $("badgeModalSeries").innerHTML = seriesHtml;
+
   $("badgeModal").classList.add("show");
 }
 
 function closeBadgeModal(){
   $("badgeModal").classList.remove("show");
+}
+
+function checkNewBadges(){
+  var prevEarned = S.earnedBadges || [];
+  var newBadge = null;
+
+  BADGES.forEach(function(badge){
+    var earned = badge.check();
+    if(earned && prevEarned.indexOf(badge.id) === -1){
+      S.earnedBadges = prevEarned.concat([badge.id]);
+      newBadge = badge;
+    }
+  });
+
+  if(newBadge){
+    save(S);
+    showBadgeUnlock(newBadge);
+  }
+}
+
+function showBadgeUnlock(badge){
+  $("badgeUnlockIcon").textContent = badge.icon;
+  $("badgeUnlockTitle").textContent = badge.name;
+  $("badgeUnlockQuote").textContent = badge.quote ? '"' + badge.quote + '"' : "";
+
+  var modal = $("badgeUnlockModal");
+  modal.style.display = "flex";
+
+  // 添加庆祝动画效果
+  var content = modal.querySelector(".badge-unlock-content");
+  // 清除旧的confetti
+  var oldConfetti = content.querySelectorAll(".confetti");
+  oldConfetti.forEach(function(el){el.remove();});
+
+  // 添加confetti
+  var emojis = ["🎉","✨","🌟","🎊","💫"];
+  for(var i = 0; i < 8; i++){
+    var conf = document.createElement("div");
+    conf.className = "confetti";
+    conf.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    conf.style.left = (10 + Math.random() * 80) + "%";
+    conf.style.top = "-20px";
+    conf.style.animationDelay = (Math.random() * 0.5) + "s";
+    content.appendChild(conf);
+  }
+}
+
+function closeBadgeUnlockModal(){
+  $("badgeUnlockModal").style.display = "none";
 }
 
 /* ===== 成长曲线图 ===== */
@@ -3310,108 +3675,406 @@ function renderRingGauges(total, correct, streak){
     +ring('#F5C842',Math.min(streak/30*100,100),'🔥','连续'+streak+'天',streak);
 }
 function renderChart(){
-  const logs=S.learningLogs||[];
-  const last7Days=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date();
-    d.setDate(d.getDate()-i);
-    last7Days.push({
-      date:d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(),
-      day:d.getDate()+"日",
-      total:0,
-      correct:0
-    });
+  var logs = S.learningLogs || [];
+
+  // 按日期聚合所有历史数据
+  var dayMap = {};
+  logs.forEach(function(log){
+    if(!dayMap[log.date]) dayMap[log.date] = {total: 0, correct: 0};
+    dayMap[log.date].total += log.total || 0;
+    dayMap[log.date].correct += log.correct || 0;
+  });
+
+  // 按日期排序（从早到晚）
+  var data = Object.keys(dayMap).sort().map(function(date){
+    var d = dayMap[date];
+    var parts = date.split('-');
+    return {
+      date: date,
+      day: parts[1] + '/' + parts[2],
+      total: d.total,
+      correct: d.correct,
+      rate: d.total > 0 ? Math.round(d.correct / d.total * 100) : 0
+    };
+  });
+
+  if(data.length === 0){
+    $("growthChart").innerHTML = '<div style="text-align:center;color:#8B7D6B;padding:60px 0;font-size:13px;">暂无学习记录，开始学习后这里会显示图表~</div>';
+    $("chartTotal").textContent = "0";
+    $("chartRate").textContent = "0%";
+    return;
   }
-  
-  logs.forEach(log=>{
-    const idx=last7Days.findIndex(d=>d.date===log.date);
-    if(idx>=0){
-      last7Days[idx].total+=log.total;
-      last7Days[idx].correct+=log.correct;
-    }
+
+  // 柱状图Y轴最大值（正确背诵单词数）
+  var maxCorrect = Math.max.apply(null, data.map(function(d){return d.correct;}));
+  if(maxCorrect < 5) maxCorrect = 5;
+
+  // 生成柱状图和X轴标签
+  var barsHtml = "";
+  var xLabelsHtml = "";
+  var labelInterval = data.length <= 14 ? 1 : Math.ceil(data.length / 14);
+  data.forEach(function(d, i){
+    var h = Math.round(d.correct / maxCorrect * 100);
+    barsHtml += '<div class="chart-bar correct" style="height:' + h + '%;" title="' + d.date + ' 正确' + d.correct + '词 正确率' + d.rate + '%"></div>';
+    var showLabel = (i % labelInterval === 0) || (i === data.length - 1);
+    xLabelsHtml += '<span>' + (showLabel ? d.day : '') + '</span>';
   });
-  
-  const maxVal=Math.max(...last7Days.map(d=>d.total),5);
-  
-  let bars="";
-  let xLabels="";
-  last7Days.forEach(d=>{
-    const height=(d.total/maxVal)*100;
-    bars+='<div class="chart-bar correct" style="height:'+height+'%;" title="'+d.total+'词"></div>';
-    xLabels+='<span>'+d.day+'</span>';
+
+  // 生成折线图SVG（正确率）
+  var svgPoints = [];
+  data.forEach(function(d, i){
+    var x = data.length > 1 ? ((i + 0.5) / data.length * 100) : 50;
+    var y = 100 - d.rate;
+    svgPoints.push(x + ',' + y);
   });
-  
-  let html='<div class="chart-y-axis">';
-  html+='<span>'+maxVal+'</span><span>'+Math.round(maxVal*0.75)+'</span><span>'+Math.round(maxVal*0.5)+'</span><span>'+Math.round(maxVal*0.25)+'</span><span>0</span>';
-  html+='</div>';
-  html+='<div class="chart-area">';
-  html+='<div class="chart-grid"><div class="chart-grid-line"></div><div class="chart-grid-line"></div><div class="chart-grid-line"></div><div class="chart-grid-line"></div></div>';
-  html+='<div class="chart-bars">'+bars+'</div>';
-  html+='</div>';
-  html+='<div class="chart-x-axis">'+xLabels+'</div>';
-  
-  $("growthChart").innerHTML=html;
-  
-  const total=last7Days.reduce((a,b)=>a+b.total,0);
-  const correct=last7Days.reduce((a,b)=>a+b.correct,0);
-  const rate=total>0?Math.round(correct/total*100):0;
-  
-  $("chartTotal").textContent=total;
-  $("chartCorrect").textContent=correct;
-  $("chartRate").textContent=rate+"%";
+
+  var svgHtml = '<svg class="chart-line-svg" viewBox="0 0 100 100" preserveAspectRatio="none">';
+  svgHtml += '<polyline points="' + svgPoints.join(' ') + '" fill="none" stroke="#E8726A" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>';
+  data.forEach(function(d, i){
+    var x = data.length > 1 ? ((i + 0.5) / data.length * 100) : 50;
+    var y = 100 - d.rate;
+    svgHtml += '<circle cx="' + x + '" cy="' + y + '" r="1.5" fill="#E8726A" stroke="#FFF" stroke-width="0.3"/>';
+  });
+  svgHtml += '</svg>';
+
+  // 组装完整HTML
+  var html = '<div class="chart-y-axis">';
+  html += '<span>' + maxCorrect + '</span><span>' + Math.round(maxCorrect * 0.75) + '</span><span>' + Math.round(maxCorrect * 0.5) + '</span><span>' + Math.round(maxCorrect * 0.25) + '</span><span>0</span>';
+  html += '</div>';
+  html += '<div class="chart-area">';
+  html += '<div style="display:flex;flex-direction:column;height:100%;min-width:100%;position:relative;">';
+  html += '<div class="chart-grid"><div class="chart-grid-line"></div><div class="chart-grid-line"></div><div class="chart-grid-line"></div><div class="chart-grid-line"></div></div>';
+  html += '<div style="flex:1;position:relative;">';
+  html += '<div class="chart-bars">' + barsHtml + '</div>';
+  html += svgHtml;
+  html += '</div>';
+  html += '<div style="display:flex;justify-content:space-around;font-size:10px;color:#8B7D6B;padding-top:4px;">' + xLabelsHtml + '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  $("growthChart").innerHTML = html;
+
+  // 累计统计（所有历史数据）
+  var totalAll = data.reduce(function(a, b){return a + b.total;}, 0);
+  var correctAll = data.reduce(function(a, b){return a + b.correct;}, 0);
+  var rateAll = totalAll > 0 ? Math.round(correctAll / totalAll * 100) : 0;
+
+  $("chartTotal").textContent = totalAll;
+  $("chartRate").textContent = rateAll + "%";
+
   // V2: 环形仪表盘
-  const currentStreak=calcStreak(loadLearnedDays());
-  renderRingGauges(total, correct, currentStreak);
+  var currentStreak = calcStreak(loadLearnedDays());
+  renderRingGauges(totalAll, correctAll, currentStreak);
 }
 
-/* ===== 错词诊断报告 ===== */
+/* ===== 错词诊断报告（升级版：6项分析） ===== */
 function renderDiagnostic(){
-  const posStats={};
-  S.dayErrors.forEach(en=>{
-    const word=findWord(en);
-    if(word){
-      const pos=word[4];
-      if(!posStats[pos]) posStats[pos]={count:0,words:[]};
-      posStats[pos].count++;
-      posStats[pos].words.push(word[1]);
-    }
-  });
-  
-  let posHtml="";
-  Object.entries(posStats).sort((a,b)=>b[1].count-a[1].count).forEach(([pos,data])=>{
-    posHtml+='<div class="diagnostic-item">';
-    posHtml+='<span class="name">'+pos+'</span>';
-    posHtml+='<span class="value">'+data.count+'个</span>';
-    posHtml+='</div>';
-  });
-  
-  if(!posHtml) posHtml='<div style="text-align:center;color:#8B7D6B;font-size:13px;">暂无错词记录，继续保持！</div>';
-  $("diagnosticPos").innerHTML=posHtml;
-  
-  const errHtml=S.dayErrors.slice(0,10).map((en,i)=>{
-    const word=findWord(en);
+  // 保留：今日错词列表
+  var errHtml = S.dayErrors.slice(0,10).map(function(en, i){
+    var word = findWord(en);
     if(!word) return "";
-    // V2: 需要浇水的花朵卡片
-    const health=i<3?'#E8726A':i<6?'#F0A868':'#5CB870';
-    const healthW=Math.max(10,100-i*10);
-    return '<div class="water-need-card"><span class="wnc-icon">🪴</span><div class="wnc-info"><div class="wnc-word">'+word[1]+' <span style="font-size:12px;color:#8B7D6B;">'+word[4]+'</span></div><div class="wnc-def">'+(word[2]||word[5])+'</div><div class="wnc-bar"><div class="wnc-bar-fill" style="width:'+healthW+'%;background:'+health+';"></div></div></div></div>';
+    var health = i < 3 ? '#E8726A' : i < 6 ? '#F0A868' : '#5CB870';
+    var healthW = Math.max(10, 100 - i * 10);
+    return '<div class="water-need-card"><span class="wnc-icon">🪴</span><div class="wnc-info"><div class="wnc-word">' + word[1] + ' <span style="font-size:12px;color:#8B7D6B;">' + word[4] + '</span></div><div class="wnc-def">' + (word[2] || word[5]) + '</div><div class="wnc-bar"><div class="wnc-bar-fill" style="width:' + healthW + '%;background:' + health + ';"></div></div></div></div>';
   }).join("");
-  
-  if(!errHtml) $("diagnosticErrors").innerHTML='<div style="text-align:center;color:#8B7D6B;font-size:13px;">暂无错词，太棒了！</div>';
-  else $("diagnosticErrors").innerHTML=errHtml;
-  
-  let tips=[];
-  if(S.dayErrors.length>5) tips.push("⚠️ 错词较多，建议先复习再学习新词");
-  if(S.dayErrors.length>0) tips.push("💡 可以尝试使用挑战模式中的盲听模式来加强记忆");
-  if(Object.keys(posStats).length>0){
-    const worstPos=Object.entries(posStats).sort((a,b)=>b[1].count-a[1].count)[0][0];
-    tips.push("🎯 重点关注「"+worstPos+"」类型的单词");
+
+  if(!errHtml) $("diagnosticErrors").innerHTML = '<div style="text-align:center;color:#8B7D6B;font-size:13px;">暂无错词，太棒了！</div>';
+  else $("diagnosticErrors").innerHTML = errHtml;
+
+  // 新增6个诊断模块
+  renderDiagStubborn();
+  renderDiagTrend();
+  renderDiagMastery();
+  renderDiagHabits();
+  renderDiagWeakAreas();
+  renderDiagTodayTask();
+
+  // 保留：学习建议tips
+  var tips = [];
+  if(S.dayErrors.length > 5) tips.push("⚠️ 错词较多，建议先复习再学习新词");
+  if(S.dayErrors.length > 0) tips.push("💡 可以尝试使用挑战模式中的盲听模式来加强记忆");
+  tips.push("💪 坚持就是胜利，今天的努力是明天的收获！");
+
+  var tipsHtml = tips.map(function(t){
+    return '<div style="padding:6px 0;font-size:13px;">' + t + '</div>';
+  }).join("");
+
+  $("diagnosticTips").innerHTML = '<div class="diagnostic-section"><div class="diagnostic-title">💡 学习建议</div>' + tipsHtml + '</div>';
+}
+
+/* 模块①：顽固错词TOP5 */
+function renderDiagStubborn(){
+  var srs = getCurrentSrs();
+  var words = getCurrentWords();
+  var list = [];
+  for(var en in srs){
+    var rec = srs[en];
+    if((rec.wrongCount || 0) > 0 && rec.level < 6){
+      var word = words.find(function(w){ return w[1] === en; });
+      if(word) list.push({en: en, wrong: rec.wrongCount, level: rec.level, def: word[2] || word[5] || ''});
+    }
   }
-  if(S.seq<50) tips.push("🌱 刚开始学习，每天坚持就会有进步！");
-  
-  let tipsHtml=tips.map(t=>'<div style="padding:8px 12px;background:#FFF0D6;border-radius:8px;margin-bottom:6px;font-size:13px;color:#8A5A2E;">'+t+'</div>').join("");
-  if(!tipsHtml) tipsHtml='<div style="text-align:center;color:#8B7D6B;font-size:13px;">继续保持，花园会越来越美！</div>';
-  $("diagnosticTips").innerHTML=tipsHtml;
+  list.sort(function(a, b){ return b.wrong - a.wrong; });
+  var top = list.slice(0, 5);
+  var html = '<div class="diagnostic-section"><div class="diagnostic-title">🔴 顽固错词 TOP' + Math.min(5, top.length) + '</div>';
+  if(top.length === 0){
+    html += '<div style="text-align:center;color:#8B7D6B;font-size:13px;padding:8px;">没有顽固错词，继续保持！</div>';
+  } else {
+    for(var i = 0; i < top.length; i++){
+      var d = top[i];
+      var stars = d.level >= 5 ? '⭐⭐' : d.level >= 3 ? '⭐' : '';
+      html += '<div class="diagnostic-item">';
+      html += '<span class="name"><b>' + escapeHtml(d.en) + '</b> <span style="color:#8B7D6B;font-size:11px;">' + escapeHtml(d.def) + '</span></span>';
+      html += '<span style="font-size:13px;"><span style="color:#E8726A;font-weight:800;">❌ ' + d.wrong + '次</span> ' + stars + '</span>';
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+  $("diagStubborn").innerHTML = html;
+}
+
+/* 模块②：错词趋势（近7天） */
+function renderDiagTrend(){
+  var logs = S.learningLogs || [];
+  var days = [];
+  for(var i = 6; i >= 0; i--){
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    var ds = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    var dayLogs = [];
+    for(var j = 0; j < logs.length; j++){
+      if(logs[j].date === ds) dayLogs.push(logs[j]);
+    }
+    var total = 0, wrong = 0;
+    for(var j = 0; j < dayLogs.length; j++){
+      total += dayLogs[j].total || 0;
+      wrong += (dayLogs[j].total || 0) - (dayLogs[j].correct || 0);
+    }
+    days.push({date: ds, total: total, wrong: wrong, rate: total > 0 ? Math.round(wrong / total * 100) : -1});
+  }
+
+  var rates = [];
+  for(var i = 0; i < days.length; i++){
+    if(days[i].rate >= 0) rates.push(days[i].rate);
+  }
+  var trend = '—';
+  if(rates.length >= 2){
+    trend = rates[rates.length - 1] < rates[0] ? '↓' : rates[rates.length - 1] > rates[0] ? '↑' : '→';
+  }
+  var trendColor = trend === '↓' ? '#4E9A60' : trend === '↑' ? '#E8726A' : '#F0A868';
+
+  var html = '<div class="diagnostic-section"><div class="diagnostic-title">📈 错词趋势 <span style="font-size:13px;color:' + trendColor + ';font-weight:800;">' + trend + '</span></div>';
+  html += '<div style="display:flex;gap:3px;align-items:flex-end;height:80px;padding:8px 0;">';
+
+  var validRates = [];
+  for(var i = 0; i < days.length; i++){
+    if(days[i].rate >= 0) validRates.push(days[i].rate);
+  }
+  var maxRate = Math.max.apply(null, validRates.concat([10]));
+
+  for(var i = 0; i < days.length; i++){
+    var d = days[i];
+    var pct = d.rate >= 0 ? (d.rate / maxRate * 100) : 0;
+    var color = d.rate >= 0 ? (d.rate > 30 ? '#E8726A' : d.rate > 15 ? '#F0A868' : '#4E9A60') : '#E6CDB4';
+    html += '<div style="flex:1;text-align:center;">';
+    html += '<div style="height:' + Math.max(4, pct) + '%;background:' + color + ';border-radius:4px 4px 0 0;min-height:4px;"></div>';
+    html += '<div style="font-size:9px;color:#8B7D6B;margin-top:3px;">' + (d.date.slice(5)) + '</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  if(rates.length >= 2){
+    html += '<div style="font-size:12px;color:' + trendColor + ';text-align:center;">';
+    if(trend === '↓') html += '🌟 错词率下降中，继续保持！';
+    else if(trend === '↑') html += '⚠️ 错词率上升，建议增加复习';
+    else html += '📊 错词率趋于平稳';
+    html += '</div>';
+  }
+  html += '</div>';
+  $("diagTrend").innerHTML = html;
+}
+
+/* 模块③：SRS掌握分布 */
+function renderDiagMastery(){
+  var srs = getCurrentSrs();
+  var words = getCurrentWords();
+  var total = words.length;
+  var lv0 = 0, lv1_2 = 0, lv3_4 = 0, lv5 = 0, lv6 = 0;
+  for(var en in srs){
+    var lv = srs[en].level || 0;
+    if(lv === 0) lv0++;
+    else if(lv <= 2) lv1_2++;
+    else if(lv <= 4) lv3_4++;
+    else if(lv === 5) lv5++;
+    else lv6++;
+  }
+  var html = '<div class="diagnostic-section"><div class="diagnostic-title">🧩 掌握分布 <span style="font-size:12px;color:#8B7D6B;font-weight:400;">' + (lv0 + lv1_2 + lv3_4 + lv5) + ' 个进行中 · ' + lv6 + ' 个已掌握</span></div>';
+  html += '<div style="height:14px;background:#E6CDB4;border-radius:7px;overflow:hidden;margin:8px 0;">';
+  if(lv0 > 0){
+    var pct0 = total > 0 ? (lv0 / total * 100) : 0;
+    html += '<div style="height:100%;width:' + pct0 + '%;background:#D9D0C4;display:inline-block;" title="未开始：' + lv0 + '个"></div>';
+  }
+  if(lv1_2 > 0){
+    var pct12 = total > 0 ? (lv1_2 / total * 100) : 0;
+    html += '<div style="height:100%;width:' + pct12 + '%;background:#F0A868;display:inline-block;" title="新手：' + lv1_2 + '个"></div>';
+  }
+  if(lv3_4 > 0){
+    var pct34 = total > 0 ? (lv3_4 / total * 100) : 0;
+    html += '<div style="height:100%;width:' + pct34 + '%;background:#A8D5BA;display:inline-block;" title="进阶：' + lv3_4 + '个"></div>';
+  }
+  if(lv5 > 0){
+    var pct5 = total > 0 ? (lv5 / total * 100) : 0;
+    html += '<div style="height:100%;width:' + pct5 + '%;background:#6BAF7A;display:inline-block;" title="熟练：' + lv5 + '个"></div>';
+  }
+  if(lv6 > 0){
+    var pct6 = total > 0 ? (lv6 / total * 100) : 0;
+    html += '<div style="height:100%;width:' + pct6 + '%;background:#4E9A60;display:inline-block;border-radius:0 6px 6px 0;" title="已掌握：' + lv6 + '个"></div>';
+  }
+  html += '</div>';
+  html += '<div style="display:flex;gap:8px;font-size:11px;flex-wrap:wrap;margin-top:6px;">';
+  if(lv0 > 0) html += '<span>🟤 未开始 ' + lv0 + '</span>';
+  if(lv1_2 > 0) html += '<span>🟠 新手 ' + lv1_2 + '</span>';
+  if(lv3_4 > 0) html += '<span>🟢 进阶 ' + lv3_4 + '</span>';
+  if(lv5 > 0) html += '<span>🌿 熟练 ' + lv5 + '</span>';
+  if(lv6 > 0) html += '<span>⭐ 已掌握 ' + lv6 + '</span>';
+  html += '</div></div>';
+  $("diagMastery").innerHTML = html;
+}
+
+/* 模块④：学习习惯 */
+function renderDiagHabits(){
+  var logs = S.learningLogs || [];
+  var daySet = {};
+  for(var i = 0; i < logs.length; i++){
+    if(logs[i].date) daySet[logs[i].date] = true;
+  }
+  var days = Object.keys(daySet).sort();
+  var streak = calcStreak(daySet);
+
+  var totalWords = 0, totalSessions = 0;
+  for(var i = 0; i < logs.length; i++){
+    totalWords += logs[i].total || 0;
+    totalSessions++;
+  }
+  var avgPerDay = days.length > 0 ? Math.round(totalWords / days.length) : 0;
+
+  var gaps = [];
+  for(var i = 1; i < days.length; i++){
+    var d1 = new Date(days[i - 1]);
+    var d2 = new Date(days[i]);
+    var gap = Math.round((d2 - d1) / (24 * 60 * 60 * 1000));
+    if(gap > 1) gaps.push(gap);
+  }
+  var maxGap = gaps.length > 0 ? Math.max.apply(null, gaps) : 0;
+
+  var html = '<div class="diagnostic-section"><div class="diagnostic-title">📅 学习习惯</div>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  html += '<div style="flex:1;min-width:80px;text-align:center;background:#FFFDF8;border-radius:12px;padding:10px 6px;border:2px solid #E8DFD0;">';
+  html += '<div style="font-size:24px;font-weight:800;color:#4E9A60;">' + streak + '</div>';
+  html += '<div style="font-size:11px;color:#8B7D6B;">连续天数</div></div>';
+  html += '<div style="flex:1;min-width:80px;text-align:center;background:#FFFDF8;border-radius:12px;padding:10px 6px;border:2px solid #E8DFD0;">';
+  html += '<div style="font-size:24px;font-weight:800;color:#F0A868;">' + avgPerDay + '</div>';
+  html += '<div style="font-size:11px;color:#8B7D6B;">日均学词</div></div>';
+  html += '<div style="flex:1;min-width:80px;text-align:center;background:#FFFDF8;border-radius:12px;padding:10px 6px;border:2px solid #E8DFD0;">';
+  html += '<div style="font-size:24px;font-weight:800;color:' + (maxGap > 3 ? '#E8726A' : '#4E9A60') + ';">' + days.length + '</div>';
+  html += '<div style="font-size:11px;color:#8B7D6B;">学习天数</div></div>';
+  html += '</div>';
+
+  if(maxGap > 3){
+    html += '<div style="margin-top:8px;padding:6px 10px;background:#FFF3D6;border-radius:10px;font-size:12px;color:#8A5A2E;">⚠️ 最长间隔 ' + maxGap + ' 天未学习，建议每天固定时间学 5 分钟</div>';
+  }
+  html += '</div>';
+  $("diagHabits").innerHTML = html;
+}
+
+/* 模块⑤：薄弱环节 */
+function renderDiagWeakAreas(){
+  var words = getCurrentWords();
+  var srs = getCurrentSrs();
+  var grouped = {};
+  for(var i = 0; i < words.length; i++){
+    var w = words[i];
+    var lv = w[0] || '?';
+    if(!grouped[lv]) grouped[lv] = {total: 0, wrong: 0};
+    grouped[lv].total++;
+    var rec = srs[w[1]];
+    if(rec && rec.wrongCount > 0) grouped[lv].wrong++;
+  }
+
+  var list = [];
+  for(var lv in grouped){
+    if(grouped[lv].wrong > 0) list.push({lv: lv, data: grouped[lv]});
+  }
+  list.sort(function(a, b){ return b.data.wrong - a.data.wrong; });
+
+  var html = '<div class="diagnostic-section"><div class="diagnostic-title">🎯 薄弱环节</div>';
+  if(list.length === 0){
+    html += '<div style="text-align:center;color:#8B7D6B;font-size:13px;padding:8px;">当前没有明显薄弱环节！</div>';
+  } else {
+    for(var i = 0; i < Math.min(5, list.length); i++){
+      var item = list[i];
+      var pct = Math.round(item.data.wrong / item.data.total * 100);
+      var color = pct > 40 ? '#E8726A' : pct > 20 ? '#F0A868' : '#4E9A60';
+      var label = '第 ' + item.lv + ' 课';
+      html += '<div class="diagnostic-item">';
+      html += '<span class="name">' + label + '（' + item.data.total + '词）</span>';
+      html += '<span class="rate" style="color:' + color + ';">' + pct + '% 错词率</span>';
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+  $("diagWeakAreas").innerHTML = html;
+}
+
+/* 模块⑥：今日学习推荐 */
+function renderDiagTodayTask(){
+  var due = [];
+  if(typeof getDueWords === 'function') due = getDueWords();
+  var dueCount = due.length;
+
+  var srs = getCurrentSrs();
+  var stubborn = [];
+  for(var en in srs){
+    var rec = srs[en];
+    if((rec.wrongCount || 0) >= 3 && rec.level < 6){
+      stubborn.push(en);
+    }
+  }
+
+  var progress = getCurrentProgress();
+  var totalWords = (getCurrentWords() || []).length;
+  var remaining = totalWords - (progress.nextNewIdx || 0);
+
+  var html = '<div class="diagnostic-section"><div class="diagnostic-title">📋 今日学习推荐</div>';
+  html += '<div style="padding:4px 0;">';
+  if(dueCount > 0){
+    html += '<div style="padding:6px 0;font-size:13px;">📖 复习 <b>' + dueCount + '</b> 个到期词</div>';
+  } else {
+    html += '<div style="padding:6px 0;font-size:13px;color:#8B7D6B;">✅ 今日复习任务已完成</div>';
+  }
+  if(stubborn.length > 0){
+    var stubList = stubborn.slice(0, 3).map(escapeHtml).join('、');
+    html += '<div style="padding:6px 0;font-size:13px;">🔁 重练 <b>' + Math.min(3, stubborn.length) + '</b> 个顽固错词：<span style="color:#E8726A;">' + stubList + '</span></div>';
+  }
+  if(remaining > 0){
+    html += '<div style="padding:6px 0;font-size:13px;">🌟 学 <b>' + Math.min(10, remaining) + '</b> 个新词（词库进度 ' + (totalWords - remaining) + '/' + totalWords + '）</div>';
+  }
+  html += '<div style="margin-top:8px;padding:8px;background:#E8F5E9;border-radius:10px;font-size:12px;color:#2E7D32;text-align:center;">💪 ' + randomEncourage() + '</div>';
+  html += '</div></div>';
+  $("diagTodayTask").innerHTML = html;
+}
+
+/* 鼓励语随机函数 */
+function randomEncourage(){
+  var msgs = [
+    "今天的努力是明天的收获！",
+    "每背一个词就是种下一颗种子 🌱",
+    "你已经坚持了这么久，真了不起！",
+    "慢慢来，比较快 ✨",
+    "单词花园因你而美丽 🌸",
+    "加油，今天的你一定比昨天更棒！"
+  ];
+  return msgs[Math.floor(Math.random() * msgs.length)];
 }
 
 /* ===== 挑战模式 ===== */
@@ -3655,10 +4318,12 @@ function roundEnd(){
   const masteredWords = c.rounds[c.rounds.length-1].correct.map(w=>({en:w.en, pos:w.pos, def:w.def}));
   const wrongWords = c.rounds[c.rounds.length-1].wrong.map(w=>({en:w.en, ans:w.ans, pos:w.pos, def:w.def}));
   recordLearningLog(total, correct, masteredWords, wrongWords);
-  
-  if(S.maxStreak===undefined) S.maxStreak=0;
-  if(correct===total) S.maxStreak=Math.max(S.maxStreak, c.rounds.length);
-  
+
+  // 检查是否有新徽章获得
+  checkNewBadges();
+
+  // maxStreak 已在 submit 中逐题累积，无需在此处重复计算
+
   $("sumTitle").textContent=c.group+" · 第 "+c.rounds.length+" 轮 成长记录";
   let html="";
   html+='<div class="stat-row"><span>本轮正确</span><b>'+c.rounds[c.rounds.length-1].correct.length+' / '+total+'</b></div>';
