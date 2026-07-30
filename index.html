@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>单词花园 · 成长记录 V3（移动端适配版）</title>
+<title>拼词花圃 · 成长记录 V3（移动端适配版）</title>
 <style>
   :root{
     --leaf:#6BAF7A; --leaf-d:#4E9A60; --red:#E8726A; --orange:#F0A868;
@@ -334,11 +334,6 @@
   .match-card{user-select:none; -webkit-tap-highlight-color:transparent;}
   .match-card:active{transform:scale(.95);}
   .match-card--empty{pointer-events:none;}
-
-  /* 长单词自动缩小字体 */
-  @media(max-width:400px){
-    .match-card{font-size:12px !important;}
-  }
 
   /* ===== 花盆进度条 ===== */
   .flower-progress-container {
@@ -784,10 +779,10 @@
         <ellipse cx="92" cy="52" rx="5" ry="9" fill="#A8D5BA" transform="rotate(15,92,52)"/>
         <ellipse cx="45" cy="25" rx="5" ry="8" fill="#C8B6E2" transform="rotate(-30,45,25)"/>
         <!-- 标题文字 -->
-        <text x="60" y="105" font-size="12" fill="#4E9A60" text-anchor="middle" font-weight="bold">单词花园</text>
+        <text x="60" y="105" font-size="12" fill="#4E9A60" text-anchor="middle" font-weight="bold">拼词花圃</text>
       </svg>
     </div>
-    <h1>单词花园</h1>
+    <h1>拼词花圃</h1>
     <div class="sub">🌿 种下单词的种子，收获知识的花朵 🌱</div>
     <!-- V2: 连续打卡天数横条 -->
     <div class="streak-bar" id="streakBar"></div>
@@ -2096,7 +2091,7 @@ function exportAllData(){
   var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
   var a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "单词花园进度备份_"+todayStr()+".json";
+  a.download = "拼词花圃进度备份_"+todayStr()+".json";
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -2880,7 +2875,7 @@ function renderFinal(f){
   $("finalBody").innerHTML=html;
 }
 function roundText(f){
-  let s="【单词花园·成长记录】\n";
+  let s="【拼词花圃·成长记录】\n";
   s+="小园丁："+f.nick+"　日期："+f.date+"\n";
   const sec=Math.round(f.elapsed/1000); const mm=Math.floor(sec/60), ss=sec%60;
   s+="耗时："+(mm>0?mm+"分":"")+ss+"秒　开始 "+fmtTime(f.startTime)+" 结束 "+fmtTime(f.endTime)+"\n";
@@ -2908,12 +2903,12 @@ $("saveBtn").onclick=async function(){
   try {
     const res = await fetch(img.src);
     const blob = await res.blob();
-    const file = new File([blob], "单词花园_"+todayStr()+".png", {type:"image/png"});
+    const file = new File([blob], "拼词花圃_"+todayStr()+".png", {type:"image/png"});
 
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
       await navigator.share({
         files: [file],
-        title: "单词花园成长记录"
+        title: "拼词花圃成长记录"
       });
       return;
     }
@@ -3084,13 +3079,11 @@ function drawCard(f){
   const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,"#F7FFF0"); g.addColorStop(1,"#FFF0F5");
   x.fillStyle=g; x.fillRect(0,0,W,H);
   x.strokeStyle="#D4C8B8"; x.lineWidth=10; x.strokeRect(14,14,W-28,H-28);
-  drawTree(x, W/2, 110, 70);
-  x.fillStyle="#4E9A60"; x.font="bold 30px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign="center"; x.fillText("单词花园·成长记录", W/2, 120);
-  x.fillStyle="#4E9A60"; x.font="bold 34px PingFang SC, sans-serif"; x.fillText((f.nick||"小园丁")+" 的成长记录", W/2, 215);
-  x.fillStyle="#8B7D6B"; x.font="18px PingFang SC, sans-serif"; x.fillText("📅 "+f.date, W/2, 250);
+  x.fillStyle="#4E9A60"; x.font="bold 40px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign="center"; x.fillText("拼词花圃·"+(f.nick||"小园丁")+"·成长记录", W/2, 145);
+  x.fillStyle="#8B7D6B"; x.font="18px PingFang SC, sans-serif"; x.fillText("📅 "+f.date, W/2, 205);
   const sec=Math.round(f.elapsed/1000); const mm=Math.floor(sec/60), ss=sec%60;
-  x.fillStyle="#E8726A"; x.font="bold 46px PingFang SC, sans-serif"; x.fillText((mm>0?mm+"分":"")+ss+"秒", W/2, 320);
-  x.fillStyle="#8B7D6B"; x.font="16px PingFang SC, sans-serif"; x.fillText("⏱️ 累计耗时　🌅 "+fmtTime(f.startTime)+" → 🌇 "+fmtTime(f.endTime), W/2, 352);
+  x.fillStyle="#E8726A"; x.font="bold 46px PingFang SC, sans-serif"; x.fillText((mm>0?mm+"分":"")+ss+"秒", W/2, 290);
+  x.fillStyle="#8B7D6B"; x.font="16px PingFang SC, sans-serif"; x.fillText("⏱️ 累计耗时　🌅 "+fmtTime(f.startTime)+" → 🌇 "+fmtTime(f.endTime), W/2, 322);
   let y=400;
   f.rounds.forEach((r,i)=>{
     x.textAlign="left";
@@ -3105,7 +3098,7 @@ function drawCard(f){
   x.textAlign="center";
   if(f.allCorrect){ x.fillStyle="#5CB870"; x.font="bold 30px PingFang SC, sans-serif"; x.fillText("🏆 全部开花！小园丁太棒了！", W/2, H-70); }
   else { x.fillStyle="#F0A868"; x.font="bold 26px PingFang SC, sans-serif"; x.fillText("🌿 继续浇水，下次全开！", W/2, H-70); }
-  x.fillStyle="#B8A88E"; x.font="15px PingFang SC, sans-serif"; x.fillText("—— 单词花园 · 成长记录 ——", W/2, H-40);
+  x.fillStyle="#B8A88E"; x.font="15px PingFang SC, sans-serif"; x.fillText("—— 拼词花圃 · 成长记录 ——", W/2, H-40);
   const url=cv.toDataURL("image/png");
   $("cardImg").src=url; $("cardImg").style.display="block";
 }
@@ -3160,13 +3153,10 @@ function drawChallengeCard(){
   x.strokeStyle = "#D4C8B8"; x.lineWidth = 10; x.strokeRect(14,14,W-28,H-28);
 
   // 标题区
-  drawTree(x, W/2, 90, 60);
-  x.fillStyle = "#4E9A60"; x.font = "bold 32px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign = "center";
-  x.fillText("单词花园·挑战战报", W/2, 100);
-  x.fillStyle = "#4E9A60"; x.font = "bold 30px PingFang SC, sans-serif";
-  x.fillText((S.nick || "小园丁") + " 的挑战成绩单", W/2, 185);
+  x.fillStyle = "#4E9A60"; x.font = "bold 38px PingFang SC, Microsoft YaHei, sans-serif"; x.textAlign = "center";
+  x.fillText("拼词花圃·" + (S.nick || "小园丁") + "·挑战战报", W/2, 140);
   x.fillStyle = "#8B7D6B"; x.font = "18px PingFang SC, sans-serif";
-  x.fillText("📅 " + todayStr(), W/2, 220);
+  x.fillText("📅 " + todayStr(), W/2, 195);
 
   // 分割线
   x.strokeStyle = "#E8DFD0"; x.lineWidth = 2; x.beginPath();
@@ -3232,7 +3222,7 @@ function drawChallengeCard(){
   x.fillStyle = "#F0A868"; x.font = "bold 26px PingFang SC, sans-serif";
   x.fillText("⚡ 再接再厉，挑战下一个纪录！", W/2, cy);
   x.fillStyle = "#B8A88E"; x.font = "15px PingFang SC, sans-serif";
-  x.fillText("—— 单词花园 · 挑战战报 ——", W/2, cy + 40);
+  x.fillText("—— 拼词花圃 · 挑战战报 ——", W/2, cy + 40);
 
   var url = cv.toDataURL("image/png");
   var img = $("challengeCardImg");
@@ -3255,12 +3245,12 @@ async function showChallengeCard(){
   try {
     var res = await fetch(img.src);
     var blob = await res.blob();
-    var file = new File([blob], "单词花园_挑战战报_" + todayStr() + ".png", {type:"image/png"});
+    var file = new File([blob], "拼词花圃_挑战战报_" + todayStr() + ".png", {type:"image/png"});
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
       await navigator.share({
         files: [file],
-        title: "单词花园 · 挑战战报",
-        text: (S.nick || "小园丁") + " 的单词花园挑战成绩单，快来看看吧～"
+        title: "拼词花圃 · 挑战战报",
+        text: (S.nick || "小园丁") + " 的拼词花圃挑战成绩单，快来看看吧～"
       });
       return;
     }
@@ -4287,7 +4277,7 @@ function randomEncourage(){
     "每背一个词就是种下一颗种子 🌱",
     "你已经坚持了这么久，真了不起！",
     "慢慢来，比较快 ✨",
-    "单词花园因你而美丽 🌸",
+    "拼词花圃因你而美丽 🌸",
     "加油，今天的你一定比昨天更棒！"
   ];
   return msgs[Math.floor(Math.random() * msgs.length)];
@@ -4450,19 +4440,22 @@ function startMatchLevel(wordCount){
 function renderMatchBoard(){
   // 卡片布局：简单难度方形；猴子/妈妈/老师改为扁宽卡片(4:3)+多列，缩小卡片、减少纵向高度
   var total = matchCards.length;
+  // 检测屏幕宽度做响应式适配（手机/微信/PC）
+  var sw = window.innerWidth || document.documentElement.clientWidth || 480;
+  var narrow = sw < 420;       // 小手机/微信窄屏
   var cols = 4;
   var cardAspect = '1';        // 默认方形
   var paddingVal = '2px';
   var bdr = '2px';
   if(total <= 12){ cols = 4; }                                    // 3行 × 4列 方形（小老鼠）
-  else if(total <= 24){                                          // 猴子：4行 × 6列 扁宽
-    cols = 6; cardAspect = '4/3'; paddingVal = '3px'; bdr = '2px';
-  } else if(total <= 36){                                        // 小朋友：4行 × 6列 方形
-    cols = 6;
-  } else if(total <= 48){                                        // 妈妈：8行 × 6列 扁宽
-    cols = 6; cardAspect = '4/3'; paddingVal = '3px'; bdr = '2px';
-  } else {                                                       // 老师：12行 × 8列 扁宽
-    cols = 8; cardAspect = '4/3'; paddingVal = '2px'; bdr = '2px';
+  else if(total <= 24){                                          // 猴子：扁宽
+    cols = narrow ? 4 : 6; cardAspect = '4/3'; paddingVal = '3px'; bdr = '2px';
+  } else if(total <= 36){                                        // 小朋友：方形
+    cols = narrow ? 4 : 6;
+  } else if(total <= 48){                                        // 妈妈：扁宽
+    cols = narrow ? 4 : 6; cardAspect = '4/3'; paddingVal = '3px'; bdr = '2px';
+  } else {                                                       // 老师：扁宽
+    cols = narrow ? 6 : 8; cardAspect = '4/3'; paddingVal = '2px'; bdr = '2px';
   }
 
   var pairsLeft = matchPairs - matchMatched;
@@ -4476,28 +4469,34 @@ function renderMatchBoard(){
   header += '<div class="ch-sub">💡 点击两张卡片配对（中文+英文）</div>';
   $("challengeHeader").innerHTML = header;
 
-  // 字体保持不变（用户确认合适）；仅间距随难度微调
+  // 字体保持不变（用户确认合适）；仅间距随难度微调；窄屏进一步缩小
   var gap = '6px';
   var cardFontEn = '18px';
   var cardFontZh = '15px';
   if(total <= 12){ gap = '8px'; }
-  else if(total <= 24){ gap = '6px'; cardFontEn = '16px'; cardFontZh = '14px'; }   // 猴子：6列窄卡，字体略调
+  else if(total <= 24){ gap = '6px'; cardFontEn = '16px'; cardFontZh = '14px'; }
   else if(total <= 36){ gap = '6px'; cardFontEn = '16px'; cardFontZh = '14px'; }
-  else if(total <= 48){ gap = '6px'; cardFontEn = '14px'; cardFontZh = '12px'; }    // 妈妈：6列窄卡
-  else { gap = '5px'; cardFontEn = '12px'; cardFontZh = '10px'; }                    // 老师：8列更窄
+  else if(total <= 48){ gap = '6px'; cardFontEn = '14px'; cardFontZh = '12px'; }
+  else { gap = '5px'; cardFontEn = '12px'; cardFontZh = '10px'; }
+  // 窄屏（手机/微信）字体再降一档，防止溢出
+  if(narrow){
+    cardFontEn = (parseInt(cardFontEn) - 2) + 'px';
+    cardFontZh = (parseInt(cardFontZh) - 2) + 'px';
+    if(total > 36) gap = '4px';
+  }
 
-  // 扁宽卡片布局：无 max-height，无需滚动，纵向自然延伸
-  var body = '<div class="match-grid" style="display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:' + gap + ';max-width:100%;margin:0 auto;padding-bottom:8px;">';
+  // 扁宽卡片布局：固定高度+overflow防止长单词撑开导致卡片大小不一致
+  var body = '<div class="match-grid" style="display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:' + gap + ';width:100%;max-width:100%;margin:0 auto;padding-bottom:8px;">';
   for(var i = 0; i < matchCards.length; i++){
     var c = matchCards[i];
     if(c.matched){
-      body += '<div class="match-card match-card--empty" style="aspect-ratio:' + cardAspect + ';border-radius:8px;background:transparent;border:1px dashed #E6CDB4;opacity:0.2;"></div>';
+      body += '<div class="match-card match-card--empty" style="aspect-ratio:' + cardAspect + ';min-height:0;border-radius:8px;background:transparent;border:1px dashed #E6CDB4;opacity:0.2;overflow:hidden;"></div>';
     } else {
       var isEn = c.type === 'en';
       var isLong = c.text.length > 7;   // 扁宽卡片更窄，长词阈值降低
       var isSelected = matchSelected && matchSelected === c.id;
       var fontSize = isEn ? (isLong ? (parseInt(cardFontEn)-2)+'px' : cardFontEn) : (isLong ? (parseInt(cardFontZh)-2)+'px' : cardFontZh);
-      body += '<div id="' + c.id + '" class="match-card" onclick="clickMatchCard(\'' + c.id + '\')" style="aspect-ratio:' + cardAspect + ';border-radius:8px;display:flex;align-items:center;justify-content:center;padding:' + paddingVal + ';background:' + (isSelected ? '#E8F5E9' : (isEn ? '#FFF8EC' : '#FFF0F5')) + ';border:' + bdr + ' solid ' + (isSelected ? '#4E9A60' : (isEn ? '#FBD5A8' : '#C8B6E2')) + ';cursor:pointer;transition:all .15s;font-size:' + fontSize + ';font-weight:' + (isEn ? '800' : '700') + ';color:' + (isEn ? '#3D3A36' : '#7A5742') + ';text-align:center;word-break:break-word;line-height:1.1;' + (isSelected ? 'transform:scale(1.05);box-shadow:0 4px 12px rgba(78,154,96,.3);' : '') + '">';
+      body += '<div id="' + c.id + '" class="match-card" onclick="clickMatchCard(\'' + c.id + '\')" style="aspect-ratio:' + cardAspect + ';min-height:0;overflow:hidden;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:' + paddingVal + ';background:' + (isSelected ? '#E8F5E9' : (isEn ? '#FFF8EC' : '#FFF0F5')) + ';border:' + bdr + ' solid ' + (isSelected ? '#4E9A60' : (isEn ? '#FBD5A8' : '#C8B6E2')) + ';cursor:pointer;transition:all .15s;font-size:' + fontSize + ';font-weight:' + (isEn ? '800' : '700') + ';color:' + (isEn ? '#3D3A36' : '#7A5742') + ';text-align:center;word-break:break-word;line-height:1.1;' + (isSelected ? 'transform:scale(1.05);box-shadow:0 4px 12px rgba(78,154,96,.3);' : '') + '">';
       body += escapeHtml(c.text);
       body += '</div>';
     }
