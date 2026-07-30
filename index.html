@@ -216,6 +216,23 @@
   .calendar-stat .num{font-size:24px; font-weight:800; color:#8A5A2E;}
   .calendar-stat .label{font-size:11px; color:#8B7D6B;}
 
+  /* 每日学习详情 - flex 布局，避免单词与图标重叠 */
+  .day-detail-section-title{margin-top:14px; font-weight:800; color:#4E9A60; font-size:14px; padding-bottom:6px; border-bottom:1px dashed #E8DFD0;}
+  .day-detail-word{display:flex; align-items:baseline; gap:8px; padding:6px 0; font-size:13px; line-height:1.5; border-bottom:1px dotted #F0E6D6;}
+  .day-detail-word:last-child{border-bottom:none;}
+  .ddw-en{font-weight:700; color:#4E9A60; flex-shrink:0; min-width:70px;}
+  .ddw-def{color:#8B7D6B; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .ddw-audio{display:flex; gap:6px; flex-shrink:0;}
+  .ddw-audio a{font-size:14px; text-decoration:none;}
+  .ddw-level{font-size:11px; padding:2px 8px; border-radius:10px; flex-shrink:0; white-space:nowrap;}
+  .ddw-level-0{background:#FCE4E0; color:#E8726A;}
+  .ddw-level-1{background:#FCE4E0; color:#E8726A;}
+  .ddw-level-2{background:#FFF0D6; color:#F0A868;}
+  .ddw-level-3{background:#FFF0D6; color:#F0A868;}
+  .ddw-level-4{background:#E8F5E9; color:#4E9A60;}
+  .ddw-level-5{background:#E8F5E9; color:#4E9A60;}
+  .ddw-level-6{background:#A8D5BA; color:#fff;}
+
   /* 徽章系统 - 升级版 */
   .badge-summary{font-size:16px; font-weight:800; color:#4E9A60; text-align:center; margin-bottom:8px;}
   .badge-progress-bar{width:80%; height:8px; background:#E8DFD0; border-radius:4px; margin:8px auto 16px; overflow:hidden;}
@@ -1327,7 +1344,7 @@
 
     <!-- 徽章内容 -->
     <div id="recordBadges" class="card record-card">
-      <div class="badge-summary" id="badgeSummary">🏆 已获得 0 / 46 枚徽章</div>
+      <div class="badge-summary" id="badgeSummary">🏆 已获得 0 / 47 枚徽章</div>
       <div class="badge-progress-bar"><div class="badge-progress-fill" id="badgeProgressFill" style="width:0%"></div></div>
       <div class="badge-category-tabs" id="badgeCategoryTabs"></div>
       <div class="badge-grid" id="badgeGrid"></div>
@@ -1473,6 +1490,7 @@
 
 </div>
 
+<script src="IMA/zhongkao_words.js"></script>
 <script>
 /* ===== 花盆进度条组件（10种花朵，3种状态）===== */
 const FLOWER_DEFS = [
@@ -1847,6 +1865,25 @@ function ensureDefaultLib(){
   saveAppConfig(cfg);
 }
 
+/* 中考必备词库（2000词）内置初始化 */
+const ZHONGKAO_LIB_ID = "lib_zhongkao";
+function ensureZhongkaoLib(){
+  var list = getLibMetaList();
+  if(list.find(function(l){ return l.id === ZHONGKAO_LIB_ID; })) return;
+  if(typeof ZHONGKAO_WORDS === 'undefined' || !ZHONGKAO_WORDS.length) return;
+  var words = JSON.parse(JSON.stringify(ZHONGKAO_WORDS));
+  saveLibWords(ZHONGKAO_LIB_ID, words);
+  var srs = {};
+  words.forEach(function(w){ srs[w[1]] = { level:0, nextReview:null, wrongCount:0, lastReview:null }; });
+  saveLibSrs(ZHONGKAO_LIB_ID, srs);
+  saveLibProgress(ZHONGKAO_LIB_ID, { nextNewIdx:0, round:0, batchSize:BATCH_SIZE });
+  list.push({ id:ZHONGKAO_LIB_ID, name:"中考必备词库", wordCount:words.length, created:todayStr() });
+  saveLibMetaList(list);
+  var cfg = getAppConfig();
+  if(cfg.libOrder.indexOf(ZHONGKAO_LIB_ID) === -1) cfg.libOrder.push(ZHONGKAO_LIB_ID);
+  saveAppConfig(cfg);
+}
+
 function loadCurrentLib(){
   var cfg = getAppConfig();
   var meta = getLibMetaById(cfg.activeLibId);
@@ -1871,6 +1908,7 @@ function switchLib(libId){
   loadCurrentLib();
   _srsMode = false; _srsQueue = []; _srsIdx = 0;
   initWelcome();
+  renderLibList();
 }
 
 function getCurrentWords(){ return CURRENT_LIB ? CURRENT_LIB.words : WORDS; }
@@ -2120,14 +2158,35 @@ function exportAllData(){
     });
   });
   var data = {
-    version: 2,
+    version: 3,
     date: todayStr(),
-    userName: cfg.userName,
+    userName: cfg.userName || S.nick || '',
     libraries: libraries,
+    mainState: {
+      nick: S.nick,
+      seq: S.seq,
+      learningLogs: S.learningLogs,
+      challengeHighScores: S.challengeHighScores,
+      matchBestTimes: S.matchBestTimes,
+      earnedBadges: S.earnedBadges,
+      badges: S.earnedBadges, // 兼容小程序字段
+      maxStreak: S.maxStreak,
+      curStreak: S.curStreak,
+      totalCorrect: S.totalCorrect,
+      streakData: S.streakData,
+      roundCompleted: S.roundCompleted,
+      dayErrors: S.dayErrors,
+      dayErrorsDate: S.dayErrorsDate,
+      dayBestRate: S.dayBestRate,
+      streakDays: S.streakDays,
+      totalMastered: S.totalMastered,
+      srs: S.srs,
+      badgeNotified: S.badgeNotified || {}
+    },
     config: {
       activeLibName: (getLibMetaById(cfg.activeLibId)||{}).name || "",
       studyMode: cfg.studyMode,
-      libOrder: cfg.libOrder.map(function(id){ return (getLibMetaById(id)||{}).name || id; })
+      libOrderNames: cfg.libOrder.map(function(id){ return (getLibMetaById(id)||{}).name || id; })
     },
     settings: {
       muted: localStorage.getItem("dd_muted") === "1",
@@ -2155,8 +2214,8 @@ function importAllData(){
         var text = evt.target.result;
         var data = JSON.parse(text);
         if(!data.libraries || !data.libraries.length){ alert("⚠️ 无效的备份文件"); return; }
-        if(data.userName && data.userName !== getAppConfig().userName){
-          if(!confirm('⚠️ 备份用户名「'+data.userName+'」与当前用户「'+getAppConfig().userName+'」不一致，确定覆盖？')) return;
+        if(data.userName && data.userName !== (getAppConfig().userName || S.nick)){
+          if(!confirm('⚠️ 备份用户名「'+data.userName+'」与当前用户「'+(getAppConfig().userName || S.nick)+'」不一致，确定覆盖？')) return;
         }
         var list = getLibMetaList();
         var cfg = getAppConfig();
@@ -2175,12 +2234,45 @@ function importAllData(){
           }
         });
         saveLibMetaList(list);
-        if(data.config && data.config.activeLibName){
-          var target = list.find(function(m){ return m.name === data.config.activeLibName; });
-          if(target) cfg.activeLibId = target.id;
-        }
+        // 恢复 config（兼容 v2/v3 格式，统一用名称匹配）
+        var activeName = (data.config && (data.config.activeLibName || data.config.activeLibId)) || "";
+        var target = list.find(function(m){ return m.name === activeName || m.id === activeName; });
+        if(target) cfg.activeLibId = target.id;
         if(data.config && data.config.studyMode) cfg.studyMode = data.config.studyMode;
+        // v3 用 libOrderNames，v2 用 libOrder（可能是名称或 ID）
+        var orderNames = (data.config && (data.config.libOrderNames || data.config.libOrder)) || [];
+        cfg.libOrder = [];
+        orderNames.forEach(function(n){
+          var m = list.find(function(x){ return x.name === n || x.id === n; });
+          if(m && cfg.libOrder.indexOf(m.id) === -1) cfg.libOrder.push(m.id);
+        });
+        // 确保所有现有词库都在 libOrder 中
+        list.forEach(function(m){ if(cfg.libOrder.indexOf(m.id) === -1) cfg.libOrder.push(m.id); });
         saveAppConfig(cfg);
+        // 恢复 mainState（学习记录、徽章、挑战成绩等）
+        if(data.mainState){
+          var m = data.mainState;
+          if(m.nick != null) S.nick = m.nick;
+          if(m.seq != null) S.seq = m.seq;
+          if(m.learningLogs) S.learningLogs = m.learningLogs;
+          if(m.challengeHighScores) S.challengeHighScores = m.challengeHighScores;
+          if(m.matchBestTimes) S.matchBestTimes = m.matchBestTimes;
+          if(m.earnedBadges) S.earnedBadges = m.earnedBadges;
+          if(m.badges) S.earnedBadges = m.badges; // 兼容小程序字段
+          if(m.maxStreak != null) S.maxStreak = m.maxStreak;
+          if(m.curStreak != null) S.curStreak = m.curStreak;
+          if(m.totalCorrect != null) S.totalCorrect = m.totalCorrect;
+          if(m.streakData) S.streakData = m.streakData;
+          if(m.roundCompleted != null) S.roundCompleted = m.roundCompleted;
+          if(m.dayErrors) S.dayErrors = m.dayErrors;
+          if(m.dayErrorsDate) S.dayErrorsDate = m.dayErrorsDate;
+          if(m.dayBestRate != null) S.dayBestRate = m.dayBestRate;
+          if(m.streakDays != null) S.streakDays = m.streakDays;
+          if(m.totalMastered != null) S.totalMastered = m.totalMastered;
+          if(m.badgeNotified) S.badgeNotified = m.badgeNotified;
+          if(m.srs) S.srs = m.srs;
+          save(S);
+        }
         if(data.settings){
           localStorage.setItem("dd_muted", data.settings.muted ? "1" : "0");
           localStorage.setItem("dd_bgm", data.settings.bgmOn ? "1" : "0");
@@ -3308,10 +3400,11 @@ function drawChallengeCard(){
   }
   cy += 10;
   // ===== 记忆翻牌 =====
-  section("🃏", "记忆翻牌");
+  section("🧠", "记忆翻牌");
   var ht = h.memoryTime;
   subRow("⏱️ 最快完成", ht ? parseFloat(ht).toFixed(1) + '秒' : '⏳ 未挑战');
   subRow("👣 最少步数", h.memorySteps ? (h.memorySteps + '步') : '⏳ 未挑战');
+  subRow("🏆 大佬难度", h.memoryBoss ? '✅ 已通关' : '⏳ 未挑战');
   cy += 10;
   // ===== 其他4项 =====
   section("⚡", "其他挑战项目");
@@ -3440,6 +3533,7 @@ function startGameFromLobby(gameId){
 
 /* ===== 启动 ===== */
 ensureDefaultLib();
+ensureZhongkaoLib();
 loadCurrentLib();
 loadSrsForCurrent();
 initMute();
@@ -3557,53 +3651,53 @@ function showDayDetail(dateStr){
   }
   let html='<div style="margin-top:16px;padding:16px;background:#FFF8E8;border-radius:12px;border:2px solid #E8D5C0;">';
   html+='<div style="font-weight:800;color:#4E9A60;font-size:16px;margin-bottom:12px;">📅 '+dateStr+' 学习详情</div>';
-  
+
   let allMastered=[];
   let allWrong=[];
   let totalWords=0, totalCorrect=0;
-  
+
   logs.forEach((log, i)=>{
     totalWords+=log.total||0;
     totalCorrect+=log.correct||0;
     if(log.mastered && log.mastered.length) allMastered=allMastered.concat(log.mastered);
     if(log.wrong && log.wrong.length) allWrong=allWrong.concat(log.wrong);
   });
-  
+
   html+='<div class="stat-row"><span>📊 学习次数</span><b>'+logs.length+' 次</b></div>';
   html+='<div class="stat-row"><span>📚 累计单词</span><b>'+totalWords+' 个</b></div>';
   html+='<div class="stat-row"><span>✅ 答对</span><b>'+totalCorrect+' 个</b></div>';
   html+='<div class="stat-row"><span>❌ 答错</span><b>'+(totalWords-totalCorrect)+' 个</b></div>';
-  
+
+  // 掌握单词：使用 🌳 图标，flex 布局避免重叠
   if(allMastered.length>0){
-    html+='<div style="margin-top:14px;font-weight:800;color:#4E9A60;font-size:14px;">✨ 掌握单词（'+allMastered.length+'个）</div>';
-    html+='<ul class="list">';
+    html+='<div class="day-detail-section-title">🌳 掌握单词（'+allMastered.length+'个）</div>';
     allMastered.forEach(w=>{
-      html+='<li><div style="display:flex;justify-content:space-between;align-items:flex-start;">';
-      html+='<span><span class="tag new">掌握</span><b>'+escapeHtml(w.en)+'</b>　'+escapeHtml(w.pos||'')+'　'+escapeHtml(w.def||'')+'</span>';
-      html+='<span style="white-space:nowrap;margin-left:8px;">';
-      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'uk\')" style="color:#6BAF7A;font-size:13px;font-weight:bold;margin-right:8px;">英音</a>';
-      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'us\')" style="color:#F0A868;font-size:13px;font-weight:bold;">美音</a>';
-      html+='</span></div></li>';
+      html+='<div class="day-detail-word">';
+      html+='<span class="ddw-en">'+escapeHtml(w.en)+'</span>';
+      html+='<span class="ddw-def">'+escapeHtml(w.pos||'')+' '+escapeHtml(w.def||'')+'</span>';
+      html+='<span class="ddw-audio">';
+      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'uk\')" title="英音">🔊</a>';
+      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'us\')" title="美音">🎶</a>';
+      html+='</span>';
+      html+='</div>';
     });
-    html+='</ul>';
   }
-  
+
+  // 需加强单词：使用 🌱 图标，统一与诊断页"初识/熟悉/掌握/精通"图标体系
   if(allWrong.length>0){
-    html+='<div style="margin-top:14px;font-weight:800;color:#E8726A;font-size:14px;">🥀 出现错误的单词（'+allWrong.length+'个）</div>';
-    html+='<ul class="list">';
+    html+='<div class="day-detail-section-title">🌱 需加强单词（'+allWrong.length+'个）</div>';
     allWrong.forEach(w=>{
-      html+='<li><div style="display:flex;justify-content:space-between;align-items:flex-start;">';
-      html+='<span><span class="tag">错词</span><b>'+escapeHtml(w.en)+'</b>　';
-      if(w.ans) html+='你拼：<span class="cmp wrong">'+escapeHtml(w.ans)+'</span>　';
-      html+=escapeHtml(w.pos||'')+'　'+escapeHtml(w.def||'')+'</span>';
-      html+='<span style="white-space:nowrap;margin-left:8px;">';
-      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'uk\')" style="color:#6BAF7A;font-size:13px;font-weight:bold;margin-right:8px;">英音</a>';
-      html+='<a href="javascript:speakWord(\''+escapeHtml(w.en)+'\',\'us\')" style="color:#F0A868;font-size:13px;font-weight:bold;">美音</a>';
-      html+='</span></div></li>';
+      var srsRec = (S.srs && S.srs[w.en]) || {};
+      var lv = srsRec.level || 0;
+      var lvIcon = lv >= 5 ? '🌟' : lv >= 3 ? '🌳' : lv >= 1 ? '🌿' : '🌱';
+      html+='<div class="day-detail-word">';
+      html+='<span class="ddw-en">'+escapeHtml(w.en)+'</span>';
+      html+='<span class="ddw-def">'+escapeHtml(w.pos||'')+' '+escapeHtml(w.def||'')+'</span>';
+      html+='<span class="ddw-level ddw-level-'+lv+'">'+lvIcon+' Lv'+lv+'</span>';
+      html+='</div>';
     });
-    html+='</ul>';
   }
-  
+
   html+='</div>';
   el.innerHTML=html;
 }
@@ -3819,6 +3913,7 @@ var BADGES = [
   {id:"memoryNewbie",icon:"🧠",name:"记忆新秀",desc:"完成1次记忆翻牌",category:"challenge",tier:1,quote:"第一副牌翻开了记忆的大门",check:function(){return (S.challengeHighScores && S.challengeHighScores.memoryTime > 0) || false;},progress:function(){var t=S.challengeHighScores && S.challengeHighScores.memoryTime || 0;return{current:t>0?1:0,total:1,pct:t>0?100:0};}},
   {id:"memoryPro",icon:"💡",name:"记忆高手",desc:"15步内完成记忆翻牌",category:"challenge",tier:2,quote:"每一步都精准，每一张都记得",check:function(){return (S.challengeHighScores && S.challengeHighScores.memorySteps > 0 && S.challengeHighScores.memorySteps <= 15) || false;},progress:function(){var steps=S.challengeHighScores && S.challengeHighScores.memorySteps || 99;var pct=steps<=15?100:Math.max(0,Math.floor((30-steps)/30*100));return{current:Math.min(15,steps),total:15,pct:pct};}},
   {id:"memoryMaster",icon:"💎",name:"记忆大师",desc:"8步内完成记忆翻牌",category:"challenge",tier:4,quote:"过目不忘，六张牌的位置了然于心",check:function(){return (S.challengeHighScores && S.challengeHighScores.memorySteps > 0 && S.challengeHighScores.memorySteps <= 8) || false;},progress:function(){var steps=S.challengeHighScores && S.challengeHighScores.memorySteps || 99;var pct=steps<=8?100:Math.max(0,Math.floor((20-steps)/20*100));return{current:Math.min(8,steps),total:8,pct:pct};}},
+  {id:"memoryBoss",icon:"🏆",name:"记忆霸主",desc:"完成单词大佬难度记忆翻牌（12对）",category:"challenge",tier:3,quote:"24张牌的迷宫也困不住你的记忆",check:function(){return (S.challengeHighScores && S.challengeHighScores.memoryBoss == true) || false;},progress:function(){var done=S.challengeHighScores && S.challengeHighScores.memoryBoss == true;return{current:done?1:0,total:1,pct:done?100:0};}},
   // ===== C. 60秒闪电战 · 3枚 · 新增 =====
   {id:"speedStar",icon:"⚡",name:"闪电新星",desc:"60秒闪电战单次达到100分",category:"challenge",tier:1,quote:"你的手指已经比眼睛快了",check:function(){return (S.challengeHighScores && S.challengeHighScores.speed >= 100) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.speed || 0;return{current:Math.min(100,s),total:100,pct:Math.min(100,Math.floor(s/100*100))};}},
   {id:"speedPro",icon:"🌩️",name:"闪电高手",desc:"60秒闪电战单次达到300分",category:"challenge",tier:3,quote:"闪电般的速度，精准的直觉",check:function(){return (S.challengeHighScores && S.challengeHighScores.speed >= 300) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.speed || 0;return{current:Math.min(300,s),total:300,pct:Math.min(100,Math.floor(s/300*100))};}},
@@ -4428,6 +4523,8 @@ var memoryLocked = false;
 var memoryMatched = 0;
 var memoryFirst = null;
 var memoryStartTime = 0;
+var memoryTotalPairs = 6;
+var memoryLevel = 6;
 
 // 连连看专用
 var matchLevel = 0;
@@ -4635,6 +4732,37 @@ function renderMatchBoard(){
   }
 
   // 扁宽卡片布局：固定高度+overflow防止长单词撑开导致卡片大小不一致
+  // 四档字号系统：根据文本有效长度（中文按2计）和列数动态计算
+  function effectiveLen(s){
+    var len = 0;
+    for(var i = 0; i < s.length; i++){
+      var code = s.charCodeAt(i);
+      if((code >= 0x4E00 && code <= 0x9FFF) || (code >= 0x3000 && code <= 0x303F) || (code >= 0xFF00 && code <= 0xFFEF)) len += 2;
+      else len += 1;
+    }
+    return len;
+  }
+  function computeFontSize(text, baseFont){
+    var len = effectiveLen(text);
+    var base = parseInt(baseFont);
+    if(cols >= 8){
+      if(len <= 4) return base + 'px';
+      if(len <= 7) return (base - 3) + 'px';
+      if(len <= 10) return (base - 6) + 'px';
+      return (base - 9) + 'px';
+    } else if(cols >= 6){
+      if(len <= 6) return base + 'px';
+      if(len <= 9) return (base - 3) + 'px';
+      if(len <= 13) return (base - 6) + 'px';
+      return (base - 9) + 'px';
+    } else {
+      if(len <= 8) return base + 'px';
+      if(len <= 12) return (base - 3) + 'px';
+      if(len <= 16) return (base - 6) + 'px';
+      return (base - 9) + 'px';
+    }
+  }
+
   var body = '<div class="match-grid" style="display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:' + gap + ';width:100%;max-width:100%;margin:0 auto;padding-bottom:8px;">';
   for(var i = 0; i < matchCards.length; i++){
     var c = matchCards[i];
@@ -4642,9 +4770,9 @@ function renderMatchBoard(){
       body += '<div class="match-card match-card--empty" style="aspect-ratio:' + cardAspect + ';min-height:0;border-radius:8px;background:transparent;border:1px dashed #E6CDB4;opacity:0.2;overflow:hidden;"></div>';
     } else {
       var isEn = c.type === 'en';
-      var isLong = c.text.length > 7;   // 扁宽卡片更窄，长词阈值降低
       var isSelected = matchSelected && matchSelected === c.id;
-      var fontSize = isEn ? (isLong ? (parseInt(cardFontEn)-2)+'px' : cardFontEn) : (isLong ? (parseInt(cardFontZh)-2)+'px' : cardFontZh);
+      var baseFont = isEn ? cardFontEn : cardFontZh;
+      var fontSize = computeFontSize(c.text, baseFont);
       body += '<div id="' + c.id + '" class="match-card" onclick="clickMatchCard(\'' + c.id + '\')" style="aspect-ratio:' + cardAspect + ';min-height:0;overflow:hidden;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:' + paddingVal + ';background:' + (isSelected ? '#E8F5E9' : (isEn ? '#FFF8EC' : '#FFF0F5')) + ';border:' + bdr + ' solid ' + (isSelected ? '#4E9A60' : (isEn ? '#FBD5A8' : '#C8B6E2')) + ';cursor:pointer;transition:all .15s;font-size:' + fontSize + ';font-weight:' + (isEn ? '800' : '700') + ';color:' + (isEn ? '#3D3A36' : '#7A5742') + ';text-align:center;word-break:break-word;line-height:1.1;' + (isSelected ? 'transform:scale(1.05);box-shadow:0 4px 12px rgba(78,154,96,.3);' : '') + '">';
       body += escapeHtml(c.text);
       body += '</div>';
@@ -4820,30 +4948,9 @@ function startChallenge(type){
     show("challenge");
     renderScramble();
   } else if(type === 'memory'){
-    // 记忆翻牌：初始化 6 对卡片
-    memoryCards = [];
-    memoryMatched = 0;
-    memorySeconds = 0;
-    memoryFlipCount = 0;
-    memoryLocked = false;
-    memoryFirst = null;
-    var cards = shuffled.slice(0, 6);
-    for(var i = 0; i < cards.length; i++){
-      var w = cards[i];
-      memoryCards.push({en: w[1], def: getDef(w), type: 'en', matched: false, flipped: false});
-      memoryCards.push({en: w[1], def: getDef(w), type: 'def', matched: false, flipped: false});
-    }
-    memoryCards = shuffle(memoryCards);
+    // 记忆翻牌：显示难度选择界面
     show("challenge");
-    renderMemory();
-    // 启动精确计时器
-    memoryStartTime = Date.now();
-    memoryTimer = setInterval(function(){
-      var elapsed = (Date.now() - memoryStartTime) / 1000;
-      memorySeconds = elapsed;
-      var timerEl = $("memoryTimer");
-      if(timerEl) timerEl.textContent = elapsed.toFixed(1) + '秒';
-    }, 50);
+    renderMemoryLevelSelect();
   } else if(type === 'speed'){
     // 60秒闪电战
     challengeQuestions = shuffle(shuffled).slice(0, 80);
@@ -4950,19 +5057,97 @@ function clickScramble(idx){
 }
 
 /* 模式②：记忆翻牌 */
-function renderMemory(){
+function renderMemoryLevelSelect(){
   var header = '<div class="ch-header">';
-  header += '<span class="ch-title">🃏 记忆翻牌</span>';
-  header += '<span class="ch-status">⏱️ <span id="memoryTimer">' + memorySeconds.toFixed(1) + '秒</span> · 配对 ' + memoryMatched + '/6</span>';
+  header += '<span class="ch-title">🧠 记忆翻牌</span>';
+  header += '<span class="ch-status">选择难度</span>';
   header += '</div>';
   header += '<div class="ch-sub">翻两张牌，配对的消除</div>';
   $("challengeHeader").innerHTML = header;
 
-  var body = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:360px;margin:0 auto;">';
+  var levels = [
+    {emoji:'🌱', label:'单词新手', pairs:6, desc:'6对单词 · 4×3布局 · 入门级'},
+    {emoji:'💪', label:'单词大佬', pairs:12, desc:'12对单词 · 4×6布局 · 挑战级'}
+  ];
+
+  var bestTime = S.challengeHighScores && S.challengeHighScores.memoryTime;
+  var bestSteps = S.challengeHighScores && S.challengeHighScores.memorySteps;
+
+  var html = '<div style="display:flex;flex-direction:column;gap:10px;max-width:300px;margin:0 auto;">';
+  for(var i = 0; i < levels.length; i++){
+    var lv = levels[i];
+    var bossTag = lv.pairs === 12 ? '🏆 解锁记忆霸主勋章' : '';
+    html += '<div class="challenge-card" onclick="startMemoryLevel(' + lv.pairs + ')" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;">';
+    html += '<span style="font-size:32px;">' + lv.emoji + '</span>';
+    html += '<div style="flex:1;"><div style="font-size:16px;font-weight:800;color:#4E9A60;">' + lv.label + '</div>';
+    html += '<div style="font-size:12px;color:#8B7D6B;">' + lv.desc + '</div>';
+    if(bossTag) html += '<div style="font-size:11px;color:#E8726A;font-weight:700;margin-top:2px;">' + bossTag + '</div>';
+    html += '</div></div>';
+  }
+  html += '</div>';
+  html += '<div style="text-align:center;font-size:12px;color:#8B7D6B;margin-top:12px;">⏱️ 最快记录 ' + (!isNaN(bestTime) && bestTime > 0 ? parseFloat(bestTime).toFixed(1) + '秒' : '—') + ' · 👣 最少步数 ' + (bestSteps ? bestSteps + '步' : '—') + '</div>';
+  html += '<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;"><button class="btn orange" onclick="exitChallenge()" style="width:auto;padding:8px 20px;font-size:13px;">🏠 返回挑战</button></div>';
+  $("challengeBody").innerHTML = html;
+}
+
+function startMemoryLevel(pairCount){
+  sfxClick();
+  memoryLevel = pairCount;
+  memoryTotalPairs = pairCount;
+  memoryCards = [];
+  memoryMatched = 0;
+  memorySeconds = 0;
+  memoryFlipCount = 0;
+  memoryLocked = false;
+  memoryFirst = null;
+
+  var words = getCurrentWords();
+  var pool = [];
+  for(var i = 0; i < words.length; i++){
+    if(!words[i][1].includes(' ')) pool.push(words[i]);
+  }
+  if(pool.length < pairCount) pool = words;
+  var selected = shuffle(pool).slice(0, pairCount);
+
+  for(var i = 0; i < selected.length; i++){
+    var w = selected[i];
+    memoryCards.push({en: w[1], def: getDef(w), type: 'en', matched: false, flipped: false});
+    memoryCards.push({en: w[1], def: getDef(w), type: 'def', matched: false, flipped: false});
+  }
+  memoryCards = shuffle(memoryCards);
+  renderMemory();
+  // 启动精确计时器
+  memoryStartTime = Date.now();
+  memoryTimer = setInterval(function(){
+    var elapsed = (Date.now() - memoryStartTime) / 1000;
+    memorySeconds = elapsed;
+    var timerEl = $("memoryTimer");
+    if(timerEl) timerEl.textContent = elapsed.toFixed(1) + '秒';
+  }, 50);
+}
+
+function renderMemory(){
+  var header = '<div class="ch-header">';
+  header += '<span class="ch-title">🧠 记忆翻牌</span>';
+  header += '<span class="ch-status">⏱️ <span id="memoryTimer">' + memorySeconds.toFixed(1) + '秒</span> · 配对 ' + memoryMatched + '/' + memoryTotalPairs + '</span>';
+  header += '</div>';
+  header += '<div class="ch-sub">翻两张牌，配对的消除</div>';
+  $("challengeHeader").innerHTML = header;
+
+  // 12对使用更小的字号；6对保持原字号
+  var isBoss = memoryTotalPairs >= 12;
+  var gridCols = 4;
+  var maxW = isBoss ? '420px' : '360px';
+  var gap = isBoss ? '6px' : '8px';
+  var fontEn = isBoss ? '11px' : '14px';
+  var fontDef = isBoss ? '9px' : '12px';
+
+  var body = '<div style="display:grid;grid-template-columns:repeat(' + gridCols + ',1fr);gap:' + gap + ';max-width:' + maxW + ';margin:0 auto;">';
   for(var i = 0; i < memoryCards.length; i++){
     var card = memoryCards[i];
     var isFlipped = card.flipped || card.matched;
-    body += '<div id="mcard_' + i + '" class="memory-card" onclick="flipCard(' + i + ')" style="aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:' + (isFlipped && card.type==='en'?'14px':'20px') + ';font-weight:700;cursor:pointer;transition:all .3s;background:' + (card.matched ? '#E8F5E9' : isFlipped ? '#FFFDF8' : '#A8D5BA') + ';border:2px solid ' + (card.matched ? '#A5D6A7' : isFlipped ? '#E8DFD0' : '#8DC49E') + ';color:' + (isFlipped ? '#3D3A36' : 'transparent') + ';' + (card.matched ? 'opacity:0.6;' : '') + '">';
+    var fontSize = isFlipped ? (card.type === 'en' ? fontEn : fontDef) : '20px';
+    body += '<div id="mcard_' + i + '" class="memory-card" onclick="flipCard(' + i + ')" style="aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:' + fontSize + ';font-weight:700;cursor:pointer;transition:all .3s;background:' + (card.matched ? '#E8F5E9' : isFlipped ? '#FFFDF8' : '#A8D5BA') + ';border:2px solid ' + (card.matched ? '#A5D6A7' : isFlipped ? '#E8DFD0' : '#8DC49E') + ';color:' + (isFlipped ? '#3D3A36' : 'transparent') + ';padding:2px;text-align:center;word-break:break-word;line-height:1.1;overflow:hidden;' + (card.matched ? 'opacity:0.6;' : '') + '">';
     if(isFlipped) body += card.type === 'en' ? escapeHtml(card.en) : escapeHtml(card.def);
     else body += '?';
     body += '</div>';
@@ -4994,11 +5179,13 @@ function flipCard(idx){
       second.matched = true;
       memoryMatched++;
       sfxMatch();
-      if(memoryMatched === 6){
+      if(memoryMatched === memoryTotalPairs){
         // 全部完成
         clearInterval(memoryTimer);
-        var elapsed = memorySeconds;
+        // 使用 Date.now() 计算最终时间，确保准确
+        var elapsed = (Date.now() - memoryStartTime) / 1000;
         var roundedElapsed = parseFloat(elapsed.toFixed(1));
+        memorySeconds = elapsed;
         var _prevMemTime = parseFloat(S.challengeHighScores.memoryTime);
         if(isNaN(_prevMemTime) || roundedElapsed < _prevMemTime){
           S.challengeHighScores.memoryTime = roundedElapsed;
@@ -5006,9 +5193,13 @@ function flipCard(idx){
         if(!S.challengeHighScores.memorySteps || memoryFlipCount < S.challengeHighScores.memorySteps){
           S.challengeHighScores.memorySteps = memoryFlipCount;
         }
+        // 大佬难度标记
+        if(memoryTotalPairs >= 12){
+          S.challengeHighScores.memoryBoss = true;
+        }
         save(S);
         sfxWin();
-        showChallengeResult('🃏', '记忆翻牌', memoryFlipCount, 'memory');
+        showChallengeResult('🧠', '记忆翻牌', memoryFlipCount, 'memory');
         return;
       }
       memoryFirst = null;
