@@ -220,7 +220,8 @@
   .badge-summary{font-size:16px; font-weight:800; color:#4E9A60; text-align:center; margin-bottom:8px;}
   .badge-progress-bar{width:80%; height:8px; background:#E8DFD0; border-radius:4px; margin:8px auto 16px; overflow:hidden;}
   .badge-progress-fill{height:100%; background:linear-gradient(90deg,#6BAF7A,#8FD49E); border-radius:4px; transition:width .5s ease;}
-  .badge-category-tabs{display:flex; gap:4px; overflow-x:auto; padding:2px 0 8px; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+  .badge-category-tabs{display:flex; gap:4px; overflow-x:auto; padding:2px 0 8px; -webkit-overflow-scrolling:touch; scrollbar-width:none; position:relative;}
+  .badge-category-tabs::after{content:'';position:absolute;right:0;top:0;bottom:0;width:20px;background:linear-gradient(to right,transparent,#FFFDF8);pointer-events:none;}
   .badge-category-tabs::-webkit-scrollbar{display:none;}
   .badge-tab{display:inline-flex; align-items:center; gap:4px; padding:6px 10px; border-radius:16px; font-size:12px;
     font-weight:700; color:#8B7D6B; background:#FFFDF8; border:2px solid #E8DFD0; cursor:pointer;
@@ -507,9 +508,10 @@
   .fence-border::before,.fence-border::after{content:'';position:absolute;width:4px;height:12px;background:var(--earth);border-radius:1px;top:-14px;}
   .fence-border::before{left:20px;}
   .fence-border::after{right:20px;}
-  .history-scroll{display:flex;gap:10px;overflow-x:auto;padding:8px 4px 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+  .history-scroll{display:flex;gap:10px;overflow-x:auto;padding:8px 20px 12px 4px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;position:relative;}
+  .history-scroll::after{content:'';position:absolute;right:0;top:0;bottom:0;width:24px;background:linear-gradient(to right,transparent,#FFFDF8);pointer-events:none;}
   .history-scroll::-webkit-scrollbar{display:none;}
-  .history-mini-card{min-width:140px;flex-shrink:0;background:linear-gradient(135deg,#FFFDF8,#F7FFF0);border-radius:14px;padding:12px;border:2px solid #E8DFD0;box-shadow:0 2px 8px rgba(160,130,100,.1);scroll-snap-align:start;}
+  .history-mini-card{min-width:130px;flex-shrink:0;background:linear-gradient(135deg,#FFFDF8,#F7FFF0);border-radius:14px;padding:12px;border:2px solid #E8DFD0;box-shadow:0 2px 8px rgba(160,130,100,.1);scroll-snap-align:start;}
   .history-mini-card .hmc-date{font-size:11px;color:#8B7D6B;}
   .history-mini-card .hmc-score{font-size:18px;font-weight:800;color:var(--leaf-d);margin:4px 0 2px;}
   .history-mini-card .hmc-words{font-size:12px;color:#8B7D6B;}
@@ -730,6 +732,50 @@
     #app{max-width:100%; padding:12px 10px 70px; padding-top:max(12px, env(safe-area-inset-top));}
     .garden-divider svg{max-height:30px;}
     .badge-scroll{gap:8px;}
+  }
+
+  /* ===== V3 新增：小屏手机紧凑布局 ===== */
+  @media (max-width: 420px) {
+    .card{padding:14px 12px;}
+    .ring-gauge{width:72px;height:72px;}
+    .ring-gauge svg{width:72px;height:72px;}
+    .ring-gauge .rg-bg{stroke-width:6;}
+    .ring-gauge .rg-fill{stroke-width:6;}
+    .ring-gauge .rg-num{font-size:16px;}
+    .ring-gauge .rg-emoji{font-size:13px;}
+    .ring-gauge .rg-label{font-size:9px;}
+    .chart-container{height:160px;padding:12px;}
+    .chart-y-axis{left:0;top:12px;bottom:30px;font-size:9px;}
+    .chart-area{left:26px;right:12px;top:12px;bottom:30px;}
+    .record-tabs-v2{gap:4px;}
+    .tab-pill{padding:6px 10px;font-size:12px;}
+    #app{padding-bottom:90px;}
+    .history-scroll{padding:8px 16px 12px 4px;position:relative;}
+    .history-scroll::after{content:'';position:absolute;right:0;top:0;bottom:0;width:24px;background:linear-gradient(to right,transparent,#FFFDF8);pointer-events:none;}
+    .history-mini-card{min-width:105px;padding:8px 10px;}
+    .history-mini-card .hmc-date{font-size:10px;}
+    .history-mini-card .hmc-score{font-size:15px;}
+    .history-mini-card .hmc-words{font-size:10px;}
+    .challenge-card{padding:12px;}
+    .challenge-header{font-size:14px;}
+    .challenge-icon{font-size:26px;}
+    .challenge-stats{gap:8px;font-size:10px;flex-wrap:wrap;}
+    .badge-card{padding:10px 12px;gap:8px;}
+    .badge-card .bc-icon{font-size:24px;width:30px;}
+    .badge-card .bc-name{font-size:13px;}
+    .badge-card .bc-desc{font-size:10px;}
+    .badge-card .bc-progress-bar{width:50px;}
+    .calendar-stats[style]{margin-top:16px !important;}
+    .record-card{padding:14px 12px;}
+    .ch-header{margin-bottom:4px;padding-bottom:4px;}
+    .ch-title{font-size:15px;}
+    .ch-status{font-size:11px;}
+    .match-grid{gap:4px !important;}
+    .ring-gauges{flex-wrap:wrap;gap:8px;}
+    .streak-sun{width:22px;height:22px;font-size:11px;}
+    .streak-vine{gap:2px;padding:6px 8px;}
+    .challenge-question{font-size:22px;margin:10px 0;}
+    .challenge-option{padding:10px;font-size:14px;}
   }
 
   /* ===== V3 新增：横屏紧凑布局 ===== */
@@ -1281,7 +1327,7 @@
 
     <!-- 徽章内容 -->
     <div id="recordBadges" class="card record-card">
-      <div class="badge-summary" id="badgeSummary">🏆 已获得 0 / 31 枚徽章</div>
+      <div class="badge-summary" id="badgeSummary">🏆 已获得 0 / 46 枚徽章</div>
       <div class="badge-progress-bar"><div class="badge-progress-fill" id="badgeProgressFill" style="width:0%"></div></div>
       <div class="badge-category-tabs" id="badgeCategoryTabs"></div>
       <div class="badge-grid" id="badgeGrid"></div>
@@ -2380,17 +2426,45 @@ function initBgm(){
 }
 
 let currentWord="";
+/* 音频解锁：移动端需要用户手势触发后才能播放 */
+var _audioUnlocked = false;
+function unlockAudio(){
+  if(_audioUnlocked) return;
+  _audioUnlocked = true;
+  _audio(); // 初始化并恢复 AudioContext
+  // 预加载一个短音频以解锁移动端音频播放
+  try{
+    var unlockAudio = new Audio();
+    unlockAudio.src = "https://dict.youdao.com/dictvoice?audio=hi&type=1";
+    unlockAudio.volume = 0;
+    unlockAudio.play().catch(function(){});
+  }catch(e){}
+}
+// 全局监听首次用户交互，解锁移动端音频
+document.addEventListener('touchstart', function(){ unlockAudio(); }, {once:true, passive:true});
+document.addEventListener('click', function(){ unlockAudio(); }, {once:true});
+// iOS Safari: 语音列表异步加载监听
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged = function(){
+    // 语音列表加载完成，无需特殊处理
+  };
+}
+
 function speakWord(word, accent){
   if(muted) return;
   if(!word || word.trim()==="") return;
+
+  // 移动端音频解锁
+  if(!_audioUnlocked) unlockAudio();
+
   window.speechSynthesis.cancel();
-  const type = accent==='uk' ? 1 : 2;
-  const btnUK = $("playPronounceUK") || $("rvPronounceUK");
-  const btnUS = $("playPronounceUS") || $("rvPronounceUS");
+  var type = accent==='uk' ? 1 : 2;
+  var btnUK = $("playPronounceUK") || $("rvPronounceUK");
+  var btnUS = $("playPronounceUS") || $("rvPronounceUS");
   if(accent==='uk' && btnUK) btnUK.classList.add("play");
   if(accent==='us' && btnUS) btnUS.classList.add("play");
 
-  let triedFallback=false;
+  var triedFallback=false;
   function clearPlay(){
     if(btnUK) btnUK.classList.remove("play");
     if(btnUS) btnUS.classList.remove("play");
@@ -2398,24 +2472,54 @@ function speakWord(word, accent){
   function fallbackTTS(){
     if(triedFallback) return;
     triedFallback=true;
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.rate = 0.9; utterance.pitch = 1; utterance.volume = 1;
-    utterance.lang = accent==='uk' ? 'en-GB' : 'en-US';
-    const voices = window.speechSynthesis.getVoices();
-    const voice = voices.find(v => v.lang === utterance.lang) || voices.find(v => v.lang.startsWith('en'));
-    if(voice) utterance.voice = voice;
-    utterance.onend = clearPlay;
-    utterance.onerror = clearPlay;
-    window.speechSynthesis.speak(utterance);
+    try{
+      var utterance = new SpeechSynthesisUtterance(word);
+      utterance.rate = 0.9; utterance.pitch = 1; utterance.volume = 1;
+      utterance.lang = accent==='uk' ? 'en-GB' : 'en-US';
+      var voices = window.speechSynthesis.getVoices();
+      var voice = null;
+      // 优先匹配对应口音
+      for(var i=0; i<voices.length; i++){
+        if(voices[i].lang === utterance.lang){ voice = voices[i]; break; }
+      }
+      // 退化到任意英语口音
+      if(!voice){
+        for(var j=0; j<voices.length; j++){
+          if(voices[j].lang && voices[j].lang.startsWith('en')){ voice = voices[j]; break; }
+        }
+      }
+      // iOS Safari: 如果语音列表为空，直接用默认语音
+      if(voice) utterance.voice = voice;
+      utterance.onend = clearPlay;
+      utterance.onerror = function(){
+        // TTS 也失败了，静默清除
+        clearPlay();
+      };
+      window.speechSynthesis.speak(utterance);
+    }catch(e){ clearPlay(); }
   }
 
+  // 优先尝试有道音频
   try{
-    const audio = new Audio();
+    var audio = new Audio();
+    audio.preload = 'auto';
     audio.src = "https://dict.youdao.com/dictvoice?audio="+encodeURIComponent(word)+"&type="+type;
     audio.onended = clearPlay;
-    audio.onerror = fallbackTTS;
-    audio.play().catch(fallbackTTS);
-  }catch(e){ fallbackTTS(); }
+    audio.onerror = function(){
+      // 有道失败，尝试TTS
+      fallbackTTS();
+    };
+    var playPromise = audio.play();
+    if(playPromise && playPromise.catch){
+      playPromise.catch(function(){
+        // 移动端可能因autoplay限制导致play() rejected
+        fallbackTTS();
+      });
+    }
+  }catch(e){
+    // 有道完全不可用，直接TTS
+    fallbackTTS();
+  }
 }
 
 /* ===== 存储 / 时间 ===== */
@@ -3096,9 +3200,9 @@ function drawCard(f){
     y+=12;
   });
   x.textAlign="center";
-  if(f.allCorrect){ x.fillStyle="#5CB870"; x.font="bold 30px PingFang SC, sans-serif"; x.fillText("🏆 全部开花！小园丁太棒了！", W/2, H-70); }
-  else { x.fillStyle="#F0A868"; x.font="bold 26px PingFang SC, sans-serif"; x.fillText("🌿 继续浇水，下次全开！", W/2, H-70); }
-  x.fillStyle="#B8A88E"; x.font="15px PingFang SC, sans-serif"; x.fillText("—— 拼词花圃 · 成长记录 ——", W/2, H-40);
+  if(f.allCorrect){ x.fillStyle="#5CB870"; x.font="bold 30px PingFang SC, sans-serif"; x.fillText("🏆 全部开花！小园丁太棒了！", W/2, H-100); }
+  else { x.fillStyle="#F0A868"; x.font="bold 26px PingFang SC, sans-serif"; x.fillText("🌿 继续浇水，下次全开！", W/2, H-100); }
+  x.fillStyle="#B8A88E"; x.font="15px PingFang SC, sans-serif"; x.fillText("—— 拼词花圃 · 成长记录 ——", W/2, H-58);
   const url=cv.toDataURL("image/png");
   $("cardImg").src=url; $("cardImg").style.display="block";
 }
@@ -3141,7 +3245,7 @@ function drawChallengeCard(){
   var HEADER_H = 240;     // 标题区高度
   var ROW_H = 60;         // 每条记录行高
   var PAD_TOP = 60;
-  var FOOTER_H = 140;
+  var FOOTER_H = 180;     // 底部预留（加大，避免与页面导航重叠）
   // 6 项挑战 + 标题分割线 = 7 行左右内容（1项分多子项）
   var ITEMS_H = ROW_H * 13;   // 充足预留
   var H = HEADER_H + ITEMS_H + FOOTER_H;
@@ -3200,13 +3304,13 @@ function drawChallengeCard(){
   var lvKeys = [6,12,18,24,48];
   for(var i = 0; i < lvKeys.length; i++){
     var k = lvKeys[i];
-    subRow(lvLabels[k], m[k] ? (typeof m[k]==='number'?m[k].toFixed(1):m[k]) + '秒' : '⏳ 未挑战');
+    subRow(lvLabels[k], m[k] ? parseFloat(m[k]).toFixed(1) + '秒' : '⏳ 未挑战');
   }
   cy += 10;
   // ===== 记忆翻牌 =====
   section("🃏", "记忆翻牌");
   var ht = h.memoryTime;
-  subRow("⏱️ 最快完成", ht ? (typeof ht==='number'?ht.toFixed(1):ht) + '秒' : '⏳ 未挑战');
+  subRow("⏱️ 最快完成", ht ? parseFloat(ht).toFixed(1) + '秒' : '⏳ 未挑战');
   subRow("👣 最少步数", h.memorySteps ? (h.memorySteps + '步') : '⏳ 未挑战');
   cy += 10;
   // ===== 其他4项 =====
@@ -3217,12 +3321,12 @@ function drawChallengeCard(){
   subRow("📞 电话密语  最高得分", h.blind ? h.blind + '分' : '⏳ 未挑战');
 
   // ===== 底部结语 =====
-  cy = H - 90;
+  cy = H - 130;
   x.textAlign = "center";
   x.fillStyle = "#F0A868"; x.font = "bold 26px PingFang SC, sans-serif";
   x.fillText("⚡ 再接再厉，挑战下一个纪录！", W/2, cy);
   x.fillStyle = "#B8A88E"; x.font = "15px PingFang SC, sans-serif";
-  x.fillText("—— 拼词花圃 · 挑战战报 ——", W/2, cy + 40);
+  x.fillText("—— 拼词花圃 · 挑战战报 ——", W/2, cy + 44);
 
   var url = cv.toDataURL("image/png");
   var img = $("challengeCardImg");
@@ -3704,7 +3808,29 @@ var BADGES = [
   {id:"match18",icon:"👧",name:"连连看高手",desc:"完成小朋友难度连连看",category:"challenge",tier:2,quote:"小朋友的大智慧",check:function(){return S.matchBestTimes && S.matchBestTimes[18] > 0;},progress:function(){var t=S.matchBestTimes&&S.matchBestTimes[18]||0;return{current:t>0?1:0,total:1,pct:t>0?100:0};}},
   {id:"match24",icon:"👩",name:"连连看大师",desc:"完成妈妈难度连连看",category:"challenge",tier:3,quote:"妈妈就是稳",check:function(){return S.matchBestTimes && S.matchBestTimes[24] > 0;},progress:function(){var t=S.matchBestTimes&&S.matchBestTimes[24]||0;return{current:t>0?1:0,total:1,pct:t>0?100:0};}},
   {id:"match48",icon:"👨‍🏫",name:"连连看传说",desc:"完成老师难度连连看",category:"challenge",tier:5,quote:"老师级别的终极挑战",check:function(){return S.matchBestTimes && S.matchBestTimes[48] > 0;},progress:function(){var t=S.matchBestTimes&&S.matchBestTimes[48]||0;return{current:t>0?1:0,total:1,pct:t>0?100:0};}},
-  {id:"challengeAll",icon:"⚡",name:"挑战全能王",desc:"完成所有6种挑战至少一次",category:"challenge",tier:5,quote:"没有什么能难倒你",check:function(){var h=S.challengeHighScores||{};var m=S.matchBestTimes||{};return (h.speed>0)&&(h.streak>0)&&(h.blind>0)&&(h.scramble>0)&&((h.memoryTime||0)>0)&&((m[6]||0)>0);},progress:function(){var h=S.challengeHighScores||{};var m=S.matchBestTimes||{};var done=0;var total=6;if(h.speed>0)done++;if(h.streak>0)done++;if(h.blind>0)done++;if(h.scramble>0)done++;if((h.memoryTime||0)>0)done++;if((m[6]||0)>0)done++;return{current:done,total:total,pct:Math.min(100,Math.floor(done/total*100))};}}
+  // ===== 挑战背包客 · 新增 =====
+  {id:"challengeBackpacker",icon:"🎒",name:"挑战背包客",desc:"完成4种不同的挑战游戏",category:"challenge",tier:3,quote:"走出去，才能看到更远的世界",check:function(){var h=S.challengeHighScores||{};var m=S.matchBestTimes||{};var count=0;if((m[6]||0)>0)count++;if((h.scramble||0)>0)count++;if((h.memoryTime||0)>0)count++;if((h.speed||0)>0)count++;if((h.streak||0)>0)count++;if((h.blind||0)>0)count++;return count>=4;},progress:function(){var h=S.challengeHighScores||{};var m=S.matchBestTimes||{};var count=0;if((m[6]||0)>0)count++;if((h.scramble||0)>0)count++;if((h.memoryTime||0)>0)count++;if((h.speed||0)>0)count++;if((h.streak||0)>0)count++;if((h.blind||0)>0)count++;return{current:count,total:4,pct:Math.min(100,Math.floor(count/4*100))};}},
+  {id:"challengeAll",icon:"⚡",name:"挑战全能王",desc:"完成所有6种挑战至少一次",category:"challenge",tier:5,quote:"没有什么能难倒你",check:function(){var h=S.challengeHighScores||{};var m=S.matchBestTimes||{};return (h.speed>0)&&(h.streak>0)&&(h.blind>0)&&(h.scramble>0)&&((h.memoryTime||0)>0)&&((m[6]||0)>0);},progress:function(){var h=S.challengeHighScores||{};var m=S.matchBestTimes||{};var done=0;var total=6;if(h.speed>0)done++;if(h.streak>0)done++;if(h.blind>0)done++;if(h.scramble>0)done++;if((h.memoryTime||0)>0)done++;if((m[6]||0)>0)done++;return{current:done,total:total,pct:Math.min(100,Math.floor(done/total*100))};}},
+  // ===== A. 字母大乱斗 · 3枚 · 新增 =====
+  {id:"scrambleNewbie",icon:"🔤",name:"字谜新手",desc:"完成1次字母大乱斗",category:"challenge",tier:1,quote:"第一次拼回乱掉的字母",check:function(){return (S.challengeHighScores && S.challengeHighScores.scramble > 0) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.scramble || 0;return{current:s>0?1:0,total:1,pct:s>0?100:0};}},
+  {id:"scrambleAce",icon:"🧩",name:"拼词达人",desc:"字母大乱斗最高分达到30分",category:"challenge",tier:2,quote:"打乱的字母在你眼中就是有序的",check:function(){return (S.challengeHighScores && S.challengeHighScores.scramble >= 30) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.scramble || 0;return{current:Math.min(30,s),total:30,pct:Math.min(100,Math.floor(s/30*100))};}},
+  {id:"scrambleMaster",icon:"🏅",name:"字谜大师",desc:"字母大乱斗最高分达到50分",category:"challenge",tier:3,quote:"所有字母在你面前都是透明的",check:function(){return (S.challengeHighScores && S.challengeHighScores.scramble >= 50) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.scramble || 0;return{current:Math.min(50,s),total:50,pct:Math.min(100,Math.floor(s/50*100))};}},
+  // ===== B. 记忆翻牌 · 3枚 · 新增 =====
+  {id:"memoryNewbie",icon:"🧠",name:"记忆新秀",desc:"完成1次记忆翻牌",category:"challenge",tier:1,quote:"第一副牌翻开了记忆的大门",check:function(){return (S.challengeHighScores && S.challengeHighScores.memoryTime > 0) || false;},progress:function(){var t=S.challengeHighScores && S.challengeHighScores.memoryTime || 0;return{current:t>0?1:0,total:1,pct:t>0?100:0};}},
+  {id:"memoryPro",icon:"💡",name:"记忆高手",desc:"15步内完成记忆翻牌",category:"challenge",tier:2,quote:"每一步都精准，每一张都记得",check:function(){return (S.challengeHighScores && S.challengeHighScores.memorySteps > 0 && S.challengeHighScores.memorySteps <= 15) || false;},progress:function(){var steps=S.challengeHighScores && S.challengeHighScores.memorySteps || 99;var pct=steps<=15?100:Math.max(0,Math.floor((30-steps)/30*100));return{current:Math.min(15,steps),total:15,pct:pct};}},
+  {id:"memoryMaster",icon:"💎",name:"记忆大师",desc:"8步内完成记忆翻牌",category:"challenge",tier:4,quote:"过目不忘，六张牌的位置了然于心",check:function(){return (S.challengeHighScores && S.challengeHighScores.memorySteps > 0 && S.challengeHighScores.memorySteps <= 8) || false;},progress:function(){var steps=S.challengeHighScores && S.challengeHighScores.memorySteps || 99;var pct=steps<=8?100:Math.max(0,Math.floor((20-steps)/20*100));return{current:Math.min(8,steps),total:8,pct:pct};}},
+  // ===== C. 60秒闪电战 · 3枚 · 新增 =====
+  {id:"speedStar",icon:"⚡",name:"闪电新星",desc:"60秒闪电战单次达到100分",category:"challenge",tier:1,quote:"你的手指已经比眼睛快了",check:function(){return (S.challengeHighScores && S.challengeHighScores.speed >= 100) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.speed || 0;return{current:Math.min(100,s),total:100,pct:Math.min(100,Math.floor(s/100*100))};}},
+  {id:"speedPro",icon:"🌩️",name:"闪电高手",desc:"60秒闪电战单次达到300分",category:"challenge",tier:3,quote:"闪电般的速度，精准的直觉",check:function(){return (S.challengeHighScores && S.challengeHighScores.speed >= 300) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.speed || 0;return{current:Math.min(300,s),total:300,pct:Math.min(100,Math.floor(s/300*100))};}},
+  {id:"speedLegend",icon:"💫",name:"闪电传说",desc:"60秒闪电战单次达到500分",category:"challenge",tier:5,quote:"你已经突破了人类的反应极限",check:function(){return (S.challengeHighScores && S.challengeHighScores.speed >= 500) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.speed || 0;return{current:Math.min(500,s),total:500,pct:Math.min(100,Math.floor(s/500*100))};}},
+  // ===== D. 连击王 · 3枚 · 新增 =====
+  {id:"streakNewbie",icon:"🔥",name:"连击新秀",desc:"连击王最高连击达到10次",category:"challenge",tier:1,quote:"十连击，热身完毕",check:function(){return (S.challengeHighScores && S.challengeHighScores.streak >= 10) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.streak || 0;return{current:Math.min(10,s),total:10,pct:Math.min(100,Math.floor(s/10*100))};}},
+  {id:"streakPro",icon:"🌋",name:"连击达人",desc:"连击王最高连击达到25次",category:"challenge",tier:3,quote:"二十五连击，势不可挡",check:function(){return (S.challengeHighScores && S.challengeHighScores.streak >= 25) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.streak || 0;return{current:Math.min(25,s),total:25,pct:Math.min(100,Math.floor(s/25*100))};}},
+  {id:"streakLegend",icon:"☀️",name:"连击传说",desc:"连击王最高连击达到50次",category:"challenge",tier:5,quote:"五十连击——这就是传说本身",check:function(){return (S.challengeHighScores && S.challengeHighScores.streak >= 50) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.streak || 0;return{current:Math.min(50,s),total:50,pct:Math.min(100,Math.floor(s/50*100))};}},
+  // ===== E. 电话密语 · 3枚 · 新增 =====
+  {id:"blindListener",icon:"👂",name:"顺风耳",desc:"电话密语单次达到20分",category:"challenge",tier:1,quote:"耳朵开始捕捉每一个音节",check:function(){return (S.challengeHighScores && S.challengeHighScores.blind >= 20) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.blind || 0;return{current:Math.min(20,s),total:20,pct:Math.min(100,Math.floor(s/20*100))};}},
+  {id:"blindPro",icon:"🦇",name:"千里耳",desc:"电话密语单次达到50分",category:"challenge",tier:2,quote:"再轻的发音也逃不过你的耳朵",check:function(){return (S.challengeHighScores && S.challengeHighScores.blind >= 50) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.blind || 0;return{current:Math.min(50,s),total:50,pct:Math.min(100,Math.floor(s/50*100))};}},
+  {id:"blindMaster",icon:"🦉",name:"蝙蝠耳",desc:"电话密语单次达到80分",category:"challenge",tier:4,quote:"听音拼词，你就是行走的词典",check:function(){return (S.challengeHighScores && S.challengeHighScores.blind >= 80) || false;},progress:function(){var s=S.challengeHighScores && S.challengeHighScores.blind || 0;return{current:Math.min(80,s),total:80,pct:Math.min(100,Math.floor(s/80*100))};}}
 ];
 
 // 分类Tab配置
@@ -4329,6 +4455,29 @@ if(!S.challengeHighScores.scramble) S.challengeHighScores.scramble = 0;
 if(!S.challengeHighScores.memoryTime) S.challengeHighScores.memoryTime = 0;
 if(!S.challengeHighScores.memorySteps) S.challengeHighScores.memorySteps = 0;
 if(!S.matchBestTimes) S.matchBestTimes = {};
+// 数据迁移：将历史时间记录规范化为数字类型，确保所有显示统一 0.1 秒精度
+(function(){
+  var _needSave = false;
+  if(S.matchBestTimes){
+    for(var _k in S.matchBestTimes){
+      var _v = S.matchBestTimes[_k];
+      if(_v == null || _v === '') continue;
+      var _num = parseFloat(_v);
+      if(typeof _v !== 'number' || _num !== _v){
+        S.matchBestTimes[_k] = isNaN(_num) ? 0 : _num;
+        _needSave = true;
+      }
+    }
+  }
+  if(S.challengeHighScores && S.challengeHighScores.memoryTime){
+    var _mt = S.challengeHighScores.memoryTime;
+    var _mtn = parseFloat(_mt);
+    if(typeof _mt !== 'number' || _mtn !== _mt){
+      if(!isNaN(_mtn)){ S.challengeHighScores.memoryTime = _mtn; _needSave = true; }
+    }
+  }
+  if(_needSave) save(S);
+})();
 
 function updateChallengeStats(){
   $("speedHigh").textContent = S.challengeHighScores.speed || 0;
@@ -4336,7 +4485,7 @@ function updateChallengeStats(){
   $("blindHigh").textContent = S.challengeHighScores.blind || 0;
   $("scrambleHigh").textContent = S.challengeHighScores.scramble || 0;
   var memTime = S.challengeHighScores.memoryTime;
-  var memTimeStr = memTime ? (typeof memTime === 'number' ? memTime.toFixed(1) : memTime) + '秒' : '—';
+  var memTimeStr = memTime ? parseFloat(memTime).toFixed(1) + '秒' : '—';
   $("memoryHigh").textContent = memTimeStr + ' / ' + (S.challengeHighScores.memorySteps ? S.challengeHighScores.memorySteps + '步' : '—');
   // 连连看最快记录
   var best = S.matchBestTimes || {};
@@ -4575,10 +4724,11 @@ function clickMatchCard(cardId){
         clearInterval(matchTimer);
         matchTimer = null;
         var finalTime = matchSeconds;
-        var roundedTime = Math.round(finalTime);
-        // 保存记录（整数秒）
+        var roundedTime = parseFloat(finalTime.toFixed(1));
+        // 保存记录（0.1秒精度）
         if(!S.matchBestTimes) S.matchBestTimes = {};
-        if(!S.matchBestTimes[matchLevel] || roundedTime < S.matchBestTimes[matchLevel]){
+        var _prevBest = parseFloat(S.matchBestTimes[matchLevel]);
+        if(isNaN(_prevBest) || roundedTime < _prevBest){
           S.matchBestTimes[matchLevel] = roundedTime;
           save(S);
         }
@@ -4609,12 +4759,16 @@ function showMatchResult(seconds){
   else if(matchLevel <= 24) emoji = '👩';
   else emoji = '👨‍🏫';
 
-  var best = S.matchBestTimes[matchLevel];
-  var rounded = Math.round(seconds);
-  var isNewRecord = rounded === best;
+  var rawBest = S.matchBestTimes[matchLevel];
+  var best = (rawBest != null && rawBest !== '') ? parseFloat(rawBest) : NaN;
+  var rounded = parseFloat(seconds.toFixed(1));
+  var isNewRecord = !isNaN(best) && rounded === best;
 
   // 胜利音效
   if(isNewRecord) sfxWin(); else sfxMatch();
+
+  // 检查新徽章
+  checkNewBadges();
 
   var header = '<div class="challenge-result-icon">🎉</div>';
   $("challengeHeader").innerHTML = header;
@@ -4622,7 +4776,7 @@ function showMatchResult(seconds){
   var body = '<div class="challenge-result-title">' + emoji + ' ' + matchLevel + '词 完成！</div>';
   body += '<div class="challenge-result-score">' + seconds.toFixed(1) + '秒</div>';
   if(isNewRecord) body += '<div style="text-align:center;color:#E8726A;font-size:16px;font-weight:800;margin-bottom:8px;">🏆 新纪录！</div>';
-  body += '<div style="text-align:center;color:#8B7D6B;font-size:13px;margin-bottom:16px;">⏱️ 历史最快 ' + (best ? (typeof best === 'number' ? best.toFixed(1) : best) : '—') + '秒</div>';
+  body += '<div style="text-align:center;color:#8B7D6B;font-size:13px;margin-bottom:16px;">⏱️ 历史最快 ' + (!isNaN(best) ? best.toFixed(1) : '—') + '秒</div>';
   body += '<button class="btn" onclick="startMatchLevel(' + matchLevel + ')" style="margin-top:4px;">🔄 再来一次</button>';
   body += '<button class="btn orange" onclick="exitChallenge()" style="margin-top:8px;">🏠 返回挑战</button>';
   $("challengeBody").innerHTML = body;
@@ -4707,8 +4861,8 @@ function startChallenge(type){
     challengeQuestions = shuffled.slice(0, 30);
     show("challenge");
     renderBlind();
-    // 语音播放第一题
-    setTimeout(function(){ speakWord(challengeQuestions[0][1], 'uk'); }, 300);
+    // 语音播放第一题（直接在用户手势上下文中调用，避免setTimeout导致移动端被阻止）
+    speakWord(challengeQuestions[0][1], 'uk');
   }
 }
 
@@ -4844,8 +4998,9 @@ function flipCard(idx){
         // 全部完成
         clearInterval(memoryTimer);
         var elapsed = memorySeconds;
-        var roundedElapsed = Math.round(elapsed);
-        if(!S.challengeHighScores.memoryTime || roundedElapsed < S.challengeHighScores.memoryTime){
+        var roundedElapsed = parseFloat(elapsed.toFixed(1));
+        var _prevMemTime = parseFloat(S.challengeHighScores.memoryTime);
+        if(isNaN(_prevMemTime) || roundedElapsed < _prevMemTime){
           S.challengeHighScores.memoryTime = roundedElapsed;
         }
         if(!S.challengeHighScores.memorySteps || memoryFlipCount < S.challengeHighScores.memorySteps){
@@ -5029,8 +5184,18 @@ function renderBlind(){
   }
   var w = challengeQuestions[challengeIdx];
   var en = w[1];
-  // 播放发音（仅一次）
-  speakWord(en, 'uk');
+  // 播放发音（仅一次）；如果有预加载音频则跳过，避免重复
+  if(!_blindNextAudio){
+    speakWord(en, 'uk');
+  } else {
+    // 使用预加载音频播放
+    var pa = _blindNextAudio;
+    _blindNextAudio = null;
+    var playP = pa.play();
+    if(playP && playP.catch){
+      playP.catch(function(){ speakWord(en, 'uk'); });
+    }
+  }
 
   var header = '<div class="ch-header">';
   header += '<span class="ch-title">📞 电话密语</span>';
@@ -5067,15 +5232,22 @@ function checkBlindChallengeAnswer(){
   }
   inp.disabled = true;
   challengeIdx++;
+  // 关键修复：在用户手势上下文中预加载下一题音频，避免setTimeout后被阻止
+  var nextEn = null;
+  if(challengeIdx < challengeQuestions.length){
+    nextEn = challengeQuestions[challengeIdx][1];
+    // 预加载下一题音频（在用户手势上下文中创建）
+    _blindNextAudio = new Audio();
+    _blindNextAudio.preload = 'auto';
+    _blindNextAudio.src = "https://dict.youdao.com/dictvoice?audio="+encodeURIComponent(nextEn)+"&type=1";
+  }
   setTimeout(function(){
     if(banner) banner.style.display = "none";
+    // renderBlind() 内部会使用预加载音频播放
     renderBlind();
-    // 播放下一个
-    if(challengeIdx < challengeQuestions.length){
-      setTimeout(function(){ speakWord(challengeQuestions[challengeIdx][1], 'uk'); }, 500);
-    }
   }, 1000);
 }
+var _blindNextAudio = null;
 
 /* 结果展示 + 保存最高分 */
 function showChallengeResult(icon, name, score, typeKey){
@@ -5087,11 +5259,13 @@ function showChallengeResult(icon, name, score, typeKey){
       save(S);
     }
   }
+  // 检查新徽章
+  checkNewBadges();
   var displayScore, highDisplay;
   if(typeKey === 'memory'){
     displayScore = memorySeconds.toFixed(1) + '秒 / ' + score + '步';
     var rawHighTime = S.challengeHighScores.memoryTime;
-    var highTime = rawHighTime ? (typeof rawHighTime === 'number' ? rawHighTime.toFixed(1) : rawHighTime) : '—';
+    var highTime = rawHighTime ? parseFloat(rawHighTime).toFixed(1) : '—';
     var highSteps = S.challengeHighScores.memorySteps || '—';
     highDisplay = highTime + '秒 / ' + highSteps + '步';
   } else {
